@@ -1,6 +1,6 @@
 # Plan de versiones
 
-La candidata v0.1.0 está implementada y en verificación para su PR. Los demás hitos son propuestas, no funciones ya terminadas ni nuevas fechas de entrega. El plan prioriza reconstruir una base correcta y recuperar progresivamente el contenido del curso. El plan semanal 12 anuncia una defensa del avance en semana 13: el ritmo real se ajustará a esa necesidad.
+v0.1.0 contiene la primera implementación, con 16 pruebas locales aprobadas y cuatro combinaciones de CI comprobadas. Su publicación se identifica por la etiqueta v0.1.0 y el PR #5. Los demás hitos son propuestas, no funciones ya terminadas ni nuevas fechas de entrega. El plan prioriza reconstruir una base correcta y recuperar progresivamente el contenido del curso. El plan semanal 12 anuncia una defensa del avance en semana 13: el ritmo real se ajustará a esa necesidad.
 
 | Hito interno | Resultado revisable | Relación con el curso |
 |---|---|---|

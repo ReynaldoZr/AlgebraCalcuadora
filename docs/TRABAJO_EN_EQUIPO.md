@@ -26,12 +26,13 @@ Para dos personas no hace falta añadir una rama develop permanente. main repres
 
 - Repositorio público elegido por el usuario: ReynaldoZr/AlgebraCalcuadora. El segundo integrante todavía debe confirmarse.
 - Plantillas de función, error y PR incluidas en .github/.
-- Si el plan de GitHub lo permite, protección de main con PR, revisión de la otra persona y comprobaciones requeridas; documentar lo que efectivamente quede habilitado.
+- main protegida: exige PR, rama actualizada, las cuatro comprobaciones de CI y conversaciones resueltas. Las reglas se aplican también al administrador; no se permiten force-push ni borrado de main.
+- La aprobación formal obligatoria está en 0 hasta confirmar e incorporar la cuenta del segundo integrante. La revisión del compañero sigue siendo el acuerdo de trabajo; al incorporarlo se podrá exigir una aprobación.
 - CI incluida para pruebas y reglas de imports/docstrings en Windows y Linux. Consultar el resultado real de cada ejecución en GitHub.
 - No subir credenciales, sesiones, copias de Moodle, entornos virtuales ni datos académicos personales. El repositorio contiene código propio, guías y referencias a las fuentes.
 - Elegir una versión de Python y usarla en ambos equipos y en las comprobaciones.
 
-El repositorio ya existe. Las plantillas y el flujo de comprobaciones acompañan la primera implementación. No se han configurado protecciones de main ni revisores obligatorios; su disponibilidad y el segundo integrante se revisarán antes de activarlos.
+El repositorio ya existe. Las plantillas y el flujo de comprobaciones acompañan la primera implementación. La protección de main está configurada con los controles anteriores. Falta confirmar e incorporar al segundo integrante para exigir su aprobación formal.
 
 ## Automatización que conviene añadir
 

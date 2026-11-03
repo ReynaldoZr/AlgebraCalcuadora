@@ -1,6 +1,6 @@
 # Calculadora de Álgebra Lineal
 
-Calculadora educativa local para un equipo de dos estudiantes. **Candidata v0.1.0:** suma y resta de matrices, con resultados exactos y procedimiento. Proyecto en desarrollo mediante issues y pull requests.
+Calculadora educativa local para un equipo de dos estudiantes. **Versión v0.1.0:** suma y resta de matrices, con resultados exactos y procedimiento. Proyecto en desarrollo mediante issues y pull requests.
 
 ## Ejecutar
 
@@ -52,7 +52,7 @@ python -m unittest discover -s tests -v
 python herramientas/comprobar_reglas.py
 ```
 
-El flujo de GitHub Actions ejecuta ambas comprobaciones en Windows y Linux con Python 3.11 y 3.13. Los resultados reales se consultan en el PR; tener el archivo de configuración no significa que ya se haya ejecutado en GitHub.
+GitHub Actions ejecuta ambas comprobaciones en Windows y Linux con Python 3.11 y 3.13. Las cuatro combinaciones pasaron en el PR inicial; cada cambio posterior vuelve a comprobarse. main exige un PR con las cuatro comprobaciones aprobadas antes de integrar.
 
 El verificador analiza imports con AST, rechaza bibliotecas externas fuera del ámbito numérico autorizado, detecta entradas/salidas dentro del cálculo y comprueba docstrings. Es una ayuda de mantenimiento, no una prueba de corrección matemática ni una garantía contra cualquier incumplimiento.
 

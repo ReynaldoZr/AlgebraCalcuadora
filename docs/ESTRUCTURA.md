@@ -81,4 +81,4 @@ El menú de matrices ofrecerá también determinantes e inversas como exige la t
 
 ## Alcance de la primera etapa
 
-Ya implementado en la candidata v0.1.0: main.py; interfaz con entradas, formato, cabeceras y menús; modulos con validaciones y suma/resta; pruebas de cálculo, consola y reglas; README, AGENTS, CHANGELOG y plantillas de colaboración. LU y Métodos Numéricos se crearán cuando corresponda. La estructura completa es un mapa, no una obligación de fabricar archivos vacíos.
+Ya implementado en v0.1.0: main.py; interfaz con entradas, formato, cabeceras y menús; modulos con validaciones y suma/resta; pruebas de cálculo, consola y reglas; README, AGENTS, CHANGELOG y plantillas de colaboración. LU y Métodos Numéricos se crearán cuando corresponda. La estructura completa es un mapa, no una obligación de fabricar archivos vacíos.

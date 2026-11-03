@@ -2,7 +2,7 @@
 
 ## Contexto y lectura inicial
 
-Calculadora local de Álgebra Lineal para dos estudiantes, con funciones comprensibles y defensa individual. Primera implementación: candidata v0.1.0, suma y resta de matrices. Leer README.md, docs/ESTRUCTURA.md y docs/COMO_AGREGAR.md; consultar docs/REVISION_UAM.md y docs/VERSIONES.md según la tarea. Revisar Git y preservar cambios ajenos antes de editar.
+Calculadora local de Álgebra Lineal para dos estudiantes, con funciones comprensibles y defensa individual. Primera implementación: v0.1.0, suma y resta de matrices. Leer README.md, docs/ESTRUCTURA.md y docs/COMO_AGREGAR.md; consultar docs/REVISION_UAM.md y docs/VERSIONES.md según la tarea. Revisar Git y preservar cambios ajenos antes de editar.
 
 ## Estructura
 

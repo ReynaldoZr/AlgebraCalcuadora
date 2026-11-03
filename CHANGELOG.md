@@ -1,6 +1,10 @@
 # Historial de cambios
 
-## Sin publicar — candidata v0.1.0
+## Sin publicar
+
+Sin cambios pendientes.
+
+## v0.1.0 — 2026-11-03
 
 - Menú de consola y módulo de matrices con cabecera ASCII y opción 0 de teoremas.
 - Entrada validada de matrices rectangulares, enteros, fracciones y decimales exactos.
@@ -10,4 +14,4 @@
 - Comprobaciones de estructura, plantillas de issue y PR y flujo de integración continua.
 - Guías de organización, restricciones por unidad y ampliación progresiva.
 
-Una versión se considera publicada cuando el cambio se integra y se etiqueta en Git. No hay etiquetas de entrega creadas todavía.
+Primera entrega funcional. Publicación identificada por la etiqueta v0.1.0; integración mediante PR #5. Las siguientes correcciones compatibles usarán v0.1.1, v0.1.2, etc.
