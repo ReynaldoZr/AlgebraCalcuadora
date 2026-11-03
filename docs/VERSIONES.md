@@ -22,7 +22,7 @@ Espacios, bases, dimensión, transformaciones, rango y nulidad tienen lugar rese
 - v0.2.1 → v0.3.0: siguiente bloque de funciones del plan.
 - Desde v1.0.0: primer número para cambios incompatibles de contratos, segundo para funciones compatibles y tercero para correcciones compatibles.
 - El número de tarea del profesor y la versión del software son datos distintos. En cada entrega se registra qué versión satisface qué tarea.
-- Crear una etiqueta de Git en el commit entregado y una nota en CHANGELOG.md. No fabricar carpetas «final2», «final_ahora_si» ni copias completas del proyecto por versión.
+- Después de la revisión y decisión humana, integrar el PR. Crear la etiqueta en el commit entregado y la nota de publicación en CHANGELOG.md solo con autorización expresa para publicar. La IA deja sus cambios bajo «Sin publicar» y no adelanta esos pasos. No fabricar carpetas «final2», «final_ahora_si» ni copias completas del proyecto por versión.
 
 ## Qué anotar en CHANGELOG
 

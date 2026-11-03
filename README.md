@@ -2,6 +2,10 @@
 
 Calculadora educativa local para un equipo de dos estudiantes. **Versión v0.1.0:** suma y resta de matrices, con resultados exactos y procedimiento. Proyecto en desarrollo mediante issues y pull requests.
 
+## Antes de trabajar con una IA
+
+La IA sigue **issue → rama → implementación → comprobaciones → PR → CI** y deja el pull request abierto para revisión humana. Reynaldo u otro humano autorizado decide si se corrige, se descarta o se integra. Las pruebas aprobadas no autorizan a la IA a hacer merge ni a publicar versiones. Leer [AGENTS.md](AGENTS.md) y el [flujo completo para la IA](docs/FLUJO_IA.md) antes de empezar.
+
 ## Ejecutar
 
 Requiere Python 3.11 o posterior. Esta etapa no necesita instalar bibliotecas externas. En una terminal, dentro de la carpeta del repositorio:
@@ -69,4 +73,4 @@ El permiso de NumPy/SciPy del plan semanal 12 se limita a Métodos Numéricos. L
 
 Producto, transpuesta, sistemas, vectores, determinantes, inversas, verificadores y LU se añadirán por etapas; no están implementados en v0.1.0. La identidad de pantalla «Cuaderno de Álgebra Lineal» es provisional.
 
-Una nueva función se propone con una issue y se integra por PR. Una corrección compatible usa una mini versión, por ejemplo v0.1.1. Solo se publica una etiqueta al integrar y verificar una entrega. Los datos del segundo integrante y del nuevo grupo se registrarán cuando estén confirmados; las cabeceras actuales identifican el trabajo del equipo con apoyo de IA.
+Una nueva función se propone con una issue y se presenta en un PR. Una corrección compatible puede corresponder a una mini versión, por ejemplo v0.1.1. Integrar requiere decisión humana; publicar una etiqueta o release requiere también autorización expresa. Los datos del segundo integrante y del nuevo grupo se registrarán cuando estén confirmados; las cabeceras actuales identifican el trabajo del equipo con apoyo de IA.

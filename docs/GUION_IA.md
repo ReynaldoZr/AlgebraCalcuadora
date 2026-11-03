@@ -7,6 +7,8 @@ Estamos desarrollando entre dos estudiantes una calculadora local de Álgebra Li
 
 Objetivo de esta tarea: [operación concreta y ejemplo esperado].
 
+Tu flujo es issue → rama → implementación → comprobaciones → pull request → CI → revisión humana. Lee docs/FLUJO_IA.md. Usa la issue indicada o crea una pequeña con criterios de aceptación y trabaja en una rama propia desde main actualizado.
+
 Antes de modificar archivos, lee AGENTS.md, README.md y las secciones relevantes de docs/REVISION_UAM.md, docs/ESTRUCTURA.md y docs/COMO_AGREGAR.md. Comprueba el estado real del código y de Git; no supongas que las funciones del plan ya existen.
 
 Localiza la operación en el módulo correspondiente y reutiliza las funciones existentes. Conserva las entradas y los retornos públicos salvo que el objetivo requiera cambiarlos; en ese caso explica y actualiza sus consumidores.
@@ -18,6 +20,10 @@ Separa cálculo de interfaz. Las funciones de cálculo reciben datos y devuelven
 Haz el cambio más pequeño que resuelva el objetivo, con nombres claros y docstrings breves. Explica las decisiones matemáticas necesarias. No reestructures todo el programa ni añadas servidores o dependencias ajenas al alcance.
 
 Comprueba casos correctos e inválidos relevantes. Actualiza la documentación que cambie y resume qué se hizo, por qué, cómo se verificó y qué falta. Si una regla académica resulta ambigua, señala la fuente concreta y sigue avanzando en las partes independientes.
+
+Ejecuta las pruebas, el comprobador de reglas y git diff --check. Publica la rama, abre el PR vinculado con Closes #N y comprueba la CI del último commit. Corrige los fallos en esa rama. Si algo queda bloqueado o incompleto, mantén el PR como borrador y explica el motivo.
+
+Entrega los enlaces de issue y PR, las instrucciones para probar y los resultados reales. Detente con el PR abierto para que yo lo revise. No hagas merge, no te autoapruebes, no actives auto-merge, no cierres la issue como completada, no cambies la versión publicada ni crees etiquetas/releases. Las pruebas aprobadas no son autorización humana. Solo una instrucción humana explícita posterior a la revisión puede autorizar integrar ese PR; publicar requiere también autorización expresa.
 
 No inventes autores, calificaciones, evidencias, resultados de pruebas, enlaces de PR ni funciones terminadas. No incluyas credenciales o datos privados de UAM en archivos o commits.
 ```
