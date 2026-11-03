@@ -1,0 +1,25 @@
+name: Función o tema nuevo
+description: Proponer un cambio pequeño para la siguiente versión.
+title: "[Función] "
+body:
+  - type: textarea
+    id: objetivo
+    attributes:
+      label: Objetivo y versión prevista
+      description: Qué podrá hacer el usuario al completar esta tarea.
+    validations:
+      required: true
+  - type: textarea
+    id: fuente
+    attributes:
+      label: Fuente de clase y módulo
+      description: Enlace o referencia al enunciado, restricciones y archivo donde irá el cambio.
+    validations:
+      required: true
+  - type: textarea
+    id: casos
+    attributes:
+      label: Criterios de aceptación
+      description: Entradas, resultado esperado, ejemplos y datos inválidos. Anotar responsable y revisor.
+    validations:
+      required: true
