@@ -16,6 +16,28 @@ python main.py
 
 En Windows también puedes usar `py -3 main.py` si ese es el lanzador instalado. En PyCharm o IntelliJ con soporte de Python, abre la carpeta, selecciona el intérprete y ejecuta main.py. Las fracciones y el texto en español se muestran en la consola.
 
+## Vista previa de la interfaz gráfica
+
+El PR anterior #9 está cerrado sin integrar por decisión del usuario. La nueva propuesta se presenta desde `feat/8-interfaz-animada-local`, con autorización expresa para subirla y dejarla como pull request abierto para revisión humana; [estado y límite de publicación](docs/ESTADO_UI_LOCAL.md). Todavía no está integrada ni hay una versión nueva publicada.
+
+Esta rama incorpora una ventana de escritorio, pendiente de integración y publicación. Para probarla:
+
+```text
+python gui.py
+```
+
+Incluye casillas para A y B, suma/resta, resultado exacto, procedimiento, teoremas, ejemplo y reutilización del resultado. Usa Tkinter/ttk de la biblioteca estándar, sin paquetes de pip nuevos. La consola sigue disponible con `python main.py` y conserva los menús requeridos en UAM.
+
+Cada editor permite de 1 a 10 filas y columnas, con barras de desplazamiento. Al modificar dimensiones pulsa **Aplicar**; se mantienen las celdas coincidentes y se pide confirmación antes de recortar otras. El límite solo afecta a la cuadrícula gráfica, no al núcleo o la consola.
+
+Pulsa **Cargar ejemplo → Calcular** para comenzar. Puedes editar cada casilla, usar Tab para pasar a la siguiente y Ctrl+Enter para calcular. Los errores identifican la matriz y la celda, conservando tus datos. Si cambias una entrada, el resultado anterior se identifica como tal hasta volver a calcular. **Limpiar** reinicia esta sesión.
+
+El diseño local usa azul oscuro y lavanda, con el icono cuadrado de Matrices y un cambio de tema en la esquina superior derecha. Las fracciones aparecen apiladas; haz clic o usa Tab para editarlas como texto. **Deshacer** recupera estados anteriores, incluida una limpieza.
+
+La calculadora muestra una vista previa con los puntos clave. **Abrir todos los pasos** lleva a otra pestaña interna, amplia y desplazable, con cada posición y sus equivalencias de fracciones; volver conserva tus entradas. Para explorar el cálculo usa **Anterior**, **Reproducir/Pausar**, **Siguiente** y **Reiniciar**. El intervalo es fijo de tres segundos, sin selector, y el movimiento no empieza automáticamente. Editar datos cancela el recorrido anterior y exige calcular de nuevo; el desarrollo conservado avisa si está desactualizado.
+
+Tkinter debe estar incluido en tu instalación de Python; puedes comprobarlo con `python -m tkinter`. Si falta, consulta las instrucciones de tu distribución de Python. La consola funciona sin Tkinter. Más detalles y alcance en [docs/INTERFAZ_GRAFICA.md](docs/INTERFAZ_GRAFICA.md).
+
 ## Qué incluye
 
 - Menú principal y módulo de matrices con cabecera ASCII.
@@ -39,6 +61,7 @@ Usa 9 para volver o salir, según el menú. Ctrl+C y el fin del flujo de entrada
 | Lugar | Responsabilidad |
 |---|---|
 | [main.py](main.py) | Punto de entrada y versión |
+| [gui.py](gui.py) | Punto de entrada de la ventana opcional |
 | [modulos/](modulos/) | Cálculos y validaciones matemáticas, sin input ni print |
 | [interfaz/](interfaz/) | Menús, lectura y presentación |
 | [teoremas/](teoremas/) | Enunciados teóricos de los temas implementados |
@@ -57,6 +80,8 @@ python herramientas/comprobar_reglas.py
 ```
 
 GitHub Actions ejecuta ambas comprobaciones en Windows y Linux con Python 3.11 y 3.13. Las cuatro combinaciones pasaron en el PR inicial; cada cambio posterior vuelve a comprobarse. main exige un PR con las cuatro comprobaciones aprobadas antes de integrar.
+
+Las pruebas de la ventana utilizan widgets reales. En Linux se ejecutan con `xvfb-run -a python -m unittest discover -s tests -v`. En CI, `CALCULADORA_EXIGIR_GUI=1` impide dar por aprobada la interfaz si se omitieron sus pruebas por falta de Tk o pantalla. Localmente, sin pantalla o Tk, se informa la omisión y siguen las pruebas de consola y cálculo.
 
 El verificador analiza imports con AST, rechaza bibliotecas externas fuera del ámbito numérico autorizado, detecta entradas/salidas dentro del cálculo y comprueba docstrings. Es una ayuda de mantenimiento, no una prueba de corrección matemática ni una garantía contra cualquier incumplimiento.
 

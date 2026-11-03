@@ -60,7 +60,7 @@ def revisar_archivo(ruta):
 
 def main():
     """Revisa las carpetas de código y devuelve 0 si no detecta infracciones."""
-    archivos = [RAIZ / 'main.py']
+    archivos = list(RAIZ.glob('*.py'))
     for carpeta in ('modulos', 'interfaz', 'teoremas', 'tests', 'herramientas'):
         archivos.extend((RAIZ / carpeta).rglob('*.py'))
     errores = [error for ruta in archivos for error in revisar_archivo(ruta)]

@@ -1,5 +1,9 @@
 # Reglas de trabajo de la calculadora
 
+## Propuesta de interfaz pendiente de revisión
+
+El PR #9 se cerró sin integrar por instrucción del usuario. Después de revisar el diseño y la implementación local de la issue #8, el usuario autorizó subir esta propuesta y abrir un nuevo PR desde `feat/8-interfaz-animada-local`. Esta autorización permite publicar la rama y corregir sus comprobaciones; no permite integrar, autoaprobar, activar auto-merge ni publicar versiones. Mantener el nuevo PR abierto para revisión humana y conservar el PR #9 cerrado. Consultar docs/ESTADO_UI_LOCAL.md. No interpretar esta autorización como permiso permanente para publicar propuestas futuras.
+
 ## Introducción y límite de la IA
 
 La IA prepara cambios para que una persona pueda revisarlos. Su recorrido es **issue → rama → implementación → comprobaciones → pull request → CI → revisión humana**. Leer [docs/FLUJO_IA.md](docs/FLUJO_IA.md) antes de empezar. La entrega de la IA es un PR abierto y comprobado; la decisión de integrarlo corresponde a Reynaldo u otro humano autorizado.

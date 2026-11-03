@@ -4,7 +4,7 @@ Tema: dimensiones y componentes de matrices.
 Elaboración: equipo del proyecto, con apoyo de IA.
 """
 
-from fractions import Fraction
+from interfaz.datos import convertir_numero
 
 
 def leer_opcion(mensaje, opciones):
@@ -32,8 +32,7 @@ def leer_numero(mensaje):
     """Lee un entero, decimal con punto o fracción y devuelve un Fraction exacto."""
     while True:
         try:
-            # Convertir el texto directamente evita introducir redondeo de float.
-            return Fraction(input(mensaje).strip())
+            return convertir_numero(input(mensaje))
         except (ValueError, ZeroDivisionError):
             print("Número inválido. Usa 2, -3, 0.5 o 1/3; el denominador no puede ser 0.")
 
