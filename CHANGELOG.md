@@ -2,6 +2,9 @@
 
 ## Sin publicar
 
+- Diseño local aprobado: fondo azul oscuro, acentos lavanda, icono cuadrado de Matrices, fracciones apiladas y alternativa clara. Vista previa breve y pestaña amplia con todo el desarrollo, desplazamiento y aviso de cálculo anterior.
+- Recorrido con Anterior, Reproducir/Pausar, Siguiente y Reiniciar, intervalo fijo de tres segundos sin selector y cancelación al editar. Deshacer conserva hasta 50 estados locales, incluidos limpieza y último cálculo.
+- PR #9 cerrado sin integrar; el usuario autorizó subir la nueva propuesta como PR abierto para revisión humana. No se cambia la versión publicada ni se incorpora un servidor web; integración y publicación siguen pendientes de decisión humana.
 - Interfaz gráfica opcional con Tkinter/ttk: matrices editables de hasta 10x10, suma/resta, procedimiento y teoremas, ejemplo y reutilización de resultados.
 - Lectura numérica y presentación compartidas entre consola y ventana; se conservan los algoritmos y la versión publicados.
 - Pruebas con widgets reales y pantalla virtual para la CI de Linux; la falta de pantalla/Tk no puede omitir silenciosamente las pruebas gráficas en CI.

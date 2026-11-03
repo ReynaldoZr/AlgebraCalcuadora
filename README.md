@@ -18,6 +18,8 @@ En Windows también puedes usar `py -3 main.py` si ese es el lanzador instalado.
 
 ## Vista previa de la interfaz gráfica
 
+El PR anterior #9 está cerrado sin integrar por decisión del usuario. La nueva propuesta se presenta desde `feat/8-interfaz-animada-local`, con autorización expresa para subirla y dejarla como pull request abierto para revisión humana; [estado y límite de publicación](docs/ESTADO_UI_LOCAL.md). Todavía no está integrada ni hay una versión nueva publicada.
+
 Esta rama incorpora una ventana de escritorio, pendiente de integración y publicación. Para probarla:
 
 ```text
@@ -29,6 +31,10 @@ Incluye casillas para A y B, suma/resta, resultado exacto, procedimiento, teorem
 Cada editor permite de 1 a 10 filas y columnas, con barras de desplazamiento. Al modificar dimensiones pulsa **Aplicar**; se mantienen las celdas coincidentes y se pide confirmación antes de recortar otras. El límite solo afecta a la cuadrícula gráfica, no al núcleo o la consola.
 
 Pulsa **Cargar ejemplo → Calcular** para comenzar. Puedes editar cada casilla, usar Tab para pasar a la siguiente y Ctrl+Enter para calcular. Los errores identifican la matriz y la celda, conservando tus datos. Si cambias una entrada, el resultado anterior se identifica como tal hasta volver a calcular. **Limpiar** reinicia esta sesión.
+
+El diseño local usa azul oscuro y lavanda, con el icono cuadrado de Matrices y un cambio de tema en la esquina superior derecha. Las fracciones aparecen apiladas; haz clic o usa Tab para editarlas como texto. **Deshacer** recupera estados anteriores, incluida una limpieza.
+
+La calculadora muestra una vista previa con los puntos clave. **Abrir todos los pasos** lleva a otra pestaña interna, amplia y desplazable, con cada posición y sus equivalencias de fracciones; volver conserva tus entradas. Para explorar el cálculo usa **Anterior**, **Reproducir/Pausar**, **Siguiente** y **Reiniciar**. El intervalo es fijo de tres segundos, sin selector, y el movimiento no empieza automáticamente. Editar datos cancela el recorrido anterior y exige calcular de nuevo; el desarrollo conservado avisa si está desactualizado.
 
 Tkinter debe estar incluido en tu instalación de Python; puedes comprobarlo con `python -m tkinter`. Si falta, consulta las instrucciones de tu distribución de Python. La consola funciona sin Tkinter. Más detalles y alcance en [docs/INTERFAZ_GRAFICA.md](docs/INTERFAZ_GRAFICA.md).
 

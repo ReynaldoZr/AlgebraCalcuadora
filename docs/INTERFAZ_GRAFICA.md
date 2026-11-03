@@ -1,51 +1,59 @@
 # Interfaz gráfica de escritorio
 
-La ventana se incorpora por solicitud del usuario del 3 de noviembre de 2026, antes de continuar las operaciones de la issue #2. El trabajo se sigue en la [issue #8](https://github.com/ReynaldoZr/AlgebraCalcuadora/issues/8). Es una interfaz alternativa y no reemplaza la consola exigida por el profesor.
+La ventana sigue la [issue #8](https://github.com/ReynaldoZr/AlgebraCalcuadora/issues/8). Usa Tkinter/ttk de la biblioteca estándar y conserva la consola requerida por el profesor. El PR #9 está cerrado sin integrar; el usuario autorizó presentar esta nueva propuesta como PR **pendiente de revisión humana**, según [ESTADO_UI_LOCAL.md](ESTADO_UI_LOCAL.md).
 
-## Ejecutar y probar
+## Probar
 
-1. Ejecutar `python gui.py` desde la raíz del proyecto.
-2. Pulsar Cargar ejemplo y después Calcular.
-3. Resultado de suma esperado: [[1/2, 3/10], [3, 3]]. Revisar el procedimiento.
-4. Elegir Resta y volver a calcular. Resultado: [[1/6, -1/10], [-7, 5]].
-5. Escribir `1/0` en una celda: debe aparecer la posición del error sin borrar entradas ni el último cálculo.
-6. Corregirla y volver a calcular; usar el resultado como A o B para encadenar operaciones.
-7. Cambiar dimensiones y pulsar Aplicar. Al ampliar, se conservan las celdas coincidentes; al reducir se solicita confirmación por el recorte.
-8. Consultar Teoremas clave y probar Tab, Ctrl+Enter y desplazamiento horizontal/vertical.
+1. Ejecutar `python gui.py` desde la raíz.
+2. Pulsar Cargar ejemplo y Calcular. Esperado: `[[1/2, 3/10], [3, 3]]`.
+3. Elegir Resta y calcular: `[[1/6, -1/10], [-7, 5]]`.
+4. Hacer clic en una fracción para editarla como texto (`1/3`, `0.5`, `-2`). Tab recorre entradas; al salir de ellas vuelve la notación apilada. Ctrl+Enter calcula.
+5. Usar Anterior, Reproducir/Pausar, Siguiente y Reiniciar. El intervalo es fijo de tres segundos; Reiniciar deja el primer paso en pausa.
+6. Abrir Todos los pasos: muestra todas las posiciones con equivalencias de fracciones y resultado, con desplazamiento. Volver a calculadora conserva entradas y estado.
+7. Cambiar claro/oscuro desde la esquina superior derecha. El tema inicial es azul oscuro con lavanda.
+8. Limpiar y pulsar Deshacer para recuperar entradas y cálculo. Deshacer conserva hasta 50 estados en memoria, sin persistencia al cerrar.
+9. Escribir `1/0` en una celda: debe identificar su posición sin borrar los datos ni el cálculo anterior. Corregir y calcular otra vez.
+10. Reutilizar el resultado como A o B. Para redimensionar, pulsar Aplicar; ampliar conserva datos y reducir solicita confirmación por el recorte. Hay desplazamiento para tamaños grandes.
+11. Consultar Teoremas desde el encabezado; la ventana de consulta es de solo lectura.
 
-## Archivos y responsabilidades
+## Dónde cambiar cada cosa
 
 | Archivo | Responsabilidad |
 |---|---|
-| gui.py | Lanzador opcional; explica si Tkinter no está instalado |
-| interfaz/ventana.py | Composición, estilos, eventos y estado gráfico |
-| interfaz/cuadricula.py | Tamaños, casillas, desplazamiento y posición de errores |
-| interfaz/datos.py | Conversión numérica exacta compartida con consola |
-| interfaz/formato.py | Texto de matrices y pasos compartido con consola |
-| modulos/modulo_matrices.py | Algoritmos existentes; no cambian por añadir la ventana |
-| tests/test_ventana.py | Recorridos con widgets reales, resultados y recuperación de errores |
+| gui.py | Lanzador opcional y mensaje si falta Tkinter |
+| interfaz/ventana.py | Composición, pestañas, acciones, historial y estado de sesión |
+| interfaz/tema.py | Paletas y estilos; modificar colores aquí |
+| interfaz/notacion.py | Dibujo de fracciones, matrices e icono de Matrices |
+| interfaz/cuadricula.py | Edición, dimensiones, foco, resaltado y errores de casillas |
+| interfaz/desarrollo.py | Tarjetas de pasos, equivalencias visuales y desplazamiento |
+| interfaz/recorrido.py | Temporizador cancelable, pausa y navegación de pasos |
+| interfaz/datos.py | Conversión exacta común a consola y ventana |
+| interfaz/formato.py | Presentación de texto para consola |
+| modulos/modulo_matrices.py | Algoritmos existentes, independientes de Tkinter |
+| tests/test_ventana.py | Recorridos con widgets reales y conservación de datos |
+| tests/test_recorrido.py | Navegación y cancelación con reloj controlado |
 
-La interfaz gráfica llama a sumar_matrices/restar_matrices y recibe listas. El procedimiento presenta esos resultados; no introduce un segundo algoritmo. No importa ni inicia la consola. La consola tampoco importa Tkinter: el ordenador sin Tk puede seguir usando main.py.
+## Contratos
 
-## Contratos y decisiones
+- El cálculo llama a `sumar_matrices` y `restar_matrices`, recibe listas independientes y no importa la interfaz. La consola tampoco importa Tkinter.
+- El editor admite 1–10 filas/columnas; ese límite es visual y no se extiende al núcleo o la consola.
+- Las entradas se convierten desde texto directamente a Fraction, sin pasar por float. Las fracciones apiladas representan esos valores exactos, sin generar imágenes ni usar bibliotecas matemáticas externas.
+- El desarrollo recibe operandos y resultados del núcleo. Las equivalencias visuales usan denominador común y numeradores sin simplificar para explicar cada posición; no sustituyen la respuesta del núcleo ni vuelven a solicitar resultados intermedios.
+- El último cálculo válido se conserva ante errores. Editar lo marca como anterior y deshabilita su reproducción; la pestaña amplia también avisa si está desactualizado.
+- La reproducción usa `after`, nunca sleep ni un bucle bloqueante. Editar, cargar, limpiar, cambiar operación o cerrar cancela el evento pendiente. Cambiar de pestaña pausa el recorrido.
+- Cada editor mantiene sus variables Tk mientras existan sus casillas. Durante reconstrucciones se suprimen avisos intermedios que podrían acceder a widgets destruidos.
+- El historial guarda copias de entradas, dimensiones pendientes, operación y último resultado. Restaurarlo no inicia reproducción.
+- Los temas se cambian sobre los mismos widgets; no se reconstruye la sesión para cambiar colores. No se persisten preferencias al cerrar.
+- Main y su versión publicada no cambian. No hay servidor ni migración a una interfaz web.
 
-- Tkinter/ttk pertenece a la biblioteca estándar y depende de Tcl/Tk. Es un componente opcional de algunas distribuciones de Python; la instalación disponible en este equipo incluye Tk 8.6. Fuentes: [Tkinter](https://docs.python.org/3/library/tkinter.html) y [ttk](https://docs.python.org/3/library/tkinter.ttk.html).
-- Se admiten de 1 a 10 filas y columnas por editor. Es un límite de presentación para esta primera UI; no limita los algoritmos o la consola.
-- Todas las celdas se convierten desde texto a Fraction sin pasar por float. Los resultados siguen siendo listas independientes.
-- La sesión conserva el último cálculo válido. Un cambio de entradas u operación lo marca como anterior; una operación inválida no lo reemplaza ni borra los datos.
-- Los cambios de tamaño requieren Aplicar antes de calcular. Reducir una matriz pide confirmación. Limpiar reinicia entradas y memoria de esta ventana.
-- Las variables de Tk se mantienen mientras existan sus casillas; de lo contrario Tkinter puede perder el texto y los avisos de modificación.
-- Se usan clases únicamente para agrupar widgets y su estado. Las operaciones matemáticas siguen siendo funciones pequeñas del núcleo.
-- No se cambia main.VERSION ni se publica una etiqueta al abrir el PR.
+## Añadir otra operación
 
-## Cómo añadir otra operación después
+Implementar y probar primero el algoritmo en su módulo, según COMO_AGREGAR.md. Después conectar su opción en ventana.py. Reutilizar el editor, la notación y la vista de desarrollo. Una operación unaria debe pedir solo sus entradas reales. Ampliar el contenido de los pasos cuando sea necesario sin introducir algoritmos nuevos dentro del dibujo.
 
-Primero implementar y probar la función matemática en su módulo según COMO_AGREGAR.md. Después añadir su opción y evento en ventana.py. Reutilizar EditorMatriz para leer entradas y las funciones de formato para presentar salidas. Si la operación es unaria, no obligar a completar B: adaptar el formulario a sus datos reales.
+Los colores se ajustan en tema.py; la representación matemática en notacion.py; los pasos completos en desarrollo.py. No reescribir toda la ventana para añadir un estilo o un paso. Los futuros temas se habilitarán únicamente cuando tengan funcionalidad real.
 
-Añadir pruebas de interacción y de errores que sean nuevos para esa operación. No duplicar los cálculos dentro de callbacks y no añadir botones que prometan operaciones aún no implementadas.
+## Verificación y límites
 
-## Comprobaciones y límites
+Ejecutar `python -m unittest discover -s tests -v`, `python herramientas/comprobar_reglas.py` y `git diff --check`. Las pruebas de ventana usan widgets reales; en Linux requieren Xvfb. CI usa CALCULADORA_EXIGIR_GUI=1 para impedir omisiones silenciosas.
 
-Las pruebas generales cubren consola y cálculo. Las de ventana crean widgets reales para comprobar suma/resta, fracciones, errores, dimensiones pendientes, crecimiento/recorte, limpieza y reutilización. En Linux necesitan pantalla virtual Xvfb. En CI la variable CALCULADORA_EXIGIR_GUI obliga a que se ejecuten; una omisión local no debe presentarse como interfaz verificada.
-
-La revisión visual se realiza en Windows. No se afirma haber revisado visualmente Linux, macOS, lectores de pantalla ni todos los ajustes de escala. Tkinter en Windows expone un árbol de accesibilidad limitado; antes de ampliar mucho la aplicación conviene evaluar accesibilidad con el uso real del equipo. Los resultados no se guardan al cerrar y aún no hay instalador o archivo ejecutable distribuido.
+La revisión visual local se hace en Windows; no implica haber revisado macOS, todas las escalas o lectores de pantalla. Tkinter tiene un árbol de accesibilidad limitado en Windows. Las fórmulas largas y matrices grandes tienen desplazamiento; la ventana requiere al menos 1120×760 unidades de Tk. No hay instalador, exportación ni guardado de sesiones.

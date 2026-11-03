@@ -4,6 +4,8 @@ La primera etapa ya contiene main.py, modulos/validaciones.py, modulos/modulo_ma
 
 La propuesta de UI añade gui.py como lanzador separado e interfaz/ventana.py, cuadricula.py y datos.py. Su flujo y límites se explican en [INTERFAZ_GRAFICA.md](INTERFAZ_GRAFICA.md); la consola y los contratos matemáticos siguen disponibles.
 
+La continuación local separa los colores en `interfaz/tema.py`, el dibujo de fracciones y matrices en `interfaz/notacion.py`, el desarrollo amplio en `interfaz/desarrollo.py` y el temporizador en `interfaz/recorrido.py`. La composición y el historial de sesión permanecen en `ventana.py`. Para cambiar el diseño, empezar por ese archivo específico, sin tocar los algoritmos.
+
 El árbol siguiente es la estructura objetivo a medida que avancemos; incluye archivos futuros. Solo se crearán carpetas y archivos cuando tengan una función real; los nombres de archivos de cálculo y teoremas indicados por el profesor se conservan.
 
 ```text
@@ -59,6 +61,10 @@ Calculadora_Algebra_Lineal/
 | Corregir reducción usada por varios temas | modulos/eliminacion.py y pruebas de sus consumidores |
 | Cambiar cómo se piden números | interfaz/entradas.py |
 | Cambiar la ventana o sus casillas | interfaz/ventana.py e interfaz/cuadricula.py |
+| Cambiar colores o los temas claro/oscuro | interfaz/tema.py |
+| Cambiar fracciones apiladas, matrices dibujadas o el icono | interfaz/notacion.py |
+| Cambiar el desarrollo completo y su desplazamiento | interfaz/desarrollo.py |
+| Cambiar reproducción y navegación de pasos | interfaz/recorrido.py |
 | Cambiar conversión numérica común | interfaz/datos.py |
 | Cambiar cómo se ven matrices y fracciones | interfaz/formato.py |
 | Añadir una opción a un menú | interfaz/menus.py; main.py solo si es un tema nuevo |
