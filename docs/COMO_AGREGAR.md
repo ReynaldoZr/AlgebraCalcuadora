@@ -9,7 +9,8 @@
 5. Añadir ejemplos con respuesta conocida y errores relevantes.
 6. Conectar la operación al menú del tema y mostrar errores recuperables sin cerrar la aplicación.
 7. Añadir teorema o comprobación si lo exige el enunciado.
-8. Actualizar documentación afectada y abrir un PR con el resultado verificable.
+8. Actualizar documentación afectada y abrir un PR vinculado a la issue con el resultado verificable; comprobar la CI del último commit.
+9. Si trabaja una IA, entregar el PR abierto y detenerse antes de integrar o publicar. Reynaldo u otro humano autorizado decide después de revisar; seguir [FLUJO_IA.md](FLUJO_IA.md).
 
 ## Ejemplo de cambio pequeño
 
@@ -32,6 +33,8 @@ Las pruebas comprueban resultados matemáticos y comportamientos observables. Pa
 También se revisarán las entradas vacías, texto en campos numéricos, dimensiones inválidas y recuperación del menú. No escribir pruebas que solo repitan la implementación.
 
 ## Condición para dar una operación por terminada
+
+Para la IA, estar lista para revisión significa entregar el cambio y sus comprobaciones en un PR abierto. No significa que esté integrado o publicado. El cierre definitivo depende de la revisión y decisión humana.
 
 El cálculo funciona, su entrada y salida están documentadas, aparece donde corresponde, maneja datos incorrectos, tiene comprobación apropiada y ambos integrantes pueden explicarla con un ejemplo. En Métodos Numéricos debe indicarse si hubo convergencia o por qué se detuvo.
 

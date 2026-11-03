@@ -1,5 +1,17 @@
 # Reglas de trabajo de la calculadora
 
+## Introducción y límite de la IA
+
+La IA prepara cambios para que una persona pueda revisarlos. Su recorrido es **issue → rama → implementación → comprobaciones → pull request → CI → revisión humana**. Leer [docs/FLUJO_IA.md](docs/FLUJO_IA.md) antes de empezar. La entrega de la IA es un PR abierto y comprobado; la decisión de integrarlo corresponde a Reynaldo u otro humano autorizado.
+
+- Vincular el cambio a una issue y trabajar en una rama propia desde main actualizado. No escribir directamente en main.
+- Ejecutar las comprobaciones, abrir el PR y revisar la CI del último commit. Si algo falla, corregir en esa misma rama y volver a comprobar. Si queda un bloqueo, informarlo y mantener el PR como borrador.
+- Al terminar, entregar enlaces de issue y PR, resumen del cambio, instrucciones para probarlo, resultados de las comprobaciones y pendientes reales.
+- **Detenerse antes de integrar:** no hacer merge, squash o rebase hacia main, no activar auto-merge ni entrar en una cola de integración, no autoaprobar el PR y no usar otra cuenta para aparentar una revisión humana.
+- No cerrar la issue como completada, crear etiquetas, publicar releases, adelantar la versión publicada ni desactivar protecciones para terminar la tarea. Registrar la propuesta en «Sin publicar».
+- Que las pruebas estén verdes o que se haya pedido «hacer la tarea», «subir los cambios» o «abrir el PR» no autoriza integrarlo. Para una actuación posterior de integración o publicación hace falta una instrucción humana explícita para ese PR, después de su revisión; no inferirla del permiso de desarrollar.
+- No sustituir la revisión por una aprobación de la propia IA. Atender correcciones posteriores en la misma rama y dejar que el humano vuelva a decidir sobre el estado actualizado.
+
 ## Contexto y lectura inicial
 
 Calculadora local de Álgebra Lineal para dos estudiantes, con funciones comprensibles y defensa individual. Primera implementación: v0.1.0, suma y resta de matrices. Leer README.md, docs/ESTRUCTURA.md y docs/COMO_AGREGAR.md; consultar docs/REVISION_UAM.md y docs/VERSIONES.md según la tarea. Revisar Git y preservar cambios ajenos antes de editar.
@@ -34,7 +46,7 @@ Calculadora local de Álgebra Lineal para dos estudiantes, con funciones compren
 - Ejecutar `python -m unittest discover -s tests -v` y `python herramientas/comprobar_reglas.py` antes del PR. Comprobar manualmente el recorrido de consola afectado cuando cambie la interacción.
 - Añadir pruebas de resultados conocidos, límites matemáticos y errores relevantes; no pruebas que solo repitan la implementación.
 - Cada mejora usa issue, rama y PR según docs/TRABAJO_EN_EQUIPO.md. El PR debe indicar alcance, fuente, validación y limitaciones. No inventar enlaces ni pruebas ejecutadas.
-- Actualizar README/guías si cambia uso o estructura; registrar cambios bajo «Sin publicar» en CHANGELOG. Etiquetar versiones verificadas después de integrar. No cerrar issues antes de cumplir sus criterios.
+- Actualizar README/guías si cambia uso o estructura; registrar cambios bajo «Sin publicar» en CHANGELOG. La integración, el cierre definitivo de la issue y la publicación de versiones quedan sujetos a la decisión humana del flujo anterior.
 - No subir contraseñas, sesiones, calificaciones, copias privadas de Moodle ni los entregables del grupo anterior. Referenciar fuentes por enlace.
 - Si una indicación académica cambia, registrar fuente, fecha y ámbito en docs/DECISIONES.md. Un permiso de una unidad no se extiende a todo el repositorio.
 - Al terminar, explicar qué cambió, por qué, cómo se verificó y cualquier pendiente concreto. AGENTS.md y las comprobaciones no sustituyen la revisión del compañero.

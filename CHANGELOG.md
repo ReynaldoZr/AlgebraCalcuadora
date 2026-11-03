@@ -2,7 +2,7 @@
 
 ## Sin publicar
 
-Sin cambios pendientes.
+- Instrucciones de IA y colaboración: issue, rama, comprobaciones y PR abierto; integración y publicación reservadas a decisión humana. Guía paso a paso y plantilla de PR actualizadas.
 
 ## v0.1.0 — 2026-11-03
 
