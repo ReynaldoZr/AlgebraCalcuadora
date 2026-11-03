@@ -1,0 +1,23 @@
+name: Error o ajuste
+description: Registrar una corrección para una mini versión.
+title: "[Error] "
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Versión y sistema operativo
+    validations:
+      required: true
+  - type: textarea
+    id: reproducir
+    attributes:
+      label: Pasos y datos para reproducir el error
+      description: No incluyas contraseñas ni datos personales.
+    validations:
+      required: true
+  - type: textarea
+    id: esperado
+    attributes:
+      label: Resultado esperado y resultado observado
+    validations:
+      required: true
