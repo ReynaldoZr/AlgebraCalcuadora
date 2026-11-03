@@ -33,7 +33,13 @@ La primera implementación ya incluye suma/resta y ejemplos. Los datos del segun
 
 ## Decisiones que pueden esperar
 
-Interfaz gráfica, empaquetado como ejecutable, guardado permanente del historial, exportación automática a PDF y gráficas. El núcleo independiente facilitará esas mejoras, pero no se incorporarán todas en la primera entrega.
+Empaquetado como ejecutable, guardado permanente del historial, exportación automática a PDF y gráficas. El núcleo independiente facilitará esas mejoras, pero no se incorporarán todas en la primera entrega.
+
+## 2026-11-03 — Interfaz gráfica opcional
+
+El usuario pidió incorporar una UI antes de continuar el siguiente bloque matemático. Se añade Tkinter/ttk de biblioteca estándar con un lanzador gui.py, conservando main.py y su consola por los requisitos académicos. Ambas interfaces utilizan las mismas funciones de cálculo, conversión exacta y presentación de pasos.
+
+El primer editor gráfico se limita a 10x10 para mantener una cuadrícula manejable y desplazable. La restricción no se aplica al núcleo ni a la consola. Se documenta en INTERFAZ_GRAFICA.md y se probará en la issue #8 y su PR. No se cambia la versión publicada hasta la decisión humana.
 
 ## Cómo registrar cambios importantes
 

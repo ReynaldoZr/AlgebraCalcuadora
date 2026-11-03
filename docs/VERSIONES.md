@@ -2,6 +2,8 @@
 
 v0.1.0 contiene la primera implementación, con 16 pruebas locales aprobadas y cuatro combinaciones de CI comprobadas. Su publicación se identifica por la etiqueta v0.1.0 y el PR #5. Los demás hitos son propuestas, no funciones ya terminadas ni nuevas fechas de entrega. El plan prioriza reconstruir una base correcta y recuperar progresivamente el contenido del curso. El plan semanal 12 anuncia una defensa del avance en semana 13: el ritmo real se ajustará a esa necesidad.
 
+Por solicitud del usuario, la issue #8 añade primero una interfaz gráfica opcional para las operaciones existentes. Su PR se mantiene sin publicar hasta la revisión humana. El número de la siguiente entrega se decidirá al autorizar su publicación, sin cambiar ahora main.VERSION ni renumerar las issues matemáticas existentes.
+
 | Hito interno | Resultado revisable | Relación con el curso |
 |---|---|---|
 | v0.1.0 | Arranque, menú local, entrada validada, formato y suma/resta de matrices | Base pequeña con la que ambos aprenden el flujo |

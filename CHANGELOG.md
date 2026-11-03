@@ -2,6 +2,9 @@
 
 ## Sin publicar
 
+- Interfaz gráfica opcional con Tkinter/ttk: matrices editables de hasta 10x10, suma/resta, procedimiento y teoremas, ejemplo y reutilización de resultados.
+- Lectura numérica y presentación compartidas entre consola y ventana; se conservan los algoritmos y la versión publicados.
+- Pruebas con widgets reales y pantalla virtual para la CI de Linux; la falta de pantalla/Tk no puede omitir silenciosamente las pruebas gráficas en CI.
 - Instrucciones de IA y colaboración: issue, rama, comprobaciones y PR abierto; integración y publicación reservadas a decisión humana. Guía paso a paso y plantilla de PR actualizadas.
 
 ## v0.1.0 — 2026-11-03

@@ -2,11 +2,14 @@
 
 La primera etapa ya contiene main.py, modulos/validaciones.py, modulos/modulo_matrices.py, interfaz/, teoremas/resumen_teoremas.py, ejemplos/, tests/ y herramientas/comprobar_reglas.py.
 
+La propuesta de UI añade gui.py como lanzador separado e interfaz/ventana.py, cuadricula.py y datos.py. Su flujo y límites se explican en [INTERFAZ_GRAFICA.md](INTERFAZ_GRAFICA.md); la consola y los contratos matemáticos siguen disponibles.
+
 El árbol siguiente es la estructura objetivo a medida que avancemos; incluye archivos futuros. Solo se crearán carpetas y archivos cuando tengan una función real; los nombres de archivos de cálculo y teoremas indicados por el profesor se conservan.
 
 ```text
 Calculadora_Algebra_Lineal/
 ├── main.py                       Arranque y menú principal
+├── gui.py                        Arranque opcional de la ventana
 ├── modulos/                      Funciones matemáticas reutilizables
 │   ├── __init__.py
 │   ├── eliminacion.py            Operaciones de fila y reducción compartida
@@ -28,6 +31,9 @@ Calculadora_Algebra_Lineal/
 │   ├── entradas.py               Lectura y reintentos por datos incorrectos
 │   ├── formato.py                Matrices alineadas, fracciones y pasos
 │   ├── cabeceras.py              Identidad ASCII de los módulos
+│   ├── datos.py                  Conversión numérica común a consola y GUI
+│   ├── ventana.py                Composición y eventos de escritorio
+│   ├── cuadricula.py             Editor de matriz y sus validaciones gráficas
 │   └── memoria.py                Datos y resultados de la sesión
 ├── teoremas/
 │   ├── __init__.py
@@ -52,6 +58,8 @@ Calculadora_Algebra_Lineal/
 | Añadir un método de determinante | modulos/modulo_determinantes.py |
 | Corregir reducción usada por varios temas | modulos/eliminacion.py y pruebas de sus consumidores |
 | Cambiar cómo se piden números | interfaz/entradas.py |
+| Cambiar la ventana o sus casillas | interfaz/ventana.py e interfaz/cuadricula.py |
+| Cambiar conversión numérica común | interfaz/datos.py |
 | Cambiar cómo se ven matrices y fracciones | interfaz/formato.py |
 | Añadir una opción a un menú | interfaz/menus.py; main.py solo si es un tema nuevo |
 | Añadir un teorema | teoremas/resumen_teoremas.py |

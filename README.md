@@ -16,6 +16,22 @@ python main.py
 
 En Windows también puedes usar `py -3 main.py` si ese es el lanzador instalado. En PyCharm o IntelliJ con soporte de Python, abre la carpeta, selecciona el intérprete y ejecuta main.py. Las fracciones y el texto en español se muestran en la consola.
 
+## Vista previa de la interfaz gráfica
+
+Esta rama incorpora una ventana de escritorio, pendiente de integración y publicación. Para probarla:
+
+```text
+python gui.py
+```
+
+Incluye casillas para A y B, suma/resta, resultado exacto, procedimiento, teoremas, ejemplo y reutilización del resultado. Usa Tkinter/ttk de la biblioteca estándar, sin paquetes de pip nuevos. La consola sigue disponible con `python main.py` y conserva los menús requeridos en UAM.
+
+Cada editor permite de 1 a 10 filas y columnas, con barras de desplazamiento. Al modificar dimensiones pulsa **Aplicar**; se mantienen las celdas coincidentes y se pide confirmación antes de recortar otras. El límite solo afecta a la cuadrícula gráfica, no al núcleo o la consola.
+
+Pulsa **Cargar ejemplo → Calcular** para comenzar. Puedes editar cada casilla, usar Tab para pasar a la siguiente y Ctrl+Enter para calcular. Los errores identifican la matriz y la celda, conservando tus datos. Si cambias una entrada, el resultado anterior se identifica como tal hasta volver a calcular. **Limpiar** reinicia esta sesión.
+
+Tkinter debe estar incluido en tu instalación de Python; puedes comprobarlo con `python -m tkinter`. Si falta, consulta las instrucciones de tu distribución de Python. La consola funciona sin Tkinter. Más detalles y alcance en [docs/INTERFAZ_GRAFICA.md](docs/INTERFAZ_GRAFICA.md).
+
 ## Qué incluye
 
 - Menú principal y módulo de matrices con cabecera ASCII.
@@ -39,6 +55,7 @@ Usa 9 para volver o salir, según el menú. Ctrl+C y el fin del flujo de entrada
 | Lugar | Responsabilidad |
 |---|---|
 | [main.py](main.py) | Punto de entrada y versión |
+| [gui.py](gui.py) | Punto de entrada de la ventana opcional |
 | [modulos/](modulos/) | Cálculos y validaciones matemáticas, sin input ni print |
 | [interfaz/](interfaz/) | Menús, lectura y presentación |
 | [teoremas/](teoremas/) | Enunciados teóricos de los temas implementados |
@@ -57,6 +74,8 @@ python herramientas/comprobar_reglas.py
 ```
 
 GitHub Actions ejecuta ambas comprobaciones en Windows y Linux con Python 3.11 y 3.13. Las cuatro combinaciones pasaron en el PR inicial; cada cambio posterior vuelve a comprobarse. main exige un PR con las cuatro comprobaciones aprobadas antes de integrar.
+
+Las pruebas de la ventana utilizan widgets reales. En Linux se ejecutan con `xvfb-run -a python -m unittest discover -s tests -v`. En CI, `CALCULADORA_EXIGIR_GUI=1` impide dar por aprobada la interfaz si se omitieron sus pruebas por falta de Tk o pantalla. Localmente, sin pantalla o Tk, se informa la omisión y siguen las pruebas de consola y cálculo.
 
 El verificador analiza imports con AST, rechaza bibliotecas externas fuera del ámbito numérico autorizado, detecta entradas/salidas dentro del cálculo y comprueba docstrings. Es una ayuda de mantenimiento, no una prueba de corrección matemática ni una garantía contra cualquier incumplimiento.
 
