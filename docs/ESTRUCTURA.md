@@ -1,10 +1,22 @@
 # Dónde va cada cosa
 
+La semana 12 ya está implementada localmente en `modulos/numericos/` (funciones, bisección, errores y comparadores), `interfaz/panel_numerico.py`, `metodos_numericos.py`, `menu_numerico.py` e `interfaz/numericos/graficas.py`. Su guía es [SEMANA_12.md](SEMANA_12.md); para orientarse en IntelliJ consultar [GUIA_CODIGO.md](GUIA_CODIGO.md). No se importa la unidad desde los módulos exactos.
+
+La biblioteca y las herramientas de estudio viven en `interfaz/biblioteca.py`, `cuaderno.py`, `guardados.py`, `pegado.py`, `ejemplos_casos.py` y `exportar_pdf.py`. El usuario autorizó Guardados como tercera pestaña; las dos vistas de cálculo y sus tarjetas se conservan. La persistencia nunca se importa en los módulos matemáticos. Consulte [GUARDADOS_Y_ESTUDIO.md](GUARDADOS_Y_ESTUDIO.md) antes de cambiar su esquema o ubicación; los datos personales no van al repositorio.
+
+La ampliación actual de tareas 1 a 6 ya implementa eliminación, sistemas, vectores, determinantes, inversas, LU y verificadores. `modulos/procedimientos.py` define los resultados y pasos compartidos. `interfaz/operaciones.py` conecta los métodos con consola (`menu_algebra.py`) y escritorio (`panel_algebra.py` y `procedimiento.py`). Mantener las tres tarjetas y las dos vistas existentes; no introducir pestañas anidadas. Contratos completos en [ALGEBRA_TAREAS_1_A_6.md](ALGEBRA_TAREAS_1_A_6.md). `modulos/numericos/` continúa siendo solo una reserva futura.
+
 La primera etapa ya contiene main.py, modulos/validaciones.py, modulos/modulo_matrices.py, interfaz/, teoremas/resumen_teoremas.py, ejemplos/, tests/ y herramientas/comprobar_reglas.py.
 
 La propuesta de UI añade gui.py como lanzador separado e interfaz/ventana.py, cuadricula.py y datos.py. Su flujo y límites se explican en [INTERFAZ_GRAFICA.md](INTERFAZ_GRAFICA.md); la consola y los contratos matemáticos siguen disponibles.
 
 La continuación local separa los colores en `interfaz/tema.py`, el dibujo de fracciones y matrices en `interfaz/notacion.py`, el desarrollo amplio en `interfaz/desarrollo.py` y el temporizador en `interfaz/recorrido.py`. La composición y el historial de sesión permanecen en `ventana.py`. Para cambiar el diseño, empezar por ese archivo específico, sin tocar los algoritmos.
+
+Escalar (parte local de issue #2) usa los mismos archivos: `multiplicar_por_escalar(matriz, escalar)` en modulo_matrices.py, lectura y opción 4 en menus.py, texto en formato.py, tarjeta k y estado en ventana.py, equivalencias gráficas en desarrollo.py. No se añade otra estructura ni una matriz B artificial para una operación unaria.
+
+Transpuesta usa `transponer_matriz(matriz)` en el mismo módulo matemático, opción 5 en menus.py y su formato de texto en formato.py. Su tarjeta de regla y el formulario se conectan en ventana.py; las etapas de traslado viven en explicacion.py. El origen y el destino tienen coordenadas diferentes y se documentan en INTERFAZ_GRAFICA.md. Los widgets compartidos se reutilizan.
+
+El recorrido didáctico se amplía en `interfaz/explicacion.py`, sin widgets ni nuevos cálculos del resultado final. `interfaz/transicion.py` contiene únicamente el desvanecimiento entre vistas. La composición los conecta desde ventana.py: las instrucciones matemáticas no administran temporizadores o ventanas.
 
 El árbol siguiente es la estructura objetivo a medida que avancemos; incluye archivos futuros. Solo se crearán carpetas y archivos cuando tengan una función real; los nombres de archivos de cálculo y teoremas indicados por el profesor se conservan.
 
@@ -65,6 +77,8 @@ Calculadora_Algebra_Lineal/
 | Cambiar fracciones apiladas, matrices dibujadas o el icono | interfaz/notacion.py |
 | Cambiar el desarrollo completo y su desplazamiento | interfaz/desarrollo.py |
 | Cambiar reproducción y navegación de pasos | interfaz/recorrido.py |
+| Cambiar etiquetas, etapas y explicación de una cuenta | interfaz/explicacion.py |
+| Cambiar el desvanecimiento entre vistas | interfaz/transicion.py |
 | Cambiar conversión numérica común | interfaz/datos.py |
 | Cambiar cómo se ven matrices y fracciones | interfaz/formato.py |
 | Añadir una opción a un menú | interfaz/menus.py; main.py solo si es un tema nuevo |
@@ -95,4 +109,9 @@ El menú de matrices ofrecerá también determinantes e inversas como exige la t
 
 ## Alcance de la primera etapa
 
-Ya implementado en v0.1.0: main.py; interfaz con entradas, formato, cabeceras y menús; modulos con validaciones y suma/resta; pruebas de cálculo, consola y reglas; README, AGENTS, CHANGELOG y plantillas de colaboración. LU y Métodos Numéricos se crearán cuando corresponda. La estructura completa es un mapa, no una obligación de fabricar archivos vacíos.
+Publicado en v0.1.0: main.py, validaciones, suma/resta, consola y controles iniciales. Las ampliaciones locales posteriores incluyen las tareas 1 a 6, biblioteca y ahora semana 12. Las piezas futuras del árbol son un mapa, no una obligación de fabricar archivos vacíos.
+
+
+## Navegación local aprobada
+
+La propuesta combinada se implementa en `interfaz/inicio.py`: tarjetas por unidades y menú plegable. `interfaz/herramientas.py` agrupa acciones secundarias. Biblioteca sustituye el acceso permanente a la tercera pestaña; mantiene el mismo almacenamiento y las dos vistas de cada cálculo. La unidad numérica ya está implementada, como se explica en SEMANA_12.md; las menciones anteriores a reserva futura describen etapas previas.

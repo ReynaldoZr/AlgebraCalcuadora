@@ -12,3 +12,5 @@ materiales_privados/
 *.zip
 *.log
 entregas/*/capturas/
+biblioteca.json
+.biblioteca-*.tmp

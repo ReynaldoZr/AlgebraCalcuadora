@@ -102,3 +102,15 @@ class PruebasRecorrido(unittest.TestCase):
         self.assertEqual(self.player.indice, 0)
         self.assertFalse(self.player.activo)
         self.assertFalse(self.tareas)
+
+    def test_etapas_no_pierden_las_celdas_de_origen(self):
+        """Una celda puede tener varias etapas navegables y cancelables."""
+        self.player.preparar(['celda'], ['origen', 'operacion', 'destino'])
+        self.assertEqual(self.player.pasos, ('celda',))
+        self.player.reproducir()
+        self.ejecutar_pendiente()
+        self.player.anterior()
+        self.assertEqual(self.vistos[-1], 'origen')
+        self.assertFalse(self.tareas)
+        self.player.completar()
+        self.assertEqual(self.vistos[-1], 'destino')

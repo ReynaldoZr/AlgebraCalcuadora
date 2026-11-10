@@ -1,8 +1,10 @@
 # Reglas de trabajo de la calculadora
 
-## Propuesta de interfaz pendiente de revisión
+## Estado de la interfaz y siguiente etapa
 
-El PR #9 se cerró sin integrar por instrucción del usuario. Después de revisar el diseño y la implementación local de la issue #8, el usuario autorizó subir esta propuesta y abrir un nuevo PR desde `feat/8-interfaz-animada-local`. Esta autorización permite publicar la rama y corregir sus comprobaciones; no permite integrar, autoaprobar, activar auto-merge ni publicar versiones. Mantener el nuevo PR abierto para revisión humana y conservar el PR #9 cerrado. Consultar docs/ESTADO_UI_LOCAL.md. No interpretar esta autorización como permiso permanente para publicar propuestas futuras.
+Actualización del 6 de noviembre: la rama local es `feat/qt-qml-local`, continuación del trabajo descrito abajo. El usuario autorizó implementar PySide6 + QML para el próximo avance; véase docs/MIGRACION_QT.md. No cambia la prohibición de publicar sin una nueva instrucción explícita.
+
+El PR #9 está cerrado sin integrar. Roberto (`roberto7503`) integró el PR #10 el 3 de noviembre de 2026; la issue #8 está cerrada. La rama actual `feat/inicio-temas-local` conserva además el trabajo previo de `feat/semana-12-numericos`. Esta última conserva álgebra y biblioteca y añade la semana 12 por autorización del usuario del 4 de noviembre de 2026: bisección, errores, comparación exacto/flotante y gráficas con NumPy/SciPy/Matplotlib. No hacer push, abrir PR, cerrar issues ni publicar versiones hasta nueva autorización. El permiso anterior correspondía solo al PR #10. Leer docs/SEMANA_12.md, docs/GUIA_CODIGO.md y las guías anteriores antes de continuar.
 
 ## Introducción y límite de la IA
 
@@ -30,7 +32,7 @@ Calculadora local de Álgebra Lineal para dos estudiantes, con funciones compren
 ## Reglas matemáticas
 
 - Tareas 1–6: algoritmos propios con listas, bucles, condiciones y funciones. Sin NumPy/SciPy/SymPy ni sustitutos externos; sin atajos de math. Fraction está permitido expresamente en tareas 5 y 6.
-- Excepción: plan semanal 12 permite NumPy/SciPy en Métodos Numéricos. Los imports externos de esa unidad vivirán en modulos/numericos/ y sus pruebas en tests/numericos/. No importarlos globalmente al iniciar la calculadora ni hacer que el álgebra anterior dependa de ellos.
+- Excepción: plan semanal 12 permite NumPy/SciPy y gráficas opcionales con Matplotlib. Sus algoritmos viven en modulos/numericos/ y pruebas en tests/numericos/. El adaptador Matplotlib/Tk está en interfaz/numericos/. No cargar dependencias al iniciar la calculadora ni hacer que el álgebra anterior dependa de ellas. SymPy/pandas no quedan autorizados por esta excepción.
 - Cálculo sin input/print. Operaciones devuelven listas y valores reutilizables, no números dibujados en texto. Conservar entradas originales y evitar compartir filas mutables con los resultados.
 - En esta etapa usar enteros/Fraction en el álgebra exacta. Convertir el texto decimal directamente a Fraction, sin pasar por float. La aproximación numérica tendrá contratos y tolerancias separados.
 - Antes de cambiar nombres o retornos públicos, localizar consumidores y actualizar llamadas, documentación y pruebas afectadas.
@@ -42,11 +44,20 @@ Calculadora local de Álgebra Lineal para dos estudiantes, con funciones compren
 - Nombres descriptivos en español y funciones de una responsabilidad. Unas 25 líneas por función son una orientación, no un límite que justifique fragmentación artificial.
 - Docstring inicial por archivo con propósito, tema y autoría confirmada; docstring breve por función con entradas y retorno. No inventar integrantes.
 - Comentarios para explicar decisiones matemáticas o casos especiales. Explicaciones amplias en docs; no comentar cada línea ni conservar código viejo comentado.
+- El usuario pidió comentarios cortos que le permitan orientarse y trabajar desde IntelliJ. Conservar docstrings por función y comentarios de decisiones en validación, pivotes, guardado y navegación; no inflar cada línea. El mapa práctico está en docs/GUIA_CODIGO.md.
 - Cambios localizados: una operación nueva no autoriza reescribir toda la aplicación, incorporar un servidor o cambiar tecnologías. Separar refactorizaciones amplias y justificar el problema que resuelven.
+- El usuario aprobó el 4 de noviembre de 2026 la propuesta combinada: inicio por unidades con tarjetas, menú Temas plegable, Biblioteca desde la cabecera y herramientas secundarias agrupadas. `interfaz/inicio.py` coordina la navegación; conservar las sesiones al volver al inicio o cambiar de tema. Las dos vistas de cálculo permanecen; Guardados/Historial se abre como Biblioteca. Detalles en docs/INICIO_Y_NAVEGACION.md.
+- El usuario exige conservar la base del diseño aprobado: tres tarjetas (entrada A, segunda entrada o regla, resultado), resumen inferior y colores azul/lavanda. Autorizó expresamente una tercera pestaña «Guardados» junto a Calculadora/Todos los pasos y herramientas pequeñas de estudio. No introducir pestañas anidadas ni reorganizar las tarjetas por añadir temas. Las nuevas operaciones se adaptan al diseño existente; cambios visuales amplios requieren una propuesta previa.
+- La tarjeta de resultado mantiene tanto el guardado directo en la biblioteca (sin navegar a otra vista) como los atajos Usar como A/B. Guardar no debe modificar entradas o perder el cálculo vigente. Los temas llevan símbolos matemáticos y Matrices usa una cuadrícula 3×3; conservarlos al ajustar el diseño.
+- Biblioteca e historial son datos personales locales: JSON exacto fuera del repositorio, sin pickle, eval ni carga dinámica de clases. Conservar los archivos originales ante errores y usar sustitución atómica. No hacer que los tests accedan a la biblioteca real: inyectar `Biblioteca()` en memoria o una ruta temporal. Los algoritmos matemáticos continúan sin entrada/salida ni dependencia de la biblioteca, el PDF o Tk.
 - La nueva implementación debe ser comprendida por el equipo. No copiar código del equipo anterior para disfrazarlo mediante renombrado.
+- El 6 de noviembre el usuario autorizó expresamente la migración de escritorio a PySide6 + Qt Quick/QML y los ajustes necesarios para el avance de la próxima semana. `gui.py`/`gui_qt.py` abren Qt; `gui_tk.py` conserva la interfaz anterior durante la transición. La presentación y sus adaptadores viven en `interfaz/qt/`, los componentes en `interfaz/qt/qml/`. Conservar Python como única fuente de los cálculos; no resolver ni redondear el álgebra en JavaScript/QML. Las fracciones cruzan el puente como texto exacto. El permiso de interfaz no cambia las restricciones matemáticas ni autoriza publicación.
+
+- Ajuste posterior del usuario: los formularios nuevos comienzan sin datos de ejercicio ni escalar precargados. Los ejemplos se cargan solo por acción explícita; conservar el trabajo introducido o cargado por la persona al navegar. El recorrido tiene ritmo fijo de 2 segundos (INTERVALO_PASOS_MS); la previa explica lo esencial y Todos los pasos mantiene todas las fórmulas con lenguaje sencillo.
 
 ## Verificación y colaboración
 
+- Última indicación del usuario (4 de noviembre de 2026): no volver a usar Computer Use («ChatGPT is using your computer»), ayuda visual, capturas ni control de pantalla hasta que él indique que es necesario. La autorización anterior para abrir desde IntelliJ ya no habilita nuevas acciones visuales. Continuar con revisión y pruebas del código.
 - Ejecutar `python -m unittest discover -s tests -v` y `python herramientas/comprobar_reglas.py` antes del PR. Comprobar manualmente el recorrido de consola afectado cuando cambie la interacción.
 - Añadir pruebas de resultados conocidos, límites matemáticos y errores relevantes; no pruebas que solo repitan la implementación.
 - Cada mejora usa issue, rama y PR según docs/TRABAJO_EN_EQUIPO.md. El PR debe indicar alcance, fuente, validación y limitaciones. No inventar enlaces ni pruebas ejecutadas.

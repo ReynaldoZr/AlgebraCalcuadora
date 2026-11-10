@@ -46,7 +46,7 @@ class Tema:
         estilo.configure(".", font=("Segoe UI", 10), background=c["fondo"], foreground=c["texto"])
         estilo.configure("TFrame", background=c["fondo"])
         estilo.configure("TLabel", background=c["fondo"], foreground=c["texto"])
-        estilo.configure("Titulo.TLabel", font=("Segoe UI", 21, "bold"))
+        estilo.configure("Titulo.TLabel", font=("Segoe UI", 18, "bold"))
         estilo.configure("Subtitulo.TLabel", foreground=c["secundario"])
         estilo.configure("Tarjeta.TFrame", background=c["tarjeta"], borderwidth=1,
                          relief="solid", bordercolor=c["borde"])
@@ -61,6 +61,9 @@ class Tema:
                          foreground=c["texto"], bordercolor=c["borde"], focusthickness=1)
         estilo.map("TButton", background=[("active", c["tarjeta"])],
                    foreground=[("disabled", c["secundario"])])
+        estilo.configure('TarjetaTema.TButton', background=c['entrada'], foreground=c['texto'],
+                         borderwidth=0, padding=(2, 5), anchor='w', font=('Segoe UI', 11, 'bold'))
+        estilo.map('TarjetaTema.TButton', background=[('active', c['tarjeta'])])
         for nombre in ("Principal.TButton", "Tema.TRadiobutton"):
             estilo.configure(nombre, background=c["acento"], foreground=c["sobre_acento"],
                              padding=(14, 8), font=("Segoe UI", 10, "bold"))
@@ -74,6 +77,18 @@ class Tema:
                              insertcolor=c["texto"], bordercolor=c["borde"], arrowsize=12)
         estilo.configure("Activa.TEntry", fieldbackground=c["acento"],
                          foreground=c["sobre_acento"], bordercolor=c["acento"])
+        estilo.configure('TCombobox', fieldbackground=c['entrada'], foreground=c['texto'],
+                         background=c['entrada'], arrowcolor=c['texto'], padding=6)
+        estilo.map('TCombobox', fieldbackground=[('readonly', c['entrada'])],
+                   foreground=[('readonly', c['texto'])], selectbackground=[('readonly', c['entrada'])],
+                   selectforeground=[('readonly', c['texto'])])
+        self.raiz.option_add('*TCombobox*Listbox.background', c['entrada'])
+        self.raiz.option_add('*TCombobox*Listbox.foreground', c['texto'])
+        estilo.configure('Treeview', background=c['tarjeta'], fieldbackground=c['tarjeta'],
+                         foreground=c['texto'], rowheight=28, font=('Segoe UI', 10))
+        estilo.configure('Treeview.Heading', background=c['entrada'], foreground=c['texto'])
+        estilo.map('Treeview', background=[('selected', c['acento'])],
+                   foreground=[('selected', c['sobre_acento'])])
         for orientacion in ("Vertical", "Horizontal"):
             estilo.configure(f"{orientacion}.TScrollbar", background=c["borde"],
                              troughcolor=c["fondo"], bordercolor=c["borde"],

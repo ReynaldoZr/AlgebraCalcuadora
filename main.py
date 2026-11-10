@@ -6,6 +6,7 @@ Elaboración: equipo del proyecto, con apoyo de IA.
 
 from interfaz.menus import menu_principal
 
+# La versión publicada no cambia por preparar funciones nuevas en una rama local.
 VERSION = "0.1.0"
 
 
