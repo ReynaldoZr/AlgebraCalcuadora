@@ -19,5 +19,5 @@ def mostrar_matrices():
     """Muestra la cabecera del módulo y las operaciones disponibles hoy."""
     print("\n======================================================")
     print("  [ A ][ B ]   MODULO: ALGEBRA DE MATRICES")
-    print("  [ C ][ D ]   Primera etapa: suma y resta")
+    print("  [ C ][ D ]   Suma, resta, escalar, transpuesta y producto")
     print("======================================================")

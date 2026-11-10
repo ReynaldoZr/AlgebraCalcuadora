@@ -19,21 +19,24 @@ class Notacion(tk.Canvas):
         self.matriz = None
         self.tokens = []
         self.activa = None
+        self.separador = None
         self.bind("<Configure>", self.actualizar_tema)
         self.actualizar_tema()
 
     def mostrar_formula(self, tokens):
         """Presenta números, signos y pares (numerador, denominador) sin simplificarlos."""
         self.matriz = None
+        self.separador = None
         self.tokens = list(tokens)
         self.activa = None
         self.actualizar_tema()
 
-    def mostrar_matriz(self, matriz, activa=None):
+    def mostrar_matriz(self, matriz, activa=None, separador=None):
         """Conserva una copia para dibujar la matriz y una posición opcional."""
         self.matriz = [list(fila) for fila in matriz]
         self.tokens = []
         self.activa = activa
+        self.separador = separador
         self.actualizar_tema()
 
     def _partes(self, valor):
@@ -65,8 +68,12 @@ class Notacion(tk.Canvas):
     def actualizar_tema(self, evento=None):
         """Redibuja al cambiar el tamaño, el contenido o la paleta."""
         resaltada = getattr(self, "resaltada", False)
+        contexto = getattr(self, "contexto", False)
+        borde = 3 if getattr(self, "foco_producto", False) else 1 if contexto else 2
         self.configure(bg=self.tema.colores[getattr(self, "rol_resaltado", "acento")]
-                       if resaltada else self.tema.colores["tarjeta"])
+                       if resaltada else self.tema.colores["tarjeta"],
+                       highlightthickness=borde if resaltada else 0,
+                       highlightbackground=self.tema.colores["borde" if contexto else "texto"])
         self.delete("all")
         if self.matriz is not None:
             self._dibujar_matriz()
@@ -101,7 +108,7 @@ class Notacion(tk.Canvas):
                 if self.activa == (i, j):
                     self.create_rectangle(x + 3, y - alto_fila / 2 + 3,
                                           x + anchos[j] - 3, y + alto_fila / 2 - 3,
-                                          fill=c["acento"], outline="")
+                                          fill=c["acento"], outline=c["texto"], width=2)
                 self._numero(valor, x + anchos[j] / 2, y,
                              c["sobre_acento"] if self.activa == (i, j) else c["texto"])
                 x += anchos[j]
@@ -110,15 +117,50 @@ class Notacion(tk.Canvas):
                              borde, y0 + filas * alto_fila,
                              borde + direccion * 8, y0 + filas * alto_fila,
                              fill=c["texto"], width=2)
+        if self.separador is not None and 0 < self.separador < columnas:
+            x = x0 + sum(anchos[:self.separador])
+            self.create_line(x, y0 + 2, x, y0 + filas * alto_fila - 2,
+                             fill=c["acento"], width=2)
         self.configure(scrollregion=(0, 0, max(ancho, self.winfo_width()), max(alto, self.winfo_height())))
 
 
 def crear_icono_matrices(padre, tema, seleccionado=True):
-    """Dibuja el icono cuadrado de cuatro casillas aprobado para Matrices."""
+    """Dibuja una cuadrícula de nueve casillas, organizada como matriz 3×3."""
     icono = tk.Canvas(padre, width=28, height=28, highlightthickness=0)
-    tema.vincular(icono, bg="acento" if seleccionado else "fondo")
-    for x, y in ((5, 5), (16, 5), (5, 16), (16, 16)):
-        cuadrado = icono.create_rectangle(x, y, x + 7, y + 7, width=1.6, tags="casilla")
-        icono.itemconfigure(cuadrado, outline=tema.colores["sobre_acento"])
-    icono.actualizar_tema = lambda: icono.itemconfigure("casilla", outline=tema.colores["sobre_acento"])
+    icono.seleccionado = seleccionado
+    for fila in range(3):
+        for columna in range(3):
+            x, y = 3 + columna * 8, 3 + fila * 8
+            icono.create_rectangle(x, y, x + 5, y + 5, width=1.3, tags='casilla')
+
+    def actualizar():
+        """Mantiene contraste y selección al alternar el tema de color."""
+        icono.configure(bg=tema.colores['acento' if icono.seleccionado else 'entrada'])
+        icono.itemconfigure('casilla', outline=tema.colores['sobre_acento' if icono.seleccionado else 'acento'])
+
+    icono.actualizar_tema = actualizar
+    actualizar()
+    return icono
+
+
+def crear_icono_tema(padre, tema, nombre):
+    """Dibuja un símbolo matemático para cada tema sin imágenes ni dependencias externas."""
+    icono = tk.Canvas(padre, width=28, height=28, highlightthickness=0)
+    icono.seleccionado = False
+    if nombre == 'Vectores':
+        icono.create_line(5, 23, 5, 5, width=1.5, tags='trazo')
+        icono.create_line(5, 23, 24, 23, width=1.5, tags='trazo')
+        icono.create_line(5, 23, 22, 6, arrow='last', width=2, tags='trazo')
+    else:
+        simbolo = {'Sistemas': 'A│b', 'Determinantes': '|A|', 'Inversas': 'A⁻¹',
+                   'LU': 'L·U', 'Propiedades': '✓=', 'Numéricos': '≈f'}[nombre]
+        icono.create_text(14, 14, text=simbolo, font=('Segoe UI', 10, 'bold'), tags='trazo')
+
+    def actualizar():
+        """Actualiza los trazos sin alterar el símbolo o el tamaño del tema."""
+        icono.configure(bg=tema.colores['acento' if icono.seleccionado else 'fondo'])
+        icono.itemconfigure('trazo', fill=tema.colores['sobre_acento' if icono.seleccionado else 'acento'])
+
+    icono.actualizar_tema = actualizar
+    actualizar()
     return icono

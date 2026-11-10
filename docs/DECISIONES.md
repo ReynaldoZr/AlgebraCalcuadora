@@ -1,5 +1,15 @@
 # Decisiones y pendientes
 
+## 2026-11-06 — Migración autorizada a Qt Quick
+
+Después de comparar propuestas de CustomTkinter, PySide6/QML, Flet y web, el usuario eligió PySide6 + QML y autorizó implementarlo para el avance de la próxima semana. La interfaz nueva se mantiene separada del núcleo y conserva las restricciones académicas, consola, estructura y Biblioteca. La interfaz Tk continúa disponible durante la revisión; gui.py abre Qt y gui_tk.py permite comparar. La autorización no permite subir la rama, abrir PR ni publicar versiones. Alcance y contratos en MIGRACION_QT.md. No se afirma una autorización académica expresa de PySide6 ausente de los documentos revisados.
+
+## 2026-11-04 — Semana 12 y trabajo en IntelliJ
+
+El usuario autorizó implementar todo el alcance conocido del plan semanal 12, incluidas recomendaciones y gráficas, y confirmó el permiso para NumPy/SciPy. Se conserva el álgebra exacta y se aísla la unidad aproximada en modulos/numericos; Matplotlib/Tk tiene un adaptador en interfaz/numericos. Fuente: plan 12, página 3; véase SEMANA_12.md. No se infiere permiso para SymPy ni para reemplazar las tareas anteriores con bibliotecas.
+
+Se eligió .venv del proyecto para dependencias y la configuración de ejecución de IntelliJ «Calculadora escritorio». Se pidieron comentarios breves para orientarse; se conservan docstrings y se añaden notas de decisiones, con un mapa de archivos en GUIA_CODIGO.md. El usuario prefiere PySide6 con Qt Quick/QML para una evolución futura; hoy continúa Tkinter. No se autoriza publicación ni control de pantalla por esta instrucción.
+
 ## Decisiones de la primera etapa
 
 | Decisión | Motivo | Estado |

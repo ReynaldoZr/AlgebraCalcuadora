@@ -10,6 +10,7 @@ from tkinter import ttk
 from interfaz.datos import convertir_numero
 from interfaz.notacion import Notacion
 from interfaz.desarrollo import ajustar_barra
+from interfaz.pegado import interpretar_matriz, texto_matriz
 
 LIMITE_CUADRICULA = 10
 
@@ -41,17 +42,26 @@ class EditorMatriz(ttk.Frame):
         self.columnas = tk.StringVar(self, "2")
         self.celdas = []
         self.variables = []
-        ttk.Label(self, text=f"Matriz {nombre}", style="TarjetaTitulo.TLabel").pack(anchor="w")
+        cabecera = ttk.Frame(self, style='Interior.TFrame')
+        cabecera.pack(fill='x')
+        self.etiqueta_nombre = ttk.Label(cabecera, text=f'Matriz {nombre}', style='TarjetaTitulo.TLabel')
+        self.etiqueta_nombre.pack(side='left')
+        from interfaz.herramientas import menu_botones
+        copiar = ttk.Button(cabecera, text='Copiar matriz', command=self.copiar)
+        pegar = ttk.Button(cabecera, text='Pegar matriz', command=self.pegar)
+        self.herramientas = menu_botones(cabecera, tema, (copiar, pegar))
+        self.herramientas.pack(side='right')
+        self.tamano = ttk.Button(self, text='2 × 2 · Cambiar', command=self.alternar_dimensiones, padding=(4, 2))
+        self.tamano.pack(anchor='w', pady=(6, 0))
         self._crear_dimensiones()
         self._crear_area()
-        self.cargar([[0, 0], [0, 0]])
+        self.cargar([["", ""], ["", ""]])
         self.filas.trace_add("write", self.al_cambiar)
         self.columnas.trace_add("write", self.al_cambiar)
 
     def _crear_dimensiones(self):
         """Añade controles de tamaño y un botón para aplicarlos explícitamente."""
-        barra = ttk.Frame(self, style="Interior.TFrame")
-        barra.pack(side="bottom", fill="x", pady=(12, 0))
+        barra = self.barra_dimensiones = ttk.Frame(self, style="Interior.TFrame")
         for columna, (texto, variable) in enumerate((("Filas", self.filas), ("Columnas", self.columnas))):
             ttk.Label(barra, text=texto, style="Tarjeta.TLabel").grid(row=0, column=columna, sticky="w")
             ttk.Spinbox(barra, from_=1, to=LIMITE_CUADRICULA, width=3,
@@ -59,9 +69,42 @@ class EditorMatriz(ttk.Frame):
         barra.columnconfigure(2, weight=1)
         ttk.Button(barra, text="Aplicar", style="Principal.TButton", command=self.aplicar_tamano).grid(row=0, column=2, rowspan=2, sticky="e")
 
+    def alternar_dimensiones(self):
+        """Muestra u oculta Filas/Columnas sin aplicar un tamaño accidentalmente."""
+        # El tamaño tiene prioridad; la matriz conserva sus barras si queda menos espacio.
+        if self.barra_dimensiones.winfo_manager():
+            self.barra_dimensiones.pack_forget()
+        else:
+            self.barra_dimensiones.pack(side='bottom', fill='x', pady=(12, 0), before=self.area)
+
+    def vaciar(self):
+        """Deja las casillas vacías conservando el tamaño aplicado por la persona."""
+        self.cargar([[''] * len(self.celdas[0]) for _ in self.celdas])
+
+    def copiar(self):
+        """Copia valores válidos al portapapeles únicamente por acción de la persona."""
+        try:
+            texto = texto_matriz(self.leer())
+            self.clipboard_clear()
+            self.clipboard_append(texto)
+        except (ValueError, tk.TclError) as error:
+            self.informar_error(str(error))
+
+    def pegar_texto(self, texto):
+        """Valida el bloque completo y lo carga como una sola edición deshacible."""
+        matriz = interpretar_matriz(texto, LIMITE_CUADRICULA)
+        self.cargar(matriz)
+
+    def pegar(self):
+        """Pega una matriz del portapapeles sin alterar casillas si hay errores."""
+        try:
+            self.pegar_texto(self.clipboard_get())
+        except (ValueError, tk.TclError) as error:
+            self.informar_error(str(error))
+
     def _crear_area(self):
         """Crea desplazamiento horizontal y vertical para no recortar las casillas."""
-        area = ttk.Frame(self, style="Interior.TFrame")
+        area = self.area = ttk.Frame(self, style="Interior.TFrame")
         area.pack(fill="both", expand=True, pady=(12, 0))
         area.columnconfigure(0, weight=1)
         area.rowconfigure(0, weight=1)
@@ -123,6 +166,7 @@ class EditorMatriz(ttk.Frame):
             self.vistas.append(vistas_fila)
         self.lienzo.xview_moveto(0)
         self.lienzo.yview_moveto(0)
+        self.tamano.configure(text=f'{len(matriz)} × {len(matriz[0])} · Cambiar')
         self.cargando = False
         self.al_cambiar()
 
@@ -140,18 +184,26 @@ class EditorMatriz(ttk.Frame):
         vista.grid(row=0, column=0, sticky="nsew")
         # El lienzo muestra fracciones; Tab y el clic siguen usando una entrada real.
         entrada.bind("<FocusIn>", lambda evento: vista.grid_remove())
-        entrada.bind("<FocusOut>", lambda evento: vista.grid())
+        entrada.bind("<FocusOut>", lambda evento: self._mostrar_celda(entrada, vista, variable))
         vista.bind("<Button-1>", lambda evento: entrada.focus_set())
-        variable.trace_add("write", lambda *args: self._dibujar_celda(vista, variable))
-        self._dibujar_celda(vista, variable)
+        variable.trace_add("write", lambda *args: self._mostrar_celda(entrada, vista, variable))
+        self._mostrar_celda(entrada, vista, variable)
         return entrada, vista
+
+    def _mostrar_celda(self, entrada, vista, variable):
+        """Deja visibles las casillas vacías; los valores conservan su notación."""
+        self._dibujar_celda(vista, variable)
+        if not variable.get().strip() or entrada == entrada.focus_get():
+            vista.grid_remove()
+        else:
+            vista.grid()
 
     def _dibujar_celda(self, vista, variable):
         """Muestra el valor exacto o el texto pendiente sin ocultar errores."""
         try:
             valor = convertir_numero(variable.get())
         except (ValueError, ZeroDivisionError):
-            valor = variable.get() or "…"
+            valor = variable.get()
         vista.master.configure(width=max(64, vista._ancho(valor) + 16))
         vista.mostrar_formula([valor])
 
@@ -173,6 +225,7 @@ class EditorMatriz(ttk.Frame):
         matriz = [[anteriores[i][j] if i < len(anteriores) and j < len(anteriores[0]) else "0"
                    for j in range(columnas)] for i in range(filas)]
         self.cargar(matriz)
+        self.barra_dimensiones.pack_forget()
         self.al_cambiar()
 
     def leer(self):
@@ -197,21 +250,52 @@ class EditorMatriz(ttk.Frame):
 
     def quitar_resaltado(self):
         """Devuelve todas las casillas al aspecto normal."""
+        self.etiqueta_nombre.configure(text=f"Matriz {self.nombre}")
         for fila in self.celdas:
             for celda in fila:
                 celda.configure(style="TEntry")
         for fila in self.vistas:
             for vista in fila:
                 vista.resaltada = False
+                vista.contexto = False
+                vista.foco_producto = False
                 vista.activa = None
                 vista.actualizar_tema()
 
     def resaltar(self, fila, columna):
         """Resalta una posición y la lleva al área visible sin cambiar el foco."""
         self.quitar_resaltado()
+        self.etiqueta_nombre.configure(text=f"Matriz {self.nombre} · {self.nombre}[{fila + 1},{columna + 1}]")
         self.celdas[fila][columna].configure(style="Activa.TEntry")
         vista = self.vistas[fila][columna]
         vista.resaltada = True
         vista.actualizar_tema()
+        self.lienzo.xview_moveto(columna / len(self.celdas[0]))
+        self.lienzo.yview_moveto(fila / len(self.celdas))
+
+    def resaltar_fila(self, fila, par=None):
+        """Señala una fila completa y, opcionalmente, el elemento del par activo."""
+        posiciones = [(fila, j) for j in range(len(self.celdas[fila]))]
+        foco = (fila, par) if par is not None else None
+        self._resaltar_grupo(posiciones, foco, f"Fila {fila + 1}")
+
+    def resaltar_columna(self, columna, par=None):
+        """Señala una columna completa y, opcionalmente, el elemento del par activo."""
+        posiciones = [(i, columna) for i in range(len(self.celdas))]
+        foco = (par, columna) if par is not None else None
+        self._resaltar_grupo(posiciones, foco, f"Columna {columna + 1}")
+
+    def _resaltar_grupo(self, posiciones, foco, etiqueta):
+        """Distingue contexto y par con bordes, manteniendo las entradas intactas."""
+        self.quitar_resaltado()
+        self.etiqueta_nombre.configure(text=f"Matriz {self.nombre} · {etiqueta}")
+        for i, j in posiciones:
+            self.celdas[i][j].configure(style="Activa.TEntry")
+            vista = self.vistas[i][j]
+            vista.resaltada = True
+            vista.contexto = (i, j) != foco
+            vista.foco_producto = (i, j) == foco
+            vista.actualizar_tema()
+        fila, columna = foco or posiciones[0]
         self.lienzo.xview_moveto(columna / len(self.celdas[0]))
         self.lienzo.yview_moveto(fila / len(self.celdas))

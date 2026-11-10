@@ -5,6 +5,9 @@ Elaboración: equipo del proyecto, con apoyo de IA.
 """
 
 
+INTERVALO_PASOS_MS = 2000
+
+
 class ReproductorPasos:
     """Controla reproducción, pausa y avance manual de una secuencia."""
 
@@ -16,14 +19,16 @@ class ReproductorPasos:
         self.demora = demora
         self.informar = informar
         self.pasos = ()
+        self.secuencia = ()
         self.indice = -1
         self.activo = False
         self.pendiente = None
 
-    def preparar(self, pasos):
-        """Cancela la secuencia anterior y prepara una nueva sin reproducirla."""
+    def preparar(self, pasos, etapas=None):
+        """Prepara celdas y una secuencia opcional de etapas sin reproducirlas."""
         self.pausar()
         self.pasos = tuple(pasos)
+        self.secuencia = tuple(etapas) if etapas is not None else self.pasos
         self.indice = -1
         self.informar()
 
@@ -44,30 +49,30 @@ class ReproductorPasos:
     def anterior(self):
         """Retrocede un paso en pausa sin programar otro temporizador."""
         self.pausar()
-        if self.pasos and self.indice > 0:
+        if self.secuencia and self.indice > 0:
             self.indice -= 1
-            self.mostrar(self.pasos[self.indice], self.indice, len(self.pasos))
+            self.mostrar(self.secuencia[self.indice], self.indice, len(self.secuencia))
         self.informar()
 
     def reiniciar(self):
         """Muestra el primer paso y deja la reproducción detenida."""
         self.pausar()
-        if self.pasos:
+        if self.secuencia:
             self.indice = 0
-            self.mostrar(self.pasos[0], 0, len(self.pasos))
+            self.mostrar(self.secuencia[0], 0, len(self.secuencia))
         self.informar()
 
     def _avanzar(self):
         """Presenta el siguiente dato de la secuencia si todavía queda alguno."""
-        if self.indice + 1 < len(self.pasos):
+        if self.indice + 1 < len(self.secuencia):
             self.indice += 1
-            self.mostrar(self.pasos[self.indice], self.indice, len(self.pasos))
+            self.mostrar(self.secuencia[self.indice], self.indice, len(self.secuencia))
 
     def reproducir(self):
         """Inicia o reanuda; al llegar al final permite volver a empezar."""
-        if self.activo or not self.pasos:
+        if self.activo or not self.secuencia:
             return
-        if self.indice == len(self.pasos) - 1:
+        if self.indice == len(self.secuencia) - 1:
             self.indice = -1
         self.activo = True
         self._tick()
@@ -78,7 +83,8 @@ class ReproductorPasos:
         if not self.activo:
             return
         self._avanzar()
-        if self.indice < len(self.pasos) - 1:
+        if self.indice < len(self.secuencia) - 1:
+            # after cede el control a Tk: la persona puede editar o pausar entre etapas.
             self.pendiente = self.programar(self.demora(), self._tick)
         else:
             self.activo = False
@@ -87,7 +93,7 @@ class ReproductorPasos:
     def completar(self):
         """Detiene la reproducción y muestra el último paso de la secuencia."""
         self.pausar()
-        if self.pasos:
-            self.indice = len(self.pasos) - 1
-            self.mostrar(self.pasos[self.indice], self.indice, len(self.pasos))
+        if self.secuencia:
+            self.indice = len(self.secuencia) - 1
+            self.mostrar(self.secuencia[self.indice], self.indice, len(self.secuencia))
         self.informar()

@@ -8,22 +8,24 @@ import tkinter as tk
 from tkinter import ttk
 
 from interfaz.notacion import Notacion
+from interfaz.explicacion import etapas_completas, fraccion_intermedia, operacion_de_paso, terminos_producto
 
 
 def detallar_paso(paso):
     """Forma equivalencias visuales sin reemplazar el resultado del núcleo."""
     _, _, a, b, resultado, signo = paso
+    if signo == "AB":
+        return terminos_producto(paso), "Multiplicamos los pares de una fila por una columna y sumamos sus productos."
+    if signo == "T":
+        fila, columna = paso[:2]
+        return [f"A[{columna + 1},{fila + 1}]", "=", a, "→", f"R[{fila + 1},{columna + 1}]", "=", resultado], "Intercambiamos fila y columna; el valor se conserva."
+    if signo == "×":
+        return detallar_escalar(a, b, resultado)
     tokens = [a, signo]
     tokens.extend(["(", b, ")"] if b < 0 else [b])
     if a.denominator == b.denominator == 1:
         return tokens + ["=", resultado], "Operamos los enteros de esta posición."
-    # Euclides obtiene el mínimo denominador común solo para la explicación.
-    divisor, resto = a.denominator, b.denominator
-    while resto:
-        divisor, resto = resto, divisor % resto
-    comun = a.denominator * b.denominator // divisor
-    numerador_a = a.numerator * (comun // a.denominator)
-    numerador_b = b.numerator * (comun // b.denominator)
+    numerador_a, numerador_b, comun = fraccion_intermedia(paso)
     tokens += ["=", (numerador_a, comun), signo]
     tokens.extend(["(", (numerador_b, comun), ")"] if b < 0 else [(numerador_b, comun)])
     numerador = numerador_a + numerador_b if signo == "+" else numerador_a - numerador_b
@@ -31,6 +33,19 @@ def detallar_paso(paso):
     if (numerador, comun) != (resultado.numerator, resultado.denominator):
         tokens += ["=", resultado]
     return tokens, "Usamos denominador común y simplificamos la fracción resultante."
+
+
+def detallar_escalar(escalar, elemento, resultado):
+    """Expone el producto de numeradores y denominadores para una entrada de kA."""
+    tokens = [escalar, "×"]
+    tokens += ["(", elemento, ")"] if elemento < 0 else [elemento]
+    if escalar.denominator != 1 or elemento.denominator != 1:
+        operacion, _, numerador, denominador = operacion_de_paso((0, 0, escalar, elemento, resultado, "×"))
+        tokens += ["="] + operacion
+        if (numerador, denominador) != (resultado.numerator, resultado.denominator):
+            tokens += ["=", resultado]
+        return tokens, "Multiplicamos numeradores y denominadores; simplificamos si es posible."
+    return tokens + ["=", resultado], "Multiplicamos el elemento de A por el mismo escalar k."
 
 
 def crear_notacion(padre, tema, alto=120, tamano=17):
@@ -76,19 +91,51 @@ class Desarrollo(ttk.Frame):
         barra = ttk.Scrollbar(self, command=self.lienzo.yview)
         barra.grid(row=1, column=1, sticky="ns")
         self.lienzo.configure(yscrollcommand=barra.set)
-        self.cuerpo = ttk.Frame(self.lienzo)
-        self.ventana = self.lienzo.create_window(0, 0, window=self.cuerpo, anchor="nw")
-        self.lienzo.bind("<Configure>", self._redimensionar)
-        self.cuerpo.bind("<Configure>", self._ajustar_region)
+        self.cuerpo = self.lienzo
+        self._tarjetas = []
+        self._distribucion = None
+        self.lienzo.bind("<Configure>", self._solicitar_distribucion)
+        self.bind("<Destroy>", self._cancelar_distribucion, add="+")
         self._vincular_rueda(self.lienzo)
 
-    def _redimensionar(self, evento):
-        """Hace que las tarjetas usen todo el ancho disponible."""
-        self.lienzo.itemconfigure(self.ventana, width=evento.width)
+    def _limpiar_tarjetas(self):
+        """Elimina el desarrollo anterior y vuelve al inicio de la vista."""
+        for tarjeta, ventana, _ in self._tarjetas:
+            self.lienzo.delete(ventana)
+            tarjeta.destroy()
+        self._tarjetas.clear()
+        self.lienzo.yview_moveto(0)
+        self._solicitar_distribucion()
 
-    def _ajustar_region(self, evento=None):
-        """Actualiza el recorrido vertical al construir tarjetas."""
-        self.lienzo.configure(scrollregion=self.lienzo.bbox("all"))
+    def _agregar_tarjeta(self, tarjeta, margen=10):
+        """Inserta cada tarjeta por separado para limitar el tamaño de las ventanas de Tk."""
+        ventana = self.lienzo.create_window(0, 0, window=tarjeta, anchor="nw")
+        self._tarjetas.append((tarjeta, ventana, margen))
+        tarjeta.bind("<Configure>", self._solicitar_distribucion, add="+")
+        self._vincular_rueda(tarjeta)
+        self._solicitar_distribucion()
+
+    def _solicitar_distribucion(self, evento=None):
+        """Agrupa cambios de geometría en una actualización del lienzo."""
+        if self._distribucion is None:
+            self._distribucion = self.after_idle(self._distribuir_tarjetas)
+
+    def _cancelar_distribucion(self, evento):
+        """Evita ejecutar una actualización pendiente después del cierre."""
+        if evento.widget is self and self._distribucion is not None:
+            self.after_cancel(self._distribucion)
+            self._distribucion = None
+
+    def _distribuir_tarjetas(self):
+        """Ajusta el ancho de cada tarjeta y la región desplazable completa."""
+        self._distribucion = None
+        ancho = max(1, self.lienzo.winfo_width() - 4)
+        y = 0
+        for tarjeta, ventana, margen in self._tarjetas:
+            self.lienzo.coords(ventana, 0, y)
+            self.lienzo.itemconfigure(ventana, width=ancho)
+            y += tarjeta.winfo_reqheight() + margen
+        self.lienzo.configure(scrollregion=(0, 0, ancho, y))
 
     def _rueda(self, evento):
         """Desplaza los pasos con rueda en Windows y Linux."""
@@ -103,29 +150,26 @@ class Desarrollo(ttk.Frame):
         for hijo in widget.winfo_children():
             self._vincular_rueda(hijo)
 
-    def mostrar(self, pasos, resultado):
+    def mostrar(self, pasos, resultado, condicion=None):
         """Sustituye las tarjetas por un cálculo completo o vacía la vista."""
         self.pasos = tuple(pasos)
-        for hijo in self.cuerpo.winfo_children():
-            hijo.destroy()
+        self._limpiar_tarjetas()
         if not self.pasos:
             self.aviso.configure(text="Calcula para ver el desarrollo completo.")
             return
         filas, columnas = len(resultado), len(resultado[0])
-        self.aviso.configure(text=f"A y B tienen las mismas dimensiones: {filas} × {columnas}.  ·  {len(pasos)} pasos")
+        condicion = condicion or f"A y B tienen las mismas dimensiones: {filas} × {columnas}."
+        self.aviso.configure(text=f"{condicion}  ·  {len(pasos)} pasos")
         for indice, paso in enumerate(pasos):
             self._tarjeta(indice, paso)
         final = ttk.Frame(self.cuerpo, style="Tarjeta.TFrame", padding=16)
-        final.pack(fill="x", pady=(2, 12), padx=(0, 4))
         ttk.Label(final, text="Resultado final", style="TarjetaTitulo.TLabel").pack(anchor="w")
         crear_notacion(final, self.tema, min(240, filas * 66 + 28)).mostrar_matriz(resultado)
-        self._vincular_rueda(self.cuerpo)
-        self.lienzo.yview_moveto(0)
+        self._agregar_tarjeta(final, margen=12)
 
     def _tarjeta(self, indice, paso):
         """Presenta coordenada, equivalencias y explicación de una posición."""
         tarjeta = ttk.Frame(self.cuerpo, style="Tarjeta.TFrame", padding=(16, 10))
-        tarjeta.pack(fill="x", pady=(0, 10), padx=(0, 4))
         cabecera = ttk.Frame(tarjeta, style="Interior.TFrame")
         cabecera.pack(side="left", padx=(0, 26), anchor="center")
         ttk.Label(cabecera, text=f"Paso {indice + 1}", style="TarjetaTitulo.TLabel").pack(anchor="w")
@@ -133,6 +177,27 @@ class Desarrollo(ttk.Frame):
                   style="Coordenada.TLabel").pack(anchor="w", pady=(8, 0))
         detalle = ttk.Frame(tarjeta, style="Interior.TFrame")
         detalle.pack(side="left", fill="both", expand=True)
-        tokens, explicacion = detallar_paso(paso)
-        crear_notacion(detalle, self.tema, 60, 16).mostrar_formula(tokens)
-        ttk.Label(detalle, text=explicacion, style="Tarjeta.TLabel").pack(anchor="w", pady=(3, 0))
+        etapas = etapas_completas(paso, indice)
+        origen = ttk.Label(detalle, text=etapas[0].operandos.replace("\n", "  ·  "),
+                            style="Coordenada.TLabel", wraplength=640)
+        origen.pack(anchor="w", pady=(0, 6))
+        etiquetas = [origen]
+        for etapa in etapas:
+            titulo = etapa.titulo
+            if etapa.par is not None:
+                titulo += " · " + etapa.operandos.replace("\n", " · ")
+            etiqueta = ttk.Label(detalle, text=titulo, style="Coordenada.TLabel", wraplength=640)
+            etiqueta.pack(anchor="w", pady=(8, 0))
+            etiquetas.append(etiqueta)
+            crear_notacion(detalle, self.tema, 56, 16).mostrar_formula(etapa.tokens)
+            if etapa.mensaje:
+                nota = ttk.Label(detalle, text=etapa.mensaje, style="Tarjeta.TLabel", wraplength=640)
+                nota.pack(anchor="w")
+                etiquetas.append(nota)
+        detalle.bind("<Configure>", lambda evento: self._ajustar_etiquetas(evento.width, *etiquetas))
+        self._agregar_tarjeta(tarjeta)
+
+    def _ajustar_etiquetas(self, ancho, *etiquetas):
+        """Mantiene las instrucciones legibles al reducir el ancho de la ventana."""
+        for etiqueta in etiquetas:
+            etiqueta.configure(wraplength=max(140, ancho - 12))
