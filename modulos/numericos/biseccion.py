@@ -1,7 +1,7 @@
 """Calcula bisección propia con tabla y contraste independiente de SciPy.
 
 Tema: semana 12; intervalos, errores, residuo y motivos de terminación.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Elaboración: equipo 9
 """
 
 import math

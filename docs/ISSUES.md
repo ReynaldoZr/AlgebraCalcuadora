@@ -2,7 +2,7 @@
 
 ## Tarea local: migración a PySide6 + QML
 
-Autorizada el 6 de noviembre para el próximo avance, en `feat/qt-qml-local`. Objetivo: sustituir la presentación principal conservando la consola, cálculos, entradas vacías, Biblioteca, todos los pasos y ritmo de dos segundos. Criterios: los métodos existentes calculan, QML carga sin errores, las fracciones siguen exactas, la recuperación no duplica historial y Tk permanece como respaldo. Alcance, archivos y comprobaciones en [MIGRACION_QT.md](MIGRACION_QT.md). Issue remota y PR pendientes de autorización; no se inventa número.
+Autorizada el 6 de noviembre para el próximo avance, en `feat/qt-qml-local`. Objetivo: sustituir la presentación principal conservando la consola, cálculos, entradas vacías, Biblioteca, todos los pasos y ritmo de dos segundos. Criterios: los métodos existentes calculan, QML carga sin errores, las fracciones siguen exactas, la recuperación no duplica historial y Tk permanece como respaldo. Alcance, archivos y comprobaciones en [MIGRACION_QT.md](MIGRACION_QT.md). El avance local acumulado se revisa en la [issue #11](https://github.com/ReynaldoZr/AlgebraCalcuadora/issues/11).
 
 La continuación local actual es `feat/semana-12-numericos`: el alcance matemático y sus criterios se registran en [SEMANA_12.md](SEMANA_12.md). La semana 12 fue autorizada el 4 de noviembre; sus estados anteriores «fuera de alcance» quedan superados. No se inventa una issue remota, se publica la rama ni se abre PR mientras el usuario no lo autorice.
 
