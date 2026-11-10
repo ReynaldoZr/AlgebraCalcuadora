@@ -32,6 +32,11 @@ jobs:
         run: python herramientas/comprobar_reglas.py
       - name: Instalar dependencias de semana 12
         run: python -m pip install -r requirements-numericos.txt
+      - name: Instalar bibliotecas gráficas de Qt en Linux
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libegl1 libgl1 libopengl0
       - name: Instalar interfaz Qt Quick
         run: python -m pip install -r requirements-interfaz.txt
       - name: Ejecutar pruebas matemáticas y de consola
