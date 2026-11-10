@@ -2,6 +2,8 @@
 
 ## Sin publicar
 
+- La tabla y el listado de pasos ocupan el mismo espacio en Qt. En Tk, los procedimientos largos usan tarjetas separadas dentro del área desplazable, conservando todas las fórmulas.
+
 - «Guardar resultado» conserva la salida del cálculo. «Cargar guardado» permite elegir la matriz o el campo numérico donde reutilizarla.
 
 - «Cargar ejercicio» abre la lista de ejercicios guardados desde la calculadora. Las copias creadas en Biblioteca quedan preseleccionadas al abrir la lista.

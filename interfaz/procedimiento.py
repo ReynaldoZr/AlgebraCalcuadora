@@ -17,11 +17,9 @@ class VistaProcedimiento(Desarrollo):
         """Dibuja todas las fórmulas y matrices, sin resumir ni limitar la cantidad."""
         self.pasos = tuple(pasos)
         self.aviso.configure(text=aviso)
-        for hijo in self.cuerpo.winfo_children():
-            hijo.destroy()
+        self._limpiar_tarjetas()
         for indice, paso in enumerate(self.pasos):
             tarjeta = ttk.Frame(self.cuerpo, style='Tarjeta.TFrame', padding=14)
-            tarjeta.pack(fill='x', pady=(0, 10), padx=(0, 4))
             titulo = ttk.Label(tarjeta, text=f'{indice + 1}. {paso.titulo}', style='TarjetaTitulo.TLabel', wraplength=620)
             titulo.pack(anchor='w')
             explicacion = explicar_paso(paso, completo=True)
@@ -34,5 +32,4 @@ class VistaProcedimiento(Desarrollo):
                 alto = min(340, len(paso.matriz) * 58 + 28)
                 crear_notacion(tarjeta, self.tema, alto, 15).mostrar_matriz(paso.matriz, separador=paso.separador)
             tarjeta.bind('<Configure>', lambda evento, t=titulo, n=nota: self._ajustar_etiquetas(evento.width, t, n))
-        self._vincular_rueda(self.cuerpo)
-        self.lienzo.yview_moveto(0)
+            self._agregar_tarjeta(tarjeta)
