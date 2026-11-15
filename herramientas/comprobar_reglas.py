@@ -10,7 +10,7 @@ from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parents[1]
 EXTERNAS = {'numpy', 'scipy', 'sympy', 'matplotlib', 'pandas'}
-NUMERICAS = {'numpy', 'scipy', 'matplotlib'}
+NUMERICAS = {'numpy', 'scipy', 'matplotlib', 'pandas', 'sympy'}
 
 
 def revisar_import(nodo, calculo, numerico):
