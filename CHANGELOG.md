@@ -2,6 +2,8 @@
 
 ## Sin publicar
 
+- Issue #13. Bisección conserva las raíces de ambos extremos en el resumen, los pasos y la gráfica. La referencia SciPy se obtiene al calcular. Los casos sin iteraciones usan una gráfica de función completa. Se identifica el valor principal que guarda el atajo de resultado.
+
 - Programa 8 definitivo. Jacobi informa residuo final y crecimiento del error, y admite igualdad con la tolerancia. Se actualizan reglas y pruebas para el permiso de Pandas/SymPy dentro de la unidad numérica, junto con la fecha y las evidencias de entrega.
 
 - Issue #14. Núcleo de Jacobi con validación de A, B, X₀ y criterios de parada, dominancia diagonal por filas, tabla completa y protección ante valores no finitos. Incluye pruebas de soluciones conocidas y errores de entrada. Guía en docs/JACOBI.md.

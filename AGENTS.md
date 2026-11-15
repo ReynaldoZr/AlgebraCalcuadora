@@ -4,7 +4,7 @@
 
 Actualización del 15 de noviembre de 2026. El PR #12 integró el avance de álgebra, biblioteca, métodos numéricos e interfaz PySide6 + QML en main, con la excepción de revisión autorizada por Reynaldo para ese PR. Las nuevas tareas siguen el flujo habitual de PR y revisión humana.
 
-La issue #14, asignada a Reynaldo, prepara Jacobi y sus validaciones compartidas. La #15, asignada a Roberto, añade Gauss-Seidel y reordenamiento después de integrar #14. La #16 conecta los métodos a la interfaz. La corrección de extremos de bisección corresponde a Roberto en #13. Consultar el estado real de GitHub antes de comenzar y conservar cambios locales ajenos. Leer docs/JACOBI.md, docs/SEMANA_12.md y docs/GUIA_CODIGO.md.
+El PR #17 integró Jacobi y sus validaciones compartidas (#14), por autorización de Reynaldo tras verificar las pruebas. La #15, asignada a Roberto, añade Gauss-Seidel y reordenamiento. La #16 conecta los métodos a la interfaz. Reynaldo asume la corrección de extremos de bisección en #13 por indicación del 15 de noviembre. Consultar el estado real de GitHub antes de comenzar y conservar cambios locales ajenos. Leer docs/JACOBI.md, docs/SEMANA_12.md y docs/GUIA_CODIGO.md.
 
 ## Introducción y límite de la IA
 
