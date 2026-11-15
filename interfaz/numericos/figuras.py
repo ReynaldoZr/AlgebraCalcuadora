@@ -16,7 +16,8 @@ def figura_numerica(clave, calculo):
     if clave in ('num_biseccion', 'num_propagacion'):
         funcion = crear_funcion(d['funcion'])
         a, b = d['intervalo'] if clave == 'num_biseccion' else (d['x'] - max(d['delta'] * 2, 0.1), d['x'] + max(d['delta'] * 2, 0.1))
-        eje = figura.add_subplot(211 if clave == 'num_biseccion' else 111)
+        con_iteraciones = clave == 'num_biseccion' and bool(d['filas'])
+        eje = figura.add_subplot(211 if con_iteraciones else 111)
         puntos = [a + (b - a) * i / 400 for i in range(401)]
         valores = []
         for punto in puntos:
@@ -28,12 +29,20 @@ def figura_numerica(clave, calculo):
         eje.axhline(0, color='gray', linewidth=0.8)
         eje.set(xlabel='x', ylabel='f(x)', title='Función del ejercicio')
         if clave == 'num_biseccion':
-            eje.scatter([calculo.valor], [funcion(calculo.valor)], label='Aproximación', color='#a5a6ff')
-            error = figura.add_subplot(212)
-            filas = d['filas']
-            error.plot([f[0] for f in filas], [f[8] for f in filas], marker='.', label='Cota absoluta en x')
-            error.set(xlabel='Iteración', ylabel='Cota de error', yscale='log', title='Reducción del intervalo')
-            error.grid(alpha=0.3)
+            raices = d.get('raices_extremos') or (calculo.valor,)
+            etiqueta = 'Raíces en los extremos' if d.get('raices_extremos') else 'Aproximación'
+            eje.scatter(raices, [funcion(x) for x in raices], label=etiqueta, color='#a5a6ff', zorder=3)
+            for raiz in raices:
+                eje.annotate(f'x={raiz:g}', (raiz, funcion(raiz)), xytext=(0, 10),
+                             textcoords='offset points', ha='center', color='#a5a6ff')
+            if con_iteraciones:
+                error = figura.add_subplot(212)
+                filas = d['filas']
+                error.plot([f[0] for f in filas], [f[8] for f in filas], marker='.', label='Cota absoluta en x')
+                error.set(xlabel='Iteración', ylabel='Cota de error', yscale='log', title='Reducción del intervalo')
+                error.grid(alpha=0.3)
+            else:
+                eje.set_title('Raíces verificadas en los extremos · 0 iteraciones')
         else:
             eje.scatter([d['x'], d['x'] + d['delta']], [funcion(d['x']), funcion(d['x'] + d['delta'])], label='Puntos comparados')
         eje.legend()

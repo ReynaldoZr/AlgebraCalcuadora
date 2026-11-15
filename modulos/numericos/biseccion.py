@@ -5,6 +5,7 @@ Elaboración: equipo 9
 """
 
 import math
+import re
 
 from modulos.numericos.funciones import crear_funcion, formato, numero_finito
 from modulos.procedimientos import Calculo, Paso
@@ -75,18 +76,32 @@ def biseccion(
     ]
 
     if fa == 0 or fb == 0:
-        raiz = a if fa == 0 else b
+        # Guardamos ambos extremos comprobados; el valor principal sigue siendo escalar.
+        raices = tuple(x for x, fx in ((a, fa), (b, fb)) if fx == 0)
+        raiz = raices[0]
+        from scipy.optimize import bisect
+        referencia = float(bisect(funcion, a, b))
         datos.update(
             convergio=True, residuo=0.0,
-            motivo='Raíz en un extremo',
-            scipy=raiz, diferencia_scipy=0.0,
+            motivo='Raíces en ambos extremos' if len(raices) == 2 else 'Raíz en un extremo',
+            raices_extremos=raices,
+            scipy=referencia, diferencia_scipy=abs(raiz - referencia),
         )
-        pasos.append(
-            Paso(
+        for extremo in raices:
+            sustitucion = re.sub(r'\bx\b', f'({formato(extremo)})', expresion)
+            pasos.append(Paso(
                 'Raíz en el extremo',
-                formulas=((f'x={formato(raiz)}', 'f(x)=0'),),
-            )
-        )
+                'Evaluamos este extremo en la función original.',
+                formulas=((f'x={formato(extremo)}',
+                           f'f({formato(extremo)})={sustitucion}=0'),),
+            ))
+        pasos.append(Paso(
+            'Comprobación de extremos',
+            'Las raíces indicadas se comprobaron en los extremos. '
+            'Para buscar otras raíces interiores se necesitan intervalos adicionales.',
+            formulas=((f'Referencia SciPy={formato(referencia)}',
+                       f'Valor principal para guardar={formato(raiz)}'),),
+        ))
         return Calculo(raiz, tuple(pasos), datos)
 
     if (fa > 0) == (fb > 0):
