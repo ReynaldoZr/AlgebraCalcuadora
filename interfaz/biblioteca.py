@@ -23,6 +23,7 @@ ETIQUETAS = {
     'num_flotante': ('Punto flotante', 'ε'), 'num_inestabilidad': ('Estabilidad', '≈'),
     'num_bases': ('Representación numérica', 'base'), 'num_inversa': ('Inversa exacta y aproximada', '≈A⁻¹'),
     'num_sistema': ('Sistema exacto y aproximado', '≈x'),
+    'num_jacobi': ('Jacobi', 'J'),
     'sumar': ('Suma', '+'), 'restar': ('Resta', '−'), 'escalar': ('Escalar', 'kA'),
     'transponer': ('Transpuesta', 'Aᵀ'), 'multiplicar': ('Producto', 'AB'),
     'gauss': ('Gauss', 'REF'), 'jordan': ('Gauss-Jordan', 'RREF'),

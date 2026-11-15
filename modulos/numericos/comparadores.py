@@ -16,6 +16,27 @@ from modulos.procedimientos import Calculo, Paso
 from modulos.validaciones import validar_cuadrada, validar_vector
 
 
+def verificar_iterativo(calculo):
+    """Contrasta una aproximación iterativa con NumPy sin sustituir su algoritmo."""
+    datos = dict(calculo.datos)
+    try:
+        referencia = np.linalg.solve(np.array(datos['matriz']), np.array(datos['vector_b']))
+        if not np.isfinite(referencia).all():
+            raise ValueError('La solución de referencia no es finita.')
+        diferencia = max(abs(v - float(r)) for v, r in zip(calculo.valor, referencia))
+        datos.update(referencia=referencia.tolist(),
+                     diferencia_referencia=diferencia if np.isfinite(diferencia) else None)
+        detalle = 'Comparamos el vector calculado con una solución independiente de NumPy.'
+    except (np.linalg.LinAlgError, ValueError) as error:
+        datos.update(referencia=None, diferencia_referencia=None, error_referencia=str(error))
+        detalle = 'No se pudo obtener la referencia. ' + str(error)
+    paso = Paso('Verificación del sistema', detalle,
+                formulas=((f'Referencia={datos["referencia"]}',
+                           f'Diferencia máxima={formato(datos["diferencia_referencia"])}',
+                           f'Residuo={formato(datos["residuo"])}'),))
+    return Calculo(calculo.valor, calculo.pasos + (paso,), datos)
+
+
 def hilbert(orden=5):
     """Construye una Hilbert exacta de orden 1 a 10 para experimentar con su condición."""
     if type(orden) is not int or not 1 <= orden <= 10:

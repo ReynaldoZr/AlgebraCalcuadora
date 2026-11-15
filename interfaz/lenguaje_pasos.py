@@ -8,6 +8,8 @@ Elaboración: equipo del proyecto, con apoyo de IA.
 def aclaracion_paso(paso):
     """Devuelve una frase sencilla según la acción registrada por el algoritmo."""
     titulo = paso.titulo.casefold()
+    if 'jacobi' in titulo and 'iteración' in titulo:
+        return 'Calculamos todas las variables usando los valores de la vuelta anterior.'
     if paso.detalle.startswith('Conservamos [x'):
         return 'Tomamos el punto medio y conservamos la mitad donde cambia el signo.'
     if '↔' in titulo:

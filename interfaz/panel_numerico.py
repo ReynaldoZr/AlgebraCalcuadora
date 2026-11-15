@@ -11,7 +11,7 @@ from tkinter import ttk
 
 from interfaz.cuadricula import EditorMatriz
 from interfaz.desarrollo import crear_notacion
-from interfaz.metodos_numericos import CAMPOS, METODOS_NUMERICOS, casos_numericos, ejecutar_numerico, parametros_defecto, parametros_vacios, resumen_numerico
+from interfaz.metodos_numericos import CAMPOS, METODOS_NUMERICOS, casos_numericos, ejemplo_jacobi, ejecutar_numerico, parametros_defecto, parametros_vacios, resumen_numerico
 from interfaz.operaciones import Presentacion
 from interfaz.procedimiento import VistaProcedimiento
 from interfaz.recorrido import INTERVALO_PASOS_MS, ReproductorPasos
@@ -167,6 +167,7 @@ class PanelNumerico(ttk.Frame):
             if nombre == 'funcion':
                 self.teclado.pack(fill='x', pady=(6, 2))
         ayudas = {
+            'num_jacobi': 'Cada componente usa el vector anterior. Escribe b y X₀ separados por comas. El residuo comprueba el sistema original.',
             'num_biseccion': 'Intervalo: tolerancia en x.\nPorcentual: error relativo (%).\nResiduo: tolerancia independiente.',
             'num_errores': 'Comparamos el valor aproximado con el verdadero. Si el verdadero es cero, el error relativo y porcentual no están definidos.',
             'num_propagacion': 'Deja el paso vacío para elegirlo automáticamente. La estimación usa la derivada cerca del punto x.',
@@ -267,6 +268,10 @@ class PanelNumerico(ttk.Frame):
             raise ValueError('El caso no corresponde al método seleccionado.')
         datos = parametros_defecto(self.clave)
         with self._edicion():
+            if self.clave == 'num_jacobi':
+                matriz, ajustes = ejemplo_jacobi(caso)
+                self.editores['A'].cargar(matriz)
+                datos.update(ajustes)
             if self.clave == 'num_biseccion':
                 if caso == 'cos(x)-x':
                     datos.update(funcion='cos(x)-x', a='0', b='1')
@@ -372,7 +377,7 @@ class PanelNumerico(ttk.Frame):
             boton.configure(state='normal' if self.vigente else 'disabled')
         self.reproducir.configure(text='Ⅱ Pausar' if self.reproductor.activo else '▶ Reproducir')
         self.deshacer_boton.configure(state='normal' if self.historial else 'disabled')
-        graficable = self.clave in ('num_biseccion', 'num_propagacion', 'num_simulacion', 'num_inversa', 'num_sistema')
+        graficable = self.clave in ('num_biseccion', 'num_propagacion', 'num_simulacion', 'num_inversa', 'num_sistema', 'num_jacobi')
         self.grafica.configure(state='normal' if self.vigente and graficable else 'disabled')
 
     def alternar_recorrido(self):

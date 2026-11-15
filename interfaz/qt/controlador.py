@@ -137,7 +137,7 @@ class Controlador(QObject):
                     matriz=s.vigente and s.presentacion is not None and s.presentacion.matriz is not None,
                     destinos=list(s.entradas),
                     destinosValores=self._destinos_valores(),
-                    graficable=s.vigente and self.clave in ('num_biseccion', 'num_propagacion', 'num_simulacion', 'num_inversa', 'num_sistema'))
+                    graficable=s.vigente and self.clave in ('num_biseccion', 'num_propagacion', 'num_simulacion', 'num_inversa', 'num_sistema', 'num_jacobi'))
 
     @Property('QVariantList', notify=bibliotecaCambiada)
     def guardados(self):

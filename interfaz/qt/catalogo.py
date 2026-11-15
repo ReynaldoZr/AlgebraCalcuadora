@@ -36,6 +36,7 @@ TEMAS = (
     ('Numéricos', '≈ƒ', 'Bisección, errores y estabilidad'),
 )
 AYUDA_NUMERICA = {
+    'num_jacobi': 'Cada componente usa el vector anterior. Escribe b y X₀ separados por comas y decimales con punto. El residuo comprueba el sistema original.',
     'num_biseccion': 'Intervalo: tolerancia en x. Porcentual: error relativo (%). El residuo controla |f(x)|. La función debe ser continua.',
     'num_errores': 'Se compara el valor aproximado con el verdadero. Con referencia cero, el relativo y el porcentual no están definidos.',
     'num_propagacion': 'Δx es la incertidumbre de entrada. Deja el paso vacío para elegirlo automáticamente.',

@@ -108,7 +108,7 @@ class PruebasJacobi(unittest.TestCase):
         c.datos['matriz'][0][0] = 100
         self.assertEqual((self.a, self.b, self.inicial), originales)
         self.assertNotEqual(c.datos['filas'][-1][1], 100)
-        self.assertEqual(c.pasos[0].matriz[0][0], 4)
+        self.assertIn('Fila 1: [4, -1, 1] | b=7', str(c.pasos[0].formulas))
 
     def test_acepta_fracciones_y_textos_decimales(self):
         """Los números del álgebra exacta pueden convertirse en la unidad aproximada."""
