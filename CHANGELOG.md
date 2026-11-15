@@ -4,6 +4,8 @@
 
 - Avance local de #16. Jacobi se conecta a consola, Qt y Tk con datos vacíos al abrir, ejemplos explícitos, tabla completa, residuo, contraste NumPy, gráfica de error y biblioteca. La comparación con Gauss-Seidel depende de #15. Se corrige la serialización de los datos aproximados en los pasos de Jacobi para poder guardar el ejercicio.
 
+- Issue #13. Bisección conserva las raíces de ambos extremos en el resumen, los pasos y la gráfica. La referencia SciPy se obtiene al calcular. Los casos sin iteraciones usan una gráfica de función completa. Se identifica el valor principal que guarda el atajo de resultado.
+
 - Programa 8 definitivo. Jacobi informa residuo final y crecimiento del error, y admite igualdad con la tolerancia. Se actualizan reglas y pruebas para el permiso de Pandas/SymPy dentro de la unidad numérica, junto con la fecha y las evidencias de entrega.
 
 - Issue #14. Núcleo de Jacobi con validación de A, B, X₀ y criterios de parada, dominancia diagonal por filas, tabla completa y protección ante valores no finitos. Incluye pruebas de soluciones conocidas y errores de entrada. Guía en docs/JACOBI.md.

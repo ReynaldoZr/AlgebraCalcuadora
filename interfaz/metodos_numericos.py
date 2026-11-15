@@ -141,7 +141,11 @@ def resumen_numerico(clave, calculo):
                 f'Referencia NumPy: {referencia}\nDiferencia máxima: {formato(d["diferencia_referencia"])}\n'
                 + '\n'.join(d['advertencias']))
     if clave == 'num_biseccion':
-        return (f'Raíz aproximada: {formato(calculo.valor)}\n{d["motivo"]}\n'
+        raices = d.get('raices_extremos', ())
+        titulo = (f'Raíces en los extremos: {", ".join(formato(x) for x in raices)}\n'
+                  f'Valor principal para guardar: {formato(calculo.valor)}'
+                  if len(raices) > 1 else f'Raíz aproximada: {formato(calculo.valor)}')
+        return (f'{titulo}\n{d["motivo"]}\n'
                 f'Iteraciones realizadas: {len(d["filas"])} · Predicción por ancho: {d["iteraciones_predichas"]}\n'
                 f'Residuo |f(xr)|: {formato(d["residuo"])}\nSciPy: {formato(d.get("scipy"))}\nDiferencia con SciPy: {formato(d.get("diferencia_scipy"))}')
     if clave == 'num_errores':

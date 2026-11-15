@@ -1,5 +1,18 @@
 # Semana 12: Métodos Numéricos
 
+## Bisección con raíces en los extremos
+
+Cuando ambos extremos son raíces, el resumen y los pasos muestran las dos.
+La gráfica las marca con sus coordenadas y utiliza toda el área para la función,
+pues la comprobación termina con cero iteraciones. La referencia SciPy corresponde
+al valor que devuelve esa biblioteca para el intervalo.
+
+El resultado principal conserva un solo número para el guardado y la reutilización
+existentes. El resumen indica qué valor se guarda. Guardar el ejercicio completo
+conserva el intervalo y permite recuperar ambas raíces al calcularlo de nuevo.
+Las raíces comprobadas en los extremos pueden coexistir con otras raíces interiores.
+La búsqueda de estas últimas requiere intervalos adicionales.
+
 Implementación local autorizada el 4 de noviembre de 2026, en `feat/semana-12-numericos`. No es una release ni un PR publicado. Fuente: [plan semanal 12, página 3](https://uamvirtual.uam.edu.ni/grado/mod/resource/view.php?id=1031827). El usuario confirmó el permiso para NumPy y SciPy. Matplotlib corresponde a la ampliación gráfica opcional del mismo plan.
 
 ## Cómo probar en IntelliJ IDEA
