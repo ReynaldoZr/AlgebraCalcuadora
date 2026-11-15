@@ -11,7 +11,7 @@ from math import isfinite
 
 from interfaz.biblioteca import crear_registro
 from interfaz.ejemplos_casos import casos_disponibles, ejemplo_por_caso
-from interfaz.metodos_numericos import METODOS_NUMERICOS, casos_numericos, parametros_defecto, parametros_vacios
+from interfaz.metodos_numericos import METODOS_NUMERICOS, casos_numericos, ejemplo_jacobi, parametros_defecto, parametros_vacios
 from interfaz.qt.catalogo import CATALOGO, campos_de, ejecutar, leer_matrices, matrices_de, tema_de
 
 
@@ -70,6 +70,10 @@ class Sesion:
             self.parametros['escalar'] = escalar
             return
         self.parametros.update(parametros_defecto(self.clave))
+        if self.clave == 'num_jacobi':
+            a, ajustes = ejemplo_jacobi(caso)
+            self.entradas['A'] = [[str(v) for v in f] for f in a]
+            self.parametros.update(ajustes)
         if self.clave == 'num_biseccion':
             variantes = {'cos(x)-x': ('cos(x)-x', '0', '1'),
                          'Sin cambio de signo': ('x^2+1', '-1', '1'),

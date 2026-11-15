@@ -57,8 +57,23 @@ Repetir con max_iteraciones=1 devuelve el primer vector e indica el límite.
   y se registra una advertencia explícita. Un error pequeño entre iteraciones
   se interpreta junto con ese residuo al verificar la solución.
 
-La conexión visual corresponde a #16. La referencia NumPy puede incorporarse
-en la comparación de esa etapa. El orden de filas se tratará en #15.
+## Integración local de la issue #16
+
+En Numéricos, elegir «Jacobi · sistemas iterativos». La primera tarjeta permite
+editar A. La segunda recibe b, X₀, tolerancia y máximo de iteraciones. Los
+vectores se escriben con comas entre componentes y punto para los decimales.
+Los formularios empiezan vacíos. «Cargar ejemplo» coloca el sistema del plan.
+
+El resumen muestra vector, estado, error, residuo y contraste independiente con
+numpy.linalg.solve. Si la referencia es singular o no finita, el resultado de
+Jacobi se conserva con la explicación correspondiente. «Todos los pasos» y
+«Mostrar tabla» contienen todas las iteraciones. «Ver gráfica» muestra el error
+de Jacobi. Guardar un ejercicio conserva A, b, X₀ y parámetros.
+
+Los casos disponibles son dominancia diagonal, falta de convergencia y diagonal
+con cero. El último explica que hace falta reordenar. La comparación con
+Gauss-Seidel y el reordenamiento requieren el algoritmo de Roberto en #15.
+La issue #16 queda parcialmente implementada hasta disponer de ese método.
 
 ## Verificación
 

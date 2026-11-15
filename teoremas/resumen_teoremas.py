@@ -34,6 +34,9 @@ def teoremas_tema(tema):
     """Devuelve condiciones y enunciados de los temas implementados, sin calcularlos."""
     resumenes = {
         'Numéricos': 'Bisección requiere continuidad y cambio de signo, salvo raíz en un extremo.\n'
+                     'Jacobi calcula cada componente con el vector anterior completo.\n'
+                     'Parada iterativa: diferencia máxima ≤ tolerancia. Comprobar también ‖Ax−b‖∞.\n'
+                     'La dominancia diagonal estricta garantiza convergencia; su ausencia no demuestra divergencia.\n'
                      'Cota del punto medio: (xu-xl)/2. Predicción de reducciones: n≥log2((b-a)/E).\n'
                      'Ea(%)=100·|xr_actual−xr_anterior|/|xr_actual|, no definido si xr=0.\n'
                      'Tolerancia en x, porcentaje y residuo son magnitudes distintas.\n'

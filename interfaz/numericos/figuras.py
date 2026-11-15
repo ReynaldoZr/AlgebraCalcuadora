@@ -13,7 +13,15 @@ def figura_numerica(clave, calculo):
     """Construye una figura exportable sin abrir ventanas ni usar pyplot global."""
     figura = Figure(figsize=(9, 6), dpi=100, layout='constrained')
     d = calculo.datos
-    if clave in ('num_biseccion', 'num_propagacion'):
+    if clave == 'num_jacobi':
+        eje = figura.add_subplot(111)
+        eje.plot([f[0] for f in d['filas']], [f[-1] for f in d['filas']],
+                 marker='.', color='#a5a6ff', label='Jacobi')
+        eje.set(xlabel='Iteración', ylabel='Diferencia máxima',
+                title='Evolución del error · Jacobi')
+        eje.grid(alpha=0.3)
+        eje.legend()
+    elif clave in ('num_biseccion', 'num_propagacion'):
         funcion = crear_funcion(d['funcion'])
         a, b = d['intervalo'] if clave == 'num_biseccion' else (d['x'] - max(d['delta'] * 2, 0.1), d['x'] + max(d['delta'] * 2, 0.1))
         con_iteraciones = clave == 'num_biseccion' and bool(d['filas'])

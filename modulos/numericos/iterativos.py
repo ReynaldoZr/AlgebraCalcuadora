@@ -75,8 +75,13 @@ def jacobi(matriz, vector_b, inicial, tolerancia=0.0001, max_iteraciones=200):
         columnas=('k',) + tuple(f'x{i + 1}' for i in range(len(x))) + ('Error máximo',),
         motivo='Se alcanzó el máximo de iteraciones sin cumplir la tolerancia.',
     )
-    pasos = [Paso('Datos de Jacobi', aviso, matriz=[fila[:] + [b[i]] for i, fila in enumerate(a)],
-                  separador=len(a), formulas=((f'X₀={x}', f'Tolerancia={formato(tolerancia)}'),))]
+    # Las aproximaciones se guardan como fórmulas de texto en la biblioteca.
+    filas_datos = tuple(
+        (f'Fila {i + 1}: [{", ".join(formato(v) for v in fila)}] | b={formato(b[i])}',)
+        for i, fila in enumerate(a)
+    )
+    pasos = [Paso('Datos de Jacobi', aviso,
+                  formulas=filas_datos + ((f'X₀={x}', f'Tolerancia={formato(tolerancia)}'),))]
     for k in range(1, max_iteraciones + 1):
         # Todos los componentes usan x, que conserva la iteración anterior completa.
         try:

@@ -26,6 +26,9 @@ CAMPOS = {
     'capital': ('Capital inicial', '1000'), 'tasa': ('Tasa por iteración', '0.005'),
     'iteraciones': ('Iteraciones', '50'), 'decimales': ('Decimales conservados', '2'),
     'numero': ('Número decimal', '0.1'), 'base': ('Base (2 o 10)', '2'), 'cifras': ('Cifras fraccionarias', '16'),
+    'vector_b': ('Vector b · valores separados por comas', '7, -21, 15'),
+    'inicial': ('Vector inicial X₀ · separado por comas', '0, 0, 0'),
+    'epsilon': ('Tolerancia ε · decimal', '0.0001'),
 }
 METODOS_NUMERICOS = {
     'num_biseccion': MetodoNumerico('Bisección y contraste con SciPy', ('funcion', 'a', 'b'), ('criterio', 'tolerancia', 'tolerancia_f', 'maximo')),
@@ -37,6 +40,7 @@ METODOS_NUMERICOS = {
     'num_bases': MetodoNumerico('Representación en base 2 y base 10', ('numero',), ('base', 'cifras')),
     'num_inversa': MetodoNumerico('Inversa: Fraction, float propio y NumPy', (), (), ('A',)),
     'num_sistema': MetodoNumerico('Sistema: Fraction, float propio y NumPy', (), (), ('A', 'b')),
+    'num_jacobi': MetodoNumerico('Jacobi · sistemas iterativos', (), ('vector_b', 'inicial', 'epsilon', 'maximo'), ('A',)),
 }
 
 
@@ -54,7 +58,7 @@ def parametros_vacios(clave):
     """Mantiene ajustes de cálculo, pero deja sin llenar los datos del ejercicio."""
     datos = parametros_defecto(clave)
     # Tolerancias y límites son ajustes; función, extremos y cantidades son el ejercicio.
-    for nombre in ('funcion', 'a', 'b', 'verdadero', 'aproximado', 'x', 'delta', 'capital', 'tasa', 'numero'):
+    for nombre in ('funcion', 'a', 'b', 'verdadero', 'aproximado', 'x', 'delta', 'capital', 'tasa', 'numero', 'vector_b', 'inicial'):
         datos[nombre] = ''
     return datos
 
@@ -67,11 +71,36 @@ def entero(texto, nombre):
         raise ValueError(f'{nombre} debe ser un entero.') from None
 
 
+def leer_vector_numerico(texto, nombre):
+    """Convierte un vector escrito con comas y conserva las fracciones de entrada."""
+    from interfaz.datos import convertir_numero
+    try:
+        return [convertir_numero(v.strip()) for v in texto.split(',')]
+    except (ValueError, ZeroDivisionError):
+        raise ValueError(f'{nombre}: separa los números con comas. Ejemplo: 0, 0, 0.') from None
+
+
+def ejemplo_jacobi(caso):
+    """Devuelve A y parámetros del caso de práctica solicitado explícitamente."""
+    if caso == 'Sin convergencia':
+        return [[1, 5], [7, 1]], dict(vector_b='11, 15', inicial='0, 0', maximo='20')
+    if caso == 'Diagonal con cero':
+        return [[0, 2], [3, 1]], dict(vector_b='4, 5', inicial='0, 0', maximo='200')
+    return [[4, -1, 1], [4, -8, 1], [-2, 1, 5]], dict(vector_b='7, -21, 15', inicial='0, 0, 0', maximo='200')
+
+
 def ejecutar_numerico(clave, parametros, matrices=None):
     """Llama al núcleo de la semana 12; no requiere dependencias al iniciar otros temas."""
     from modulos.numericos.errores import calcular_errores, descomponer, inestabilidad, propagacion, punto_flotante, simulacion
     matrices = matrices or {}
     p = parametros
+    if clave == 'num_jacobi':
+        from modulos.numericos.iterativos import jacobi
+        from modulos.numericos.comparadores import verificar_iterativo
+        calculo = jacobi(matrices['A'], leer_vector_numerico(p['vector_b'], 'b'),
+                         leer_vector_numerico(p['inicial'], 'X₀'), p['epsilon'],
+                         entero(p['maximo'], 'Máximo'))
+        return verificar_iterativo(calculo)
     if clave == 'num_biseccion':
         from modulos.numericos.biseccion import biseccion
         return biseccion(p['funcion'], p['a'], p['b'], p['tolerancia'], entero(p['maximo'], 'Máximo'), p['criterio'], p['tolerancia_f'])
@@ -102,6 +131,15 @@ def resumen_numerico(clave, calculo):
     """Explica los resultados y límites de precisión con nombres de sus magnitudes."""
     from modulos.numericos.funciones import formato
     d = calculo.datos
+    if clave == 'num_jacobi':
+        vector = ', '.join(formato(v) for v in calculo.valor)
+        referencia = ', '.join(formato(v) for v in d['referencia']) if d['referencia'] is not None else d['error_referencia']
+        return (f'Jacobi · X ≈ ({vector})\n{d["motivo"]}\n'
+                f'Iteraciones: {len(d["filas"])} · Error máximo: {formato(d["error"])}\n'
+                f'Residuo ‖Ax − b‖∞: {formato(d["residuo"])}\n'
+                f'Diagonal dominante: {"Sí" if all(d["dominantes"]) else "Sin garantía"}\n'
+                f'Referencia NumPy: {referencia}\nDiferencia máxima: {formato(d["diferencia_referencia"])}\n'
+                + '\n'.join(d['advertencias']))
     if clave == 'num_biseccion':
         raices = d.get('raices_extremos', ())
         titulo = (f'Raíces en los extremos: {", ".join(formato(x) for x in raices)}\n'
@@ -129,5 +167,6 @@ def resumen_numerico(clave, calculo):
 def casos_numericos(clave):
     """Devuelve casos pequeños para practicar criterios y fallos de precondiciones."""
     return {'num_biseccion': ('Ejemplo del profesor', 'cos(x)-x', 'Sin cambio de signo', 'Raíz en extremo'),
+            'num_jacobi': ('Diagonal dominante', 'Sin convergencia', 'Diagonal con cero'),
             'num_inversa': ('Hilbert 5×5', 'Invertible 2×2', 'Singular'),
             'num_sistema': ('Hilbert 5×5', 'Solución conocida', 'Singular')}.get(clave, ('Ejemplo del profesor',))
