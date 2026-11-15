@@ -2,9 +2,9 @@
 
 ## Estado de la interfaz y siguiente etapa
 
-Actualización del 6 de noviembre: la rama local es `feat/qt-qml-local`, continuación del trabajo descrito abajo. El usuario autorizó implementar PySide6 + QML para el próximo avance; véase docs/MIGRACION_QT.md. No cambia la prohibición de publicar sin una nueva instrucción explícita.
+Actualización del 15 de noviembre de 2026. El PR #12 integró el avance de álgebra, biblioteca, métodos numéricos e interfaz PySide6 + QML en main, con la excepción de revisión autorizada por Reynaldo para ese PR. Las nuevas tareas siguen el flujo habitual de PR y revisión humana.
 
-El PR #9 está cerrado sin integrar. Roberto (`roberto7503`) integró el PR #10 el 3 de noviembre de 2026; la issue #8 está cerrada. La rama actual `feat/inicio-temas-local` conserva además el trabajo previo de `feat/semana-12-numericos`. Esta última conserva álgebra y biblioteca y añade la semana 12 por autorización del usuario del 4 de noviembre de 2026: bisección, errores, comparación exacto/flotante y gráficas con NumPy/SciPy/Matplotlib. No hacer push, abrir PR, cerrar issues ni publicar versiones hasta nueva autorización. El permiso anterior correspondía solo al PR #10. Leer docs/SEMANA_12.md, docs/GUIA_CODIGO.md y las guías anteriores antes de continuar.
+La issue #14, asignada a Reynaldo, prepara Jacobi y sus validaciones compartidas. La #15, asignada a Roberto, añade Gauss-Seidel y reordenamiento después de integrar #14. La #16 conecta los métodos a la interfaz. La corrección de extremos de bisección corresponde a Roberto en #13. Consultar el estado real de GitHub antes de comenzar y conservar cambios locales ajenos. Leer docs/JACOBI.md, docs/SEMANA_12.md y docs/GUIA_CODIGO.md.
 
 ## Introducción y límite de la IA
 

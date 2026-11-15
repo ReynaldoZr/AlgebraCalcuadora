@@ -2,6 +2,8 @@
 
 ## Sin publicar
 
+- Issue #14. Núcleo de Jacobi con validación de A, B, X₀ y criterios de parada, dominancia diagonal por filas, tabla completa y protección ante valores no finitos. Incluye pruebas de soluciones conocidas y errores de entrada. Guía en docs/JACOBI.md.
+
 - La tabla y el listado de pasos ocupan el mismo espacio en Qt. En Tk, los procedimientos largos usan tarjetas separadas dentro del área desplazable, conservando todas las fórmulas.
 
 - «Guardar resultado» conserva la salida del cálculo. «Cargar guardado» permite elegir la matriz o el campo numérico donde reutilizarla.
