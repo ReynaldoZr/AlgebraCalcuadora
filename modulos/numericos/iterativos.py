@@ -47,6 +47,17 @@ def dominancia_diagonal(matriz):
     return tuple(dominante)
 
 
+def residuo_sistema(matriz, vector_b, vector_x):
+    """Devuelve la norma máxima de Ax−b, o None si su evaluación desborda."""
+    try:
+        diferencias = [abs(math.fsum([v * vector_x[j] for j, v in enumerate(fila)] + [-b]))
+                       for fila, b in zip(matriz, vector_b)]
+        residuo = max(diferencias)
+        return residuo if math.isfinite(residuo) else None
+    except (OverflowError, ValueError):
+        return None
+
+
 def jacobi(matriz, vector_b, inicial, tolerancia=0.0001, max_iteraciones=200):
     """Devuelve Calculo con el último vector, pasos y tabla usando el error máximo absoluto."""
     a, b, x, tolerancia = validar_datos_iterativos(
@@ -60,6 +71,7 @@ def jacobi(matriz, vector_b, inicial, tolerancia=0.0001, max_iteraciones=200):
         metodo='Jacobi', matriz=a, vector_b=b, inicial=x[:],
         tolerancia=tolerancia, max_iteraciones=max_iteraciones,
         dominantes=dominantes, convergio=False, filas=[], error=None,
+        advertencias=[],
         columnas=('k',) + tuple(f'x{i + 1}' for i in range(len(x))) + ('Error máximo',),
         motivo='Se alcanzó el máximo de iteraciones sin cumplir la tolerancia.',
     )
@@ -76,16 +88,29 @@ def jacobi(matriz, vector_b, inicial, tolerancia=0.0001, max_iteraciones=200):
         except (OverflowError, ValueError):
             datos['motivo'] = 'La iteración produjo valores no finitos. Se conserva el último vector finito.'
             break
+        crece = datos['error'] is not None and error > datos['error']
+        if crece and not datos['advertencias']:
+            datos['advertencias'].append(
+                f'El error creció en la iteración {k}. Hay posible falta de convergencia.'
+            )
         datos['filas'].append((k, *nuevo, error))
         datos['error'] = error
         pasos.append(Paso(
-            f'Iteración {k} de Jacobi', 'Calculamos cada componente con el vector anterior.',
+            f'Iteración {k} de Jacobi',
+            'El error creció respecto a la iteración anterior.'
+            if crece else 'Calculamos cada componente con el vector anterior.',
             formulas=tuple((f'x{i + 1}={formato(v)}',) for i, v in enumerate(nuevo))
             + ((f'Error máximo={formato(error)}',),),
         ))
         x = nuevo
-        if error < tolerancia:
-            datos.update(convergio=True, motivo='La diferencia máxima es menor que la tolerancia.')
+        if error <= tolerancia:
+            datos.update(convergio=True, motivo='La diferencia máxima es menor o igual que la tolerancia.')
             break
-    pasos.append(Paso('Terminación de Jacobi', datos['motivo'], formulas=((f'X={x}',),)))
+    datos['residuo'] = residuo_sistema(a, b, x)
+    if datos['residuo'] is None:
+        datos['advertencias'].append('No se pudo evaluar el residuo con valores finitos.')
+    pasos.append(Paso(
+        'Terminación de Jacobi', ' '.join([datos['motivo']] + datos['advertencias']),
+        formulas=((f'X={x}',), (f'Residuo ||Ax−b||∞={formato(datos["residuo"])}',)),
+    ))
     return Calculo(x[:], tuple(pasos), datos)

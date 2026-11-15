@@ -64,3 +64,13 @@ apartados 8 a 13, orienta Jacobi y Gauss-Seidel y permite NumPy/SciPy para
 esta unidad. El criterio de esta etapa es la diferencia máxima absoluta entre
 vectores consecutivos, estrictamente menor que la tolerancia. La interfaz
 comparativa se prepara en #16. Contrato y ejemplos en docs/JACOBI.md.
+
+### Ajuste al enunciado definitivo del 15 de noviembre
+
+La [Tarea 8](https://uamvirtual.uam.edu.ni/grado/mod/assign/view.php?id=1043170),
+apartados 2, 3.2 y 3.3, amplía las bibliotecas permitidas en la unidad numérica
+a Pandas y SymPy, exige el residuo final y una advertencia si crece el error,
+y recomienda parada por diferencia máxima menor o igual que la tolerancia.
+Se adopta ese criterio inclusivo para Jacobi y el contrato de Gauss-Seidel.
+Se actualizan el verificador, las pruebas y la guía del módulo para reflejar
+el nuevo ámbito. El permiso no se extiende al álgebra exacta de tareas anteriores.

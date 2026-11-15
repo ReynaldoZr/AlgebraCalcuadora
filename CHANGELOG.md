@@ -2,6 +2,8 @@
 
 ## Sin publicar
 
+- Programa 8 definitivo. Jacobi informa residuo final y crecimiento del error, y admite igualdad con la tolerancia. Se actualizan reglas y pruebas para el permiso de Pandas/SymPy dentro de la unidad numérica, junto con la fecha y las evidencias de entrega.
+
 - Issue #14. Núcleo de Jacobi con validación de A, B, X₀ y criterios de parada, dominancia diagonal por filas, tabla completa y protección ante valores no finitos. Incluye pruebas de soluciones conocidas y errores de entrada. Guía en docs/JACOBI.md.
 
 - La tabla y el listado de pasos ocupan el mismo espacio en Qt. En Tk, los procedimientos largos usan tarjetas separadas dentro del área desplazable, conservando todas las fórmulas.

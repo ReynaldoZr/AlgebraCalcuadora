@@ -7,10 +7,13 @@ enteros, Fraction y textos decimales. La aritmética de esta unidad es aproximad
 
 Cada componente nueva se calcula usando el vector anterior completo.
 El error es la mayor diferencia absoluta entre componentes consecutivas.
-Se detiene cuando ese error es estrictamente menor que la tolerancia.
+Se detiene cuando ese error es menor o igual que la tolerancia.
 La dominancia diagonal estricta es una condición suficiente de convergencia.
 Cuando falta, el cálculo sigue con una advertencia y su límite de iteraciones.
 Una diagonal nula se rechaza explicando que se necesita reordenar ecuaciones.
+Si el error crece entre dos iteraciones, se registra una advertencia sin concluir
+automáticamente divergencia ni interrumpir una posible convergencia posterior.
+Al terminar se calcula el residuo máximo de Ax−b sobre el sistema original.
 
 ## Probar el ejemplo del plan
 
@@ -25,6 +28,8 @@ b = [7, -21, 15]
 calculo = jacobi(a, b, [0, 0, 0])
 print(calculo.valor)
 print(calculo.datos['motivo'])
+print(calculo.datos['residuo'])
+print(calculo.datos['advertencias'])
 print(len(calculo.datos['filas']))
 ```
 
@@ -40,13 +45,17 @@ Repetir con max_iteraciones=1 devuelve el primer vector e indica el límite.
 - jacobi devuelve el Calculo existente del proyecto. Su valor es el último
   vector finito. Los pasos explican el método y conservan cada iteración.
 - datos contiene metodo, matriz, vector_b, inicial, tolerancia, max_iteraciones,
-  dominantes, convergio, error, motivo, columnas y filas.
+  dominantes, convergio, error, motivo, columnas, filas, residuo y advertencias.
 - Cada fila es (k, x1, ..., xn, error máximo). Las columnas se adaptan al orden
   de A. Las entradas y los vectores de la tabla tienen copias independientes.
 - convergio solo es verdadero al cumplir la tolerancia. Al agotar el máximo
   se conserva la aproximación. Ante desbordamiento se conserva la última
   iteración finita y se explica la interrupción. error es None si ninguna
   iteración pudo completarse.
+- residuo_sistema recibe A, B y el vector aproximado validados y devuelve
+  la norma máxima de Ax−b. Devuelve None si el cálculo del residuo desborda
+  y se registra una advertencia explícita. Un error pequeño entre iteraciones
+  se interpreta junto con ese residuo al verificar la solución.
 
 La conexión visual corresponde a #16. La referencia NumPy puede incorporarse
 en la comparación de esa etapa. El orden de filas se tratará en #15.
@@ -64,7 +73,27 @@ Las pruebas incluyen solución conocida, primera iteración con X₀ no nulo,
 parada, dimensiones inválidas, diagonal nula, números no finitos,
 divergencia y conservación de entradas.
 
-Fuente del alcance y permiso de NumPy/SciPy en esta unidad
-[plan semanal 13](https://uamvirtual.uam.edu.ni/grado/mod/resource/view.php?id=1037473).
+Fuentes del alcance inicial y del enunciado definitivo
+[plan semanal 13](https://uamvirtual.uam.edu.ni/grado/mod/resource/view.php?id=1037473) y
+[Tarea 8](https://uamvirtual.uam.edu.ni/grado/mod/assign/view.php?id=1043170).
 El contrato de esta primera etapa se publica para que Roberto pueda
 reutilizarlo en Gauss-Seidel y revisar su comportamiento antes de integrarlo.
+
+## Entrega confirmada en UAM
+
+El cierre publicado es el martes 17 de noviembre de 2026 a las 09:00.
+El Programa 8 exige tres casos documentados de convergencia, reordenamiento
+y advertencia o falta de convergencia. La comparación debe informar el residuo,
+la diferencia respecto a Gauss-Jordan o numpy.linalg.solve, las iteraciones
+y las diferencias entre ambos métodos. La gráfica compara errores cuando
+ambos métodos tienen datos válidos.
+
+El ZIP debe contener el código actualizado, informe PDF y evidencias
+(tablas, gráficas y validación). El PDF incluye portada, objetivo, explicación
+breve, validaciones, comparación y capturas legibles de los tres casos.
+Nombre indicado por el enunciado
+`Programa 8_Grupo X_Apellido1_Apellido2.zip`.
+
+El apartado 2 permite NumPy, Pandas, Matplotlib y SymPy cuando sea necesario.
+Los algoritmos iterativos siguen implementados por el equipo.
+Newton-Raphson figura como contenido de estudio en la Semana 14.

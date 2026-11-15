@@ -39,6 +39,38 @@ class PruebasJacobi(unittest.TestCase):
         self.assertFalse(c.datos['convergio'])
         self.assertEqual(c.valor, [1.75, 2.625, 3])
         self.assertIn('máximo', c.datos['motivo'])
+        self.assertEqual(c.datos['residuo'], 10)
+
+    def test_residuo_verifica_la_solucion_original(self):
+        """El residuo final coincide con Ax−b calculado sobre el sistema original."""
+        c = jacobi(self.a, self.b, self.inicial)
+        esperado = max(abs(sum(v * x for v, x in zip(fila, c.valor)) - b)
+                       for fila, b in zip(self.a, self.b))
+        self.assertAlmostEqual(c.datos['residuo'], esperado)
+        self.assertLess(c.datos['residuo'], 0.0001)
+        self.assertIn('Residuo', str(c.pasos[-1].formulas))
+
+    def test_error_igual_a_tolerancia_termina(self):
+        """Acepta el caso límite de igualdad que recomienda el Programa 8."""
+        c = jacobi([[2]], [1], [0], tolerancia=0.5, max_iteraciones=1)
+        self.assertTrue(c.datos['convergio'])
+        self.assertEqual(c.datos['error'], 0.5)
+        self.assertEqual(c.datos['residuo'], 0)
+
+    def test_crecimiento_informa_sin_afirmar_divergencia_automatica(self):
+        """El aviso conserva las iteraciones aunque después se alcance la tolerancia."""
+        c = jacobi([[1, 2], [0.1, 1]], [0, 1], [0, 0], tolerancia=1e-8)
+        self.assertTrue(c.datos['convergio'])
+        self.assertTrue(c.datos['advertencias'])
+        self.assertIn('creció', c.datos['advertencias'][0])
+        self.assertIn('creció', c.pasos[-1].detalle)
+
+    def test_residuo_no_finito_se_informa_sin_perder_vector(self):
+        """Un residuo no representable no borra la última aproximación finita."""
+        c = jacobi([[1e308, 1e308], [1, 1]], [0, 0], [1.5, 1.5], max_iteraciones=1)
+        self.assertEqual(c.valor, [-1.5, -1.5])
+        self.assertIsNone(c.datos['residuo'])
+        self.assertTrue(any('residuo' in aviso for aviso in c.datos['advertencias']))
 
     def test_todas_las_componentes_usan_el_vector_anterior(self):
         """Un inicio no nulo distingue Jacobi de la actualización inmediata."""

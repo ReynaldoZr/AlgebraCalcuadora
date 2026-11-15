@@ -233,9 +233,13 @@ class PruebasAislamientoNumerico(unittest.TestCase):
         self.assertEqual(resultado.returncode, 0, resultado.stderr)
 
     def test_imports_externos_limitados_a_su_unidad(self):
-        """Los adaptadores gráficos autorizados no habilitan SymPy ni imports en álgebra exacta."""
+        """El permiso del Programa 8 sigue limitado a la unidad numérica."""
         import ast
         from herramientas.comprobar_reglas import revisar_import
         self.assertEqual(revisar_import(ast.parse('import matplotlib').body[0], False, True), [])
         self.assertTrue(revisar_import(ast.parse('import numpy').body[0], True, False))
-        self.assertTrue(revisar_import(ast.parse('import sympy').body[0], True, True))
+        for biblioteca in ('sympy', 'pandas'):
+            nodo = ast.parse('import ' + biblioteca).body[0]
+            self.assertEqual(revisar_import(nodo, True, True), [])
+            self.assertTrue(revisar_import(nodo, True, False))
+            self.assertTrue(revisar_import(nodo, False, False))
