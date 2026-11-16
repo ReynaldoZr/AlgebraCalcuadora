@@ -58,6 +58,6 @@ El recorrido breve muestra una fórmula esencial por operación y reproduce cada
 
 ## Comprobación y límites
 
-Ejecutar `python -m unittest discover -s tests -v`, `python herramientas/comprobar_reglas.py` y `git diff --check`. Las pruebas de álgebra cubren valores conocidos, fracciones, singularidad, dimensiones, conservación, parámetros y coincidencia de métodos; las de interfaz comprueban sesiones, formularios y procedimientos completos. En Linux las pruebas Tk requieren Xvfb, como indica la CI existente.
+Ejecutar `python -m unittest discover -s tests -v`, `python herramientas/comprobar_reglas.py` y `git diff --check` en Windows. Las pruebas de álgebra cubren valores conocidos, fracciones, singularidad, dimensiones, conservación, parámetros y coincidencia de métodos; las de interfaz comprueban sesiones, formularios y procedimientos completos.
 
 Cofactores y adjunta tienen crecimiento factorial: para órdenes grandes usar reducción o Gauss-Jordan. La cuadrícula sigue limitada a 10×10; los algoritmos no introducen ese límite de interfaz. El desarrollo completo puede ser extenso porque conserva todas las operaciones. No se afirma que una comprobación local equivalga a CI o revisión humana. No se cambia la versión publicada, se cierra una issue ni se publica la rama automáticamente.

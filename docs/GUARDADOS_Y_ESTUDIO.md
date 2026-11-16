@@ -29,7 +29,7 @@ Los temas de la barra lateral llevan símbolos propios (sistema A|b, vector, |A|
 
 **Historial** conserva los últimos cien cálculos válidos de todos los temas, con su procedimiento completo. No se registran pulsaciones, entradas inválidas ni cálculos fallidos. Para conservar uno sin que salga al superar el límite, selecciónalo y pulsa **Guardar del historial**. Esto crea una copia independiente con nombre, símbolo y notas propios.
 
-Los guardados y el historial sobreviven al cierre. Windows utiliza `%LOCALAPPDATA%/CuadernoAlgebra/biblioteca.json`; en Linux se usa `$XDG_DATA_HOME/CuadernoAlgebra/biblioteca.json` o `~/.local/share/CuadernoAlgebra/biblioteca.json`. Son archivos del usuario, fuera del repositorio y sin sincronización con GitHub. No se envían a ningún servicio.
+Los guardados y el historial sobreviven al cierre. En Windows se utiliza `%LOCALAPPDATA%/CuadernoAlgebra/biblioteca.json`. Son archivos del usuario, fuera del repositorio y sin sincronización con GitHub. No se envían a ningún servicio.
 
 El JSON incluye versión de formato, identificadores, fechas UTC, números como cadenas exactas y fórmulas tipadas. La lista muestra fechas en Nicaragua (UTC−6). No se utiliza pickle ni se ejecuta código del archivo. La escritura termina en un archivo temporal y después sustituye el anterior. Si falla la lectura o se detecta una versión incompatible, se preserva el original y se bloquea su sobrescritura. Un fallo del historial no invalida el cálculo: se informa en el estado. Para respaldar datos, cerrar la calculadora y copiar este archivo personal; no incluirlo en commits o ZIP académicos sin revisar su contenido.
 

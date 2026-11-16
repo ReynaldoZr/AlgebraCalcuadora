@@ -124,10 +124,10 @@ Guardar y recuperar el ejercicio debe conservar el reordenamiento elegido.
 Para una diagonal imposible, A=[[0,1],[0,2]], se explica la validación sin forzar
 un resultado. Las pruebas de desbordamiento distinguen esa parada del límite.
 
-Estas comprobaciones técnicas no reemplazan el informe del equipo: antes de
-entregar en UAM hay que preparar las capturas legibles, el PDF y el ZIP indicados
-en el apartado siguiente. No afirmar que esos entregables se generaron por
-aprobar las pruebas de código.
+Reynaldo confirmó el 15 de noviembre que el PDF y los demás materiales de la
+entrega ya están listos y autorizó cerrar el seguimiento #16. Esa confirmación
+del equipo completa el seguimiento documental; las comprobaciones técnicas
+anteriores corresponden al código y conservan su evidencia por separado.
 
 Fuentes del alcance inicial y del enunciado definitivo
 [plan semanal 13](https://uamvirtual.uam.edu.ni/grado/mod/resource/view.php?id=1037473) y

@@ -58,6 +58,8 @@ Calculadora local de Álgebra Lineal para dos estudiantes, con funciones compren
 
 ## Verificación y colaboración
 
+- Por indicación de Reynaldo del 15 de noviembre, el soporte y las comprobaciones automáticas se centran únicamente en Windows, con Python 3.11 y 3.13. No añadir trabajos de Linux ni exigirlos para integrar. Conservar el resto de protecciones y exigir ambas comprobaciones de Windows en el último commit. Las menciones históricas de otras plataformas no son requisitos actuales.
+
 - El 15 de noviembre Reynaldo aprobó la nueva paleta propuesta por Roberto en el PR #20: verde salvia/crema en claro y azul profundo en oscuro. Esta autorización sustituye únicamente la restricción anterior de colores azul/lavanda; conservar las tarjetas, navegación y demás reglas de diseño. La autorización de corregir e integrar este PR es puntual y no elimina la revisión humana para trabajos posteriores.
 
 - Última indicación del usuario (4 de noviembre de 2026): no volver a usar Computer Use («ChatGPT is using your computer»), ayuda visual, capturas ni control de pantalla hasta que él indique que es necesario. La autorización anterior para abrir desde IntelliJ ya no habilita nuevas acciones visuales. Continuar con revisión y pruebas del código.

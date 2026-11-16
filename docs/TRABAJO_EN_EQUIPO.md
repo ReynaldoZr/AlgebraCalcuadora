@@ -28,15 +28,15 @@ Para dos personas no hace falta añadir una rama develop permanente. main repres
 
 ## Configuración y estado
 
-- Repositorio público elegido por el usuario: ReynaldoZr/AlgebraCalcuadora. El segundo integrante todavía debe confirmarse.
+- Repositorio público elegido por el usuario: ReynaldoZr/AlgebraCalcuadora. Integrantes confirmados: Reynaldo (@ReynaldoZr) y Roberto (@roberto7503).
 - Plantillas de función, error y PR incluidas en .github/.
-- main protegida: exige PR, rama actualizada, las cuatro comprobaciones de CI y conversaciones resueltas. Las reglas se aplican también al administrador; no se permiten force-push ni borrado de main.
-- La aprobación formal obligatoria está en 0 hasta confirmar e incorporar la cuenta del segundo integrante. La revisión humana de Reynaldo u otro humano autorizado sigue siendo obligatoria en el flujo de trabajo. Al incorporar otra cuenta se podrá exigir su aprobación formal; el autor no puede aprobar su propio PR.
-- CI incluida para pruebas y reglas de imports/docstrings en Windows y Linux. Consultar el resultado real de cada ejecución en GitHub.
+- main protegida: exige PR, rama actualizada, las dos comprobaciones de Windows y conversaciones resueltas. Las reglas se aplican también al administrador; no se permiten force-push ni borrado de main.
+- La aprobación formal obligatoria está configurada en 0. La revisión humana de Reynaldo u otro humano autorizado sigue siendo obligatoria en el flujo de trabajo; el autor no puede aprobar su propio PR. Cambiar la configuración de aprobaciones requiere una decisión específica del equipo.
+- CI incluida para pruebas y reglas de imports/docstrings en Windows con Python 3.11 y 3.13. Consultar el resultado real de cada ejecución en GitHub.
 - No subir credenciales, sesiones, copias de Moodle, entornos virtuales ni datos académicos personales. El repositorio contiene código propio, guías y referencias a las fuentes.
 - Elegir una versión de Python y usarla en ambos equipos y en las comprobaciones.
 
-El repositorio ya existe. Las plantillas y el flujo de comprobaciones acompañan la primera implementación. La protección de main está configurada con los controles anteriores. Falta confirmar e incorporar al segundo integrante para exigir su aprobación formal.
+El repositorio, las plantillas y el flujo de comprobaciones están disponibles para ambos integrantes. La protección de main conserva los controles anteriores; las excepciones puntuales autorizadas no cambian el flujo de trabajos posteriores.
 
 ## Automatización que conviene añadir
 
