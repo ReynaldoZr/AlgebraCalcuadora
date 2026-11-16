@@ -70,7 +70,7 @@ class Sesion:
             self.parametros['escalar'] = escalar
             return
         self.parametros.update(parametros_defecto(self.clave))
-        if self.clave == 'num_jacobi':
+        if self.clave in ('num_jacobi', 'num_gauss_seidel', 'num_comparar_iterativos'):
             a, ajustes = ejemplo_jacobi(caso)
             self.entradas['A'] = [[str(v) for v in f] for f in a]
             self.parametros.update(ajustes)

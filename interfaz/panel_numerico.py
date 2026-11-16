@@ -80,8 +80,8 @@ class PanelNumerico(ttk.Frame):
             columna = 0 if nombre in ('funcion', 'a', 'b', 'verdadero', 'aproximado', 'x', 'delta', 'capital', 'tasa', 'numero') else 1
             marco = ttk.Frame(self.grupos[columna], style='Interior.TFrame')
             ttk.Label(marco, text=etiqueta, style='Tarjeta.TLabel').pack(anchor='w')
-            if nombre in ('criterio', 'base'):
-                valores = ('intervalo', 'porcentual') if nombre == 'criterio' else ('2', '10')
+            if nombre in ('criterio', 'base', 'reordenar'):
+                valores = ('intervalo', 'porcentual') if nombre == 'criterio' else ('2', '10') if nombre == 'base' else ('si', 'no')
                 ttk.Combobox(marco, textvariable=self.parametros[nombre], values=valores, state='readonly', width=16).pack(fill='x', pady=(2, 0))
             else:
                 entrada = ttk.Entry(marco, textvariable=self.parametros[nombre], width=18)
@@ -168,6 +168,8 @@ class PanelNumerico(ttk.Frame):
                 self.teclado.pack(fill='x', pady=(6, 2))
         ayudas = {
             'num_jacobi': 'Cada componente usa el vector anterior. Escribe b y X₀ separados por comas. El residuo comprueba el sistema original.',
+            'num_gauss_seidel': 'Usa de inmediato los valores recién calculados. Puede reordenar ecuaciones y usar relajación 0 < λ < 2.',
+            'num_comparar_iterativos': 'Ejecuta Jacobi y Gauss-Seidel con los mismos datos, conserva ambas tablas y compara sus curvas de error.',
             'num_biseccion': 'Intervalo: tolerancia en x.\nPorcentual: error relativo (%).\nResiduo: tolerancia independiente.',
             'num_errores': 'Comparamos el valor aproximado con el verdadero. Si el verdadero es cero, el error relativo y porcentual no están definidos.',
             'num_propagacion': 'Deja el paso vacío para elegirlo automáticamente. La estimación usa la derivada cerca del punto x.',
@@ -268,7 +270,7 @@ class PanelNumerico(ttk.Frame):
             raise ValueError('El caso no corresponde al método seleccionado.')
         datos = parametros_defecto(self.clave)
         with self._edicion():
-            if self.clave == 'num_jacobi':
+            if self.clave in ('num_jacobi', 'num_gauss_seidel', 'num_comparar_iterativos'):
                 matriz, ajustes = ejemplo_jacobi(caso)
                 self.editores['A'].cargar(matriz)
                 datos.update(ajustes)
@@ -377,7 +379,7 @@ class PanelNumerico(ttk.Frame):
             boton.configure(state='normal' if self.vigente else 'disabled')
         self.reproducir.configure(text='Ⅱ Pausar' if self.reproductor.activo else '▶ Reproducir')
         self.deshacer_boton.configure(state='normal' if self.historial else 'disabled')
-        graficable = self.clave in ('num_biseccion', 'num_propagacion', 'num_simulacion', 'num_inversa', 'num_sistema', 'num_jacobi')
+        graficable = self.clave in ('num_biseccion', 'num_propagacion', 'num_simulacion', 'num_inversa', 'num_sistema', 'num_jacobi', 'num_gauss_seidel', 'num_comparar_iterativos')
         self.grafica.configure(state='normal' if self.vigente and graficable else 'disabled')
 
     def alternar_recorrido(self):

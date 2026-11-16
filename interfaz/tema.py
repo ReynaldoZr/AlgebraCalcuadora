@@ -6,14 +6,14 @@ Elaboración: equipo del proyecto, con apoyo de IA.
 
 from tkinter import ttk
 
-OSCURO = dict(fondo="#10243e", tarjeta="#1a3350", entrada="#142b46",
-              texto="#edf2fa", secundario="#b3c2d6", borde="#52708e",
-              acento="#a5a6ff", sobre_acento="#10243e", activo="#bbbcff",
-              error="#ffabb5", a="#70b7ff", b="#b79aff")
-CLARO = dict(fondo="#eef2fa", tarjeta="#ffffff", entrada="#f4f6fc",
-             texto="#10243e", secundario="#526580", borde="#9aaec5",
-             acento="#6261b8", sobre_acento="#ffffff", activo="#7776ca",
-             error="#a8243c", a="#2469a3", b="#704baa")
+OSCURO = dict(fondo="#001233", tarjeta="#001845", entrada="#002855",
+              texto="#e8ecf4", secundario="#979dac", borde="#33415c",
+              acento="#0466c8", sobre_acento="#ffffff", activo="#0353a4",
+              error="#ffabb5", a="#70b7ff", b="#979dac")
+CLARO = dict(fondo="#dad7cd", tarjeta="#eae8e1", entrada="#f5f4f0",
+             texto="#344e41", secundario="#3a5a40", borde="#a3b18a",
+             acento="#588157", sobre_acento="#f5f4f0", activo="#3a5a40",
+             error="#a8243c", a="#3a5a40", b="#588157")
 
 
 class Tema:

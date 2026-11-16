@@ -74,3 +74,21 @@ y recomienda parada por diferencia máxima menor o igual que la tolerancia.
 Se adopta ese criterio inclusivo para Jacobi y el contrato de Gauss-Seidel.
 Se actualizan el verificador, las pruebas y la guía del módulo para reflejar
 el nuevo ámbito. El permiso no se extiende al álgebra exacta de tareas anteriores.
+
+## 2026-11-15 · Revisión de Gauss-Seidel y comparación, PR #20
+
+Reynaldo autorizó corregir los problemas detectados en el PR de Roberto y
+después integrarlo cuando pasaran las comprobaciones. También aprobó su paleta
+verde salvia/crema en claro y azul profundo en oscuro, conservando la estructura
+de la interfaz. Esta excepción de integración corresponde únicamente al PR #20.
+
+El reordenamiento original tardó unos 63 segundos en una matriz densa 9×9 sin
+dominancia. Se usa la asignación por caminos aumentantes para todos los tamaños,
+priorizando dominancia y evitando enumerar permutaciones. No se promete hallar
+la mejor dominancia parcial. Se conserva A y b para validar el resultado.
+
+La opción de reordenar también se ofrece en Jacobi. Los resúmenes del comparador
+muestran la causa de parada individual, incluida la interrupción por valores no
+finitos. Con relajación distinta de 1 se advierte que dominancia y `0 < λ < 2`
+no garantizan convergencia para cualquier matriz. La comparación habitual usa
+λ=1 y conserva el criterio de error del enunciado definitivo.

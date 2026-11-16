@@ -17,23 +17,47 @@ from modulos.validaciones import validar_cuadrada, validar_vector
 
 
 def verificar_iterativo(calculo):
-    """Contrasta una aproximación iterativa con NumPy sin sustituir su algoritmo."""
+    """Contrasta una o dos aproximaciones iterativas con NumPy sin sustituir su algoritmo."""
     datos = dict(calculo.datos)
+    es_comparacion = 'valor_jacobi' in datos and 'valor_gauss_seidel' in datos
     try:
         referencia = np.linalg.solve(np.array(datos['matriz']), np.array(datos['vector_b']))
         if not np.isfinite(referencia).all():
             raise ValueError('La solución de referencia no es finita.')
-        diferencia = max(abs(v - float(r)) for v, r in zip(calculo.valor, referencia))
-        datos.update(referencia=referencia.tolist(),
-                     diferencia_referencia=diferencia if np.isfinite(diferencia) else None)
+        ref_lista = referencia.tolist()
+        if es_comparacion:
+            dif_j = max(abs(v - float(r)) for v, r in zip(datos['valor_jacobi'], referencia))
+            dif_gs = max(abs(v - float(r)) for v, r in zip(datos['valor_gauss_seidel'], referencia))
+            datos.update(
+                referencia=ref_lista,
+                diferencia_referencia=dif_gs if np.isfinite(dif_gs) else None,
+                diferencia_referencia_jacobi=dif_j if np.isfinite(dif_j) else None,
+                diferencia_referencia_gauss_seidel=dif_gs if np.isfinite(dif_gs) else None,
+            )
+            formulas = (
+                (f'Referencia={ref_lista}',
+                 f'Dif. Jacobi={formato(datos["diferencia_referencia_jacobi"])}',
+                 f'Dif. Gauss-Seidel={formato(datos["diferencia_referencia_gauss_seidel"])}'),
+                (f'Residuo Jacobi={formato(datos["jacobi"]["residuo"])}',
+                 f'Residuo Gauss-Seidel={formato(datos["gauss_seidel"]["residuo"])}'),
+            )
+        else:
+            diferencia = max(abs(v - float(r)) for v, r in zip(calculo.valor, referencia))
+            datos.update(referencia=ref_lista,
+                         diferencia_referencia=diferencia if np.isfinite(diferencia) else None)
+            formulas = ((f'Referencia={datos["referencia"]}',
+                         f'Diferencia máxima={formato(datos["diferencia_referencia"])}',
+                         f'Residuo={formato(datos["residuo"])}'),)
         detalle = 'Comparamos el vector calculado con una solución independiente de NumPy.'
     except (np.linalg.LinAlgError, ValueError) as error:
         datos.update(referencia=None, diferencia_referencia=None, error_referencia=str(error))
+        if es_comparacion:
+            datos.update(diferencia_referencia_jacobi=None, diferencia_referencia_gauss_seidel=None)
         detalle = 'No se pudo obtener la referencia. ' + str(error)
-    paso = Paso('Verificación del sistema', detalle,
-                formulas=((f'Referencia={datos["referencia"]}',
-                           f'Diferencia máxima={formato(datos["diferencia_referencia"])}',
-                           f'Residuo={formato(datos["residuo"])}'),))
+        formulas = ((f'Referencia={datos["referencia"]}',
+                     f'Diferencia máxima={formato(datos["diferencia_referencia"])}',
+                     f'Residuo={formato(datos["residuo"])}'),)
+    paso = Paso('Verificación del sistema', detalle, formulas=formulas)
     return Calculo(calculo.valor, calculo.pasos + (paso,), datos)
 
 

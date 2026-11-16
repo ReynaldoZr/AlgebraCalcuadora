@@ -37,6 +37,8 @@ TEMAS = (
 )
 AYUDA_NUMERICA = {
     'num_jacobi': 'Cada componente usa el vector anterior. Escribe b y X₀ separados por comas y decimales con punto. El residuo comprueba el sistema original.',
+    'num_gauss_seidel': 'Usa de inmediato los valores recién calculados. Admite reordenar ecuaciones y factor de relajación 0 < λ < 2. El residuo comprueba el sistema original.',
+    'num_comparar_iterativos': 'Ejecuta Jacobi y Gauss-Seidel con los mismos datos, conserva ambas tablas completas y grafica sus curvas de error.',
     'num_biseccion': 'Intervalo: tolerancia en x. Porcentual: error relativo (%). El residuo controla |f(x)|. La función debe ser continua.',
     'num_errores': 'Se compara el valor aproximado con el verdadero. Con referencia cero, el relativo y el porcentual no están definidos.',
     'num_propagacion': 'Δx es la incertidumbre de entrada. Deja el paso vacío para elegirlo automáticamente.',

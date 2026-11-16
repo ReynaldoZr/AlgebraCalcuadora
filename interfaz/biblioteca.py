@@ -24,6 +24,8 @@ ETIQUETAS = {
     'num_bases': ('Representación numérica', 'base'), 'num_inversa': ('Inversa exacta y aproximada', '≈A⁻¹'),
     'num_sistema': ('Sistema exacto y aproximado', '≈x'),
     'num_jacobi': ('Jacobi', 'J'),
+    'num_gauss_seidel': ('Gauss-Seidel', 'GS'),
+    'num_comparar_iterativos': ('Jacobi vs Gauss-Seidel', 'J/GS'),
     'sumar': ('Suma', '+'), 'restar': ('Resta', '−'), 'escalar': ('Escalar', 'kA'),
     'transponer': ('Transpuesta', 'Aᵀ'), 'multiplicar': ('Producto', 'AB'),
     'gauss': ('Gauss', 'REF'), 'jordan': ('Gauss-Jordan', 'RREF'),
