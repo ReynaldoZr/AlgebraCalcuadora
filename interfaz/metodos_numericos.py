@@ -29,6 +29,8 @@ CAMPOS = {
     'vector_b': ('Vector b · valores separados por comas', '7, -21, 15'),
     'inicial': ('Vector inicial X₀ · separado por comas', '0, 0, 0'),
     'epsilon': ('Tolerancia ε · decimal', '0.0001'),
+    'relajacion': ('Relajación λ (0 < λ < 2)', '1'),
+    'reordenar': ('Reordenar ecuaciones', 'si'),
 }
 METODOS_NUMERICOS = {
     'num_biseccion': MetodoNumerico('Bisección y contraste con SciPy', ('funcion', 'a', 'b'), ('criterio', 'tolerancia', 'tolerancia_f', 'maximo')),
@@ -41,6 +43,8 @@ METODOS_NUMERICOS = {
     'num_inversa': MetodoNumerico('Inversa: Fraction, float propio y NumPy', (), (), ('A',)),
     'num_sistema': MetodoNumerico('Sistema: Fraction, float propio y NumPy', (), (), ('A', 'b')),
     'num_jacobi': MetodoNumerico('Jacobi · sistemas iterativos', (), ('vector_b', 'inicial', 'epsilon', 'maximo'), ('A',)),
+    'num_gauss_seidel': MetodoNumerico('Gauss-Seidel · sistemas iterativos', (), ('vector_b', 'inicial', 'epsilon', 'maximo', 'relajacion', 'reordenar'), ('A',)),
+    'num_comparar_iterativos': MetodoNumerico('Comparar Jacobi y Gauss-Seidel', (), ('vector_b', 'inicial', 'epsilon', 'maximo', 'reordenar'), ('A',)),
 }
 
 
@@ -82,11 +86,23 @@ def leer_vector_numerico(texto, nombre):
 
 def ejemplo_jacobi(caso):
     """Devuelve A y parámetros del caso de práctica solicitado explícitamente."""
+    if caso == 'Reordenar 2×2':
+        return [[1, 5], [7, 1]], dict(vector_b='11, 15', inicial='0, 0', maximo='200', reordenar='si')
     if caso == 'Sin convergencia':
-        return [[1, 5], [7, 1]], dict(vector_b='11, 15', inicial='0, 0', maximo='20')
+        return [[1, 5], [7, 1]], dict(vector_b='11, 15', inicial='0, 0', maximo='20', reordenar='no')
     if caso == 'Diagonal con cero':
-        return [[0, 2], [3, 1]], dict(vector_b='4, 5', inicial='0, 0', maximo='200')
-    return [[4, -1, 1], [4, -8, 1], [-2, 1, 5]], dict(vector_b='7, -21, 15', inicial='0, 0, 0', maximo='200')
+        return [[0, 2], [3, 1]], dict(vector_b='4, 5', inicial='0, 0', maximo='200', reordenar='si')
+    return [[4, -1, 1], [4, -8, 1], [-2, 1, 5]], dict(vector_b='7, -21, 15', inicial='0, 0, 0', maximo='200', reordenar='si')
+
+
+def _opcion_reordenar(valor):
+    """Interpreta la opción textual de reordenamiento para consola y formularios."""
+    texto = str(valor).strip().lower()
+    if texto in ('si', 'sí', 'true', '1'):
+        return True
+    if texto in ('no', 'false', '0'):
+        return False
+    raise ValueError('Reordenar ecuaciones debe ser "si" o "no".')
 
 
 def ejecutar_numerico(clave, parametros, matrices=None):
@@ -94,12 +110,24 @@ def ejecutar_numerico(clave, parametros, matrices=None):
     from modulos.numericos.errores import calcular_errores, descomponer, inestabilidad, propagacion, punto_flotante, simulacion
     matrices = matrices or {}
     p = parametros
-    if clave == 'num_jacobi':
-        from modulos.numericos.iterativos import jacobi
+    if clave in ('num_jacobi', 'num_gauss_seidel', 'num_comparar_iterativos'):
+        from modulos.numericos.iterativos import comparar_iterativos, gauss_seidel, jacobi
         from modulos.numericos.comparadores import verificar_iterativo
-        calculo = jacobi(matrices['A'], leer_vector_numerico(p['vector_b'], 'b'),
-                         leer_vector_numerico(p['inicial'], 'X₀'), p['epsilon'],
-                         entero(p['maximo'], 'Máximo'))
+        b_vec = leer_vector_numerico(p['vector_b'], 'b')
+        x0_vec = leer_vector_numerico(p['inicial'], 'X₀')
+        maximo = entero(p['maximo'], 'Máximo')
+        reordenar = _opcion_reordenar(p.get('reordenar', 'si'))
+        if clave == 'num_jacobi':
+            calculo = jacobi(matrices['A'], b_vec, x0_vec, p['epsilon'], maximo)
+        elif clave == 'num_gauss_seidel':
+            calculo = gauss_seidel(
+                matrices['A'], b_vec, x0_vec, p['epsilon'], maximo,
+                reordenar=reordenar, relajacion=p.get('relajacion', '1') or '1',
+            )
+        else:
+            calculo = comparar_iterativos(
+                matrices['A'], b_vec, x0_vec, p['epsilon'], maximo, reordenar=reordenar,
+            )
         return verificar_iterativo(calculo)
     if clave == 'num_biseccion':
         from modulos.numericos.biseccion import biseccion
@@ -131,15 +159,30 @@ def resumen_numerico(clave, calculo):
     """Explica los resultados y límites de precisión con nombres de sus magnitudes."""
     from modulos.numericos.funciones import formato
     d = calculo.datos
-    if clave == 'num_jacobi':
+    if clave in ('num_jacobi', 'num_gauss_seidel'):
         vector = ', '.join(formato(v) for v in calculo.valor)
         referencia = ', '.join(formato(v) for v in d['referencia']) if d['referencia'] is not None else d['error_referencia']
-        return (f'Jacobi · X ≈ ({vector})\n{d["motivo"]}\n'
+        orden_txt = f'Reordenadas ({list(d["orden_ecuaciones"])})' if d.get('reordenado') else 'Original'
+        return (f'{d["metodo"]} · X ≈ ({vector})\n{d["motivo"]}\n'
                 f'Iteraciones: {len(d["filas"])} · Error máximo: {formato(d["error"])}\n'
                 f'Residuo ‖Ax − b‖∞: {formato(d["residuo"])}\n'
-                f'Diagonal dominante: {"Sí" if all(d["dominantes"]) else "Sin garantía"}\n'
+                f'Orden de ecuaciones: {orden_txt} · Diagonal dominante: {"Sí" if all(d["dominantes"]) else "Sin garantía"}\n'
                 f'Referencia NumPy: {referencia}\nDiferencia máxima: {formato(d["diferencia_referencia"])}\n'
                 + '\n'.join(d['advertencias']))
+    if clave == 'num_comparar_iterativos':
+        dj, dgs = d['jacobi'], d['gauss_seidel']
+        vec_j = ', '.join(formato(v) for v in d['valor_jacobi'])
+        vec_gs = ', '.join(formato(v) for v in d['valor_gauss_seidel'])
+        referencia = ', '.join(formato(v) for v in d['referencia']) if d['referencia'] is not None else d['error_referencia']
+        orden_txt = f'Reordenadas ({list(d["orden_ecuaciones"])})' if d.get('reordenado') else 'Original'
+        avisos = dj['advertencias'] + dgs['advertencias']
+        return (f'{d["comparacion_iteraciones"]}\n'
+                f'Orden de ecuaciones: {orden_txt} · Diagonal dominante: {"Sí" if all(d["dominantes"]) else "Sin garantía"}\n'
+                f'Jacobi ({len(dj["filas"])} it., {"convergió" if dj["convergio"] else "sin converger"}): X ≈ ({vec_j}) · Error: {formato(dj["error"])} · Residuo: {formato(dj["residuo"])}\n'
+                f'Gauss-Seidel ({len(dgs["filas"])} it., {"convergió" if dgs["convergio"] else "sin converger"}): X ≈ ({vec_gs}) · Error: {formato(dgs["error"])} · Residuo: {formato(dgs["residuo"])}\n'
+                f'Diferencia entre métodos: {formato(d["diferencia_metodos"])}\n'
+                f'Referencia NumPy: {referencia} · Dif. Jacobi: {formato(d["diferencia_referencia_jacobi"])} · Dif. Gauss-Seidel: {formato(d["diferencia_referencia_gauss_seidel"])}\n'
+                + '\n'.join(dict.fromkeys(avisos)))
     if clave == 'num_biseccion':
         raices = d.get('raices_extremos', ())
         titulo = (f'Raíces en los extremos: {", ".join(formato(x) for x in raices)}\n'
@@ -168,5 +211,7 @@ def casos_numericos(clave):
     """Devuelve casos pequeños para practicar criterios y fallos de precondiciones."""
     return {'num_biseccion': ('Ejemplo del profesor', 'cos(x)-x', 'Sin cambio de signo', 'Raíz en extremo'),
             'num_jacobi': ('Diagonal dominante', 'Sin convergencia', 'Diagonal con cero'),
+            'num_gauss_seidel': ('Diagonal dominante', 'Reordenar 2×2', 'Diagonal con cero', 'Sin convergencia'),
+            'num_comparar_iterativos': ('Diagonal dominante', 'Reordenar 2×2', 'Diagonal con cero', 'Sin convergencia'),
             'num_inversa': ('Hilbert 5×5', 'Invertible 2×2', 'Singular'),
             'num_sistema': ('Hilbert 5×5', 'Solución conocida', 'Singular')}.get(clave, ('Ejemplo del profesor',))

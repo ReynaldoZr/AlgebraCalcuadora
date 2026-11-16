@@ -70,10 +70,7 @@ Jacobi se conserva con la explicación correspondiente. «Todos los pasos» y
 «Mostrar tabla» contienen todas las iteraciones. «Ver gráfica» muestra el error
 de Jacobi. Guardar un ejercicio conserva A, b, X₀ y parámetros.
 
-Los casos disponibles son dominancia diagonal, falta de convergencia y diagonal
-con cero. El último explica que hace falta reordenar. La comparación con
-Gauss-Seidel y el reordenamiento requieren el algoritmo de Roberto en #15.
-La issue #16 queda parcialmente implementada hasta disponer de ese método.
+Los casos disponibles son «Diagonal dominante», «Reordenar 2×2», «Diagonal con cero» y «Sin convergencia». En «Gauss-Seidel · sistemas iterativos» y «Comparar Jacobi y Gauss-Seidel» se admite reordenar ecuaciones (aplicando la misma permutación a A y b y verificando el residuo sobre el sistema original), factor de relajación `0 < λ < 2`, tablas completas de ambos métodos sin rellenar ni recortar y gráfica comparativa de error.
 
 ## Verificación
 

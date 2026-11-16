@@ -13,14 +13,30 @@ def figura_numerica(clave, calculo):
     """Construye una figura exportable sin abrir ventanas ni usar pyplot global."""
     figura = Figure(figsize=(9, 6), dpi=100, layout='constrained')
     d = calculo.datos
-    if clave == 'num_jacobi':
+    if clave in ('num_jacobi', 'num_gauss_seidel'):
         eje = figura.add_subplot(111)
+        etiqueta = d.get('metodo', 'Iterativo')
         eje.plot([f[0] for f in d['filas']], [f[-1] for f in d['filas']],
-                 marker='.', color='#a5a6ff', label='Jacobi')
+                 marker='.', color='#a5a6ff', label=etiqueta)
         eje.set(xlabel='Iteración', ylabel='Diferencia máxima',
-                title='Evolución del error · Jacobi')
+                title=f'Evolución del error · {etiqueta}')
         eje.grid(alpha=0.3)
         eje.legend()
+    elif clave == 'num_comparar_iterativos':
+        eje = figura.add_subplot(111)
+        filas_j = d['jacobi']['filas']
+        filas_gs = d['gauss_seidel']['filas']
+        if filas_j:
+            eje.plot([f[0] for f in filas_j], [f[-1] for f in filas_j],
+                     marker='.', color='#a5a6ff', label='Jacobi')
+        if filas_gs:
+            eje.plot([f[0] for f in filas_gs], [f[-1] for f in filas_gs],
+                     marker='o', markersize=4, color='#38bdf8', label='Gauss-Seidel')
+        eje.set(xlabel='Iteración', ylabel='Diferencia máxima',
+                title='Comparación de error · Jacobi vs Gauss-Seidel')
+        eje.grid(alpha=0.3)
+        if filas_j or filas_gs:
+            eje.legend()
     elif clave in ('num_biseccion', 'num_propagacion'):
         funcion = crear_funcion(d['funcion'])
         a, b = d['intervalo'] if clave == 'num_biseccion' else (d['x'] - max(d['delta'] * 2, 0.1), d['x'] + max(d['delta'] * 2, 0.1))

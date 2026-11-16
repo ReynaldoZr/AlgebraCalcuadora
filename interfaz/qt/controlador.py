@@ -108,7 +108,7 @@ class Controlador(QObject):
         for columna in (0, 1):
             lista = []
             for nombre in campos_de(self.clave, columna):
-                opciones = ['intervalo', 'porcentual'] if nombre == 'criterio' else ['2', '10'] if nombre == 'base' else []
+                opciones = ['intervalo', 'porcentual'] if nombre == 'criterio' else ['2', '10'] if nombre == 'base' else ['si', 'no'] if nombre == 'reordenar' else []
                 lista.append(dict(clave=nombre, etiqueta='Escalar k' if nombre == 'escalar' else CAMPOS[nombre][0],
                                   valor=s.parametros[nombre], opciones=opciones))
             campos.append(lista)
@@ -137,7 +137,7 @@ class Controlador(QObject):
                     matriz=s.vigente and s.presentacion is not None and s.presentacion.matriz is not None,
                     destinos=list(s.entradas),
                     destinosValores=self._destinos_valores(),
-                    graficable=s.vigente and self.clave in ('num_biseccion', 'num_propagacion', 'num_simulacion', 'num_inversa', 'num_sistema', 'num_jacobi'))
+                    graficable=s.vigente and self.clave in ('num_biseccion', 'num_propagacion', 'num_simulacion', 'num_inversa', 'num_sistema', 'num_jacobi', 'num_gauss_seidel', 'num_comparar_iterativos'))
 
     @Property('QVariantList', notify=bibliotecaCambiada)
     def guardados(self):

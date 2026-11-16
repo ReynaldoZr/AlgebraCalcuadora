@@ -2,6 +2,8 @@
 
 ## Sin publicar
 
+- Issues #15 y #16. Se implementa `gauss_seidel` (con soporte opcional de relajación `0 < λ < 2`), `reordenar_ecuaciones` (conservando A y B originales para el residuo y la referencia) y `comparar_iterativos` en `modulos/numericos/iterativos.py`. Se integran Gauss-Seidel y el comparador Jacobi vs Gauss-Seidel en consola, Qt y Tk con tablas completas sin truncar ni rellenar, gráfica comparativa de error, referencia NumPy y guardado en Biblioteca.
+
 - Avance local de #16. Jacobi se conecta a consola, Qt y Tk con datos vacíos al abrir, ejemplos explícitos, tabla completa, residuo, contraste NumPy, gráfica de error y biblioteca. La comparación con Gauss-Seidel depende de #15. Se corrige la serialización de los datos aproximados en los pasos de Jacobi para poder guardar el ejercicio.
 
 - Issue #13. Bisección conserva las raíces de ambos extremos en el resumen, los pasos y la gráfica. La referencia SciPy se obtiene al calcular. Los casos sin iteraciones usan una gráfica de función completa. Se identifica el valor principal que guarda el atajo de resultado.
