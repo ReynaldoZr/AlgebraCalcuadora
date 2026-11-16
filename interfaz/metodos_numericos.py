@@ -42,7 +42,7 @@ METODOS_NUMERICOS = {
     'num_bases': MetodoNumerico('Representación en base 2 y base 10', ('numero',), ('base', 'cifras')),
     'num_inversa': MetodoNumerico('Inversa: Fraction, float propio y NumPy', (), (), ('A',)),
     'num_sistema': MetodoNumerico('Sistema: Fraction, float propio y NumPy', (), (), ('A', 'b')),
-    'num_jacobi': MetodoNumerico('Jacobi · sistemas iterativos', (), ('vector_b', 'inicial', 'epsilon', 'maximo'), ('A',)),
+    'num_jacobi': MetodoNumerico('Jacobi · sistemas iterativos', (), ('vector_b', 'inicial', 'epsilon', 'maximo', 'reordenar'), ('A',)),
     'num_gauss_seidel': MetodoNumerico('Gauss-Seidel · sistemas iterativos', (), ('vector_b', 'inicial', 'epsilon', 'maximo', 'relajacion', 'reordenar'), ('A',)),
     'num_comparar_iterativos': MetodoNumerico('Comparar Jacobi y Gauss-Seidel', (), ('vector_b', 'inicial', 'epsilon', 'maximo', 'reordenar'), ('A',)),
 }
@@ -51,6 +51,8 @@ METODOS_NUMERICOS = {
 def parametros_defecto(clave):
     """Devuelve una copia de valores iniciales pertinente a cada método."""
     datos = {k: v[1] for k, v in CAMPOS.items()}
+    if clave == 'num_jacobi':
+        datos['reordenar'] = 'no'
     if clave == 'num_propagacion':
         datos['funcion'] = 'x^3'
     if clave == 'num_inestabilidad':
@@ -118,7 +120,8 @@ def ejecutar_numerico(clave, parametros, matrices=None):
         maximo = entero(p['maximo'], 'Máximo')
         reordenar = _opcion_reordenar(p.get('reordenar', 'si'))
         if clave == 'num_jacobi':
-            calculo = jacobi(matrices['A'], b_vec, x0_vec, p['epsilon'], maximo)
+            calculo = jacobi(matrices['A'], b_vec, x0_vec, p['epsilon'], maximo,
+                             reordenar=reordenar)
         elif clave == 'num_gauss_seidel':
             calculo = gauss_seidel(
                 matrices['A'], b_vec, x0_vec, p['epsilon'], maximo,
@@ -163,7 +166,13 @@ def resumen_numerico(clave, calculo):
         vector = ', '.join(formato(v) for v in calculo.valor)
         referencia = ', '.join(formato(v) for v in d['referencia']) if d['referencia'] is not None else d['error_referencia']
         orden_txt = f'Reordenadas ({list(d["orden_ecuaciones"])})' if d.get('reordenado') else 'Original'
+        relajacion_txt = ''
+        if clave == 'num_gauss_seidel':
+            relajacion_txt = f'Relajación λ: {formato(d["relajacion"])}'
+            relajacion_txt += (' · Gauss-Seidel sin relajación.\n' if d['relajacion'] == 1 else
+                              ' · No garantiza convergencia para cualquier λ; revisar el residuo.\n')
         return (f'{d["metodo"]} · X ≈ ({vector})\n{d["motivo"]}\n'
+                f'{relajacion_txt}'
                 f'Iteraciones: {len(d["filas"])} · Error máximo: {formato(d["error"])}\n'
                 f'Residuo ‖Ax − b‖∞: {formato(d["residuo"])}\n'
                 f'Orden de ecuaciones: {orden_txt} · Diagonal dominante: {"Sí" if all(d["dominantes"]) else "Sin garantía"}\n'
@@ -179,7 +188,9 @@ def resumen_numerico(clave, calculo):
         return (f'{d["comparacion_iteraciones"]}\n'
                 f'Orden de ecuaciones: {orden_txt} · Diagonal dominante: {"Sí" if all(d["dominantes"]) else "Sin garantía"}\n'
                 f'Jacobi ({len(dj["filas"])} it., {"convergió" if dj["convergio"] else "sin converger"}): X ≈ ({vec_j}) · Error: {formato(dj["error"])} · Residuo: {formato(dj["residuo"])}\n'
+                f'Parada Jacobi: {dj["motivo"]}\n'
                 f'Gauss-Seidel ({len(dgs["filas"])} it., {"convergió" if dgs["convergio"] else "sin converger"}): X ≈ ({vec_gs}) · Error: {formato(dgs["error"])} · Residuo: {formato(dgs["residuo"])}\n'
+                f'Parada Gauss-Seidel: {dgs["motivo"]}\n'
                 f'Diferencia entre métodos: {formato(d["diferencia_metodos"])}\n'
                 f'Referencia NumPy: {referencia} · Dif. Jacobi: {formato(d["diferencia_referencia_jacobi"])} · Dif. Gauss-Seidel: {formato(d["diferencia_referencia_gauss_seidel"])}\n'
                 + '\n'.join(dict.fromkeys(avisos)))
@@ -210,7 +221,7 @@ def resumen_numerico(clave, calculo):
 def casos_numericos(clave):
     """Devuelve casos pequeños para practicar criterios y fallos de precondiciones."""
     return {'num_biseccion': ('Ejemplo del profesor', 'cos(x)-x', 'Sin cambio de signo', 'Raíz en extremo'),
-            'num_jacobi': ('Diagonal dominante', 'Sin convergencia', 'Diagonal con cero'),
+            'num_jacobi': ('Diagonal dominante', 'Reordenar 2×2', 'Sin convergencia', 'Diagonal con cero'),
             'num_gauss_seidel': ('Diagonal dominante', 'Reordenar 2×2', 'Diagonal con cero', 'Sin convergencia'),
             'num_comparar_iterativos': ('Diagonal dominante', 'Reordenar 2×2', 'Diagonal con cero', 'Sin convergencia'),
             'num_inversa': ('Hilbert 5×5', 'Invertible 2×2', 'Singular'),

@@ -10,7 +10,8 @@ El error es la mayor diferencia absoluta entre componentes consecutivas.
 Se detiene cuando ese error es menor o igual que la tolerancia.
 La dominancia diagonal estricta es una condición suficiente de convergencia.
 Cuando falta, el cálculo sigue con una advertencia y su límite de iteraciones.
-Una diagonal nula se rechaza explicando que se necesita reordenar ecuaciones.
+Una diagonal nula exige reordenar ecuaciones antes de iterar. Si la persona
+desactiva el reordenamiento, se explica esa condición sin dividir por cero.
 Si el error crece entre dos iteraciones, se registra una advertencia sin concluir
 automáticamente divergencia ni interrumpir una posible convergencia posterior.
 Al terminar se calcula el residuo máximo de Ax−b sobre el sistema original.
@@ -70,7 +71,27 @@ Jacobi se conserva con la explicación correspondiente. «Todos los pasos» y
 «Mostrar tabla» contienen todas las iteraciones. «Ver gráfica» muestra el error
 de Jacobi. Guardar un ejercicio conserva A, b, X₀ y parámetros.
 
-Los casos disponibles son «Diagonal dominante», «Reordenar 2×2», «Diagonal con cero» y «Sin convergencia». En «Gauss-Seidel · sistemas iterativos» y «Comparar Jacobi y Gauss-Seidel» se admite reordenar ecuaciones (aplicando la misma permutación a A y b y verificando el residuo sobre el sistema original), factor de relajación `0 < λ < 2`, tablas completas de ambos métodos sin rellenar ni recortar y gráfica comparativa de error.
+Los casos disponibles son «Diagonal dominante», «Reordenar 2×2», «Diagonal con
+cero» y «Sin convergencia». Jacobi, Gauss-Seidel y el comparador permiten elegir
+si se reordenan ecuaciones. Se aplica la misma permutación a A y b; el residuo
+y la referencia se verifican sobre las entradas originales.
+
+El reordenamiento asigna una fila diferente a cada posición diagonal mediante
+caminos aumentantes. Prioriza los coeficientes dominantes y conserva posiciones
+cuando es posible. No enumera todas las permutaciones ni promete un orden óptimo
+si no existe dominancia estricta. Si ningún emparejamiento evita los ceros,
+se explica por qué no se puede continuar. Las variables y X₀ no se permutan.
+
+Gauss-Seidel admite un factor opcional `0 < λ < 2`; `λ=1` ejecuta el algoritmo
+habitual. Con otros valores se combina el componente nuevo con el anterior:
+`x_nuevo = λ * x_GS + (1 - λ) * x_anterior`. El intervalo admitido no garantiza
+convergencia para cualquier matriz, incluso si es diagonal dominante. Los pasos
+y el resumen lo advierten. El comparador usa Gauss-Seidel habitual (`λ=1`).
+
+El comparador conserva las tablas completas sin rellenar ni recortar y dibuja
+las dos curvas de error. Cada método muestra su propio motivo de terminación,
+incluido el desbordamiento sin perder el último vector finito. No se confunde
+esa interrupción con agotar el máximo de iteraciones.
 
 ## Verificación
 
@@ -85,11 +106,33 @@ Las pruebas incluyen solución conocida, primera iteración con X₀ no nulo,
 parada, dimensiones inválidas, diagonal nula, números no finitos,
 divergencia y conservación de entradas.
 
+### Casos de comprobación del Programa 8
+
+En el comparador, con X₀ nulo y ε=0.0001, los ejemplos explícitos permiten
+repetir las siguientes comprobaciones desde consola, Qt y Tk:
+
+| Caso | Resultado esperado | Iteraciones Jacobi / Gauss-Seidel |
+| --- | --- | --- |
+| Diagonal dominante | X ≈ (2, 4, 3), ambos convergen | 11 / 7 |
+| Reordenar 2×2 | Orden (2, 1), X ≈ (32/17, 31/17) | 7 / 5 |
+| Diagonal con cero | Orden (2, 1), X = (1, 2) | 3 / 3 |
+| Sin convergencia | Ambos conservan tabla, vector y advertencias | 20 / 20, máximo |
+
+Consultar «Todos los pasos», «Mostrar tabla» y «Ver gráfica». En el primer caso
+debe haber 18 filas en total y curvas de 11 y 7 puntos, respectivamente.
+Guardar y recuperar el ejercicio debe conservar el reordenamiento elegido.
+Para una diagonal imposible, A=[[0,1],[0,2]], se explica la validación sin forzar
+un resultado. Las pruebas de desbordamiento distinguen esa parada del límite.
+
+Estas comprobaciones técnicas no reemplazan el informe del equipo: antes de
+entregar en UAM hay que preparar las capturas legibles, el PDF y el ZIP indicados
+en el apartado siguiente. No afirmar que esos entregables se generaron por
+aprobar las pruebas de código.
+
 Fuentes del alcance inicial y del enunciado definitivo
 [plan semanal 13](https://uamvirtual.uam.edu.ni/grado/mod/resource/view.php?id=1037473) y
 [Tarea 8](https://uamvirtual.uam.edu.ni/grado/mod/assign/view.php?id=1043170).
-El contrato de esta primera etapa se publica para que Roberto pueda
-reutilizarlo en Gauss-Seidel y revisar su comportamiento antes de integrarlo.
+El núcleo y la presentación comparten este contrato entre ambos métodos.
 
 ## Entrega confirmada en UAM
 

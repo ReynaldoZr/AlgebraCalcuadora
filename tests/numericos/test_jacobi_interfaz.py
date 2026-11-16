@@ -76,6 +76,9 @@ class PruebasInterfazJacobi(unittest.TestCase):
         self.assertEqual(len(s.presentacion.calculo.datos['filas']), 20)
         self.assertIn('máximo', s.presentacion.resumen)
         s.cargar_ejemplo('Diagonal con cero')
+        s.calcular()
+        self.assertTrue(s.presentacion.calculo.datos['reordenado'])
+        s.parametros['reordenar'] = 'no'
         with self.assertRaisesRegex(ValueError, 'Reordena'):
             s.calcular()
 
@@ -157,3 +160,29 @@ class PruebasInterfazComparacionIterativos(unittest.TestCase):
                 nueva.parametros.update(guardado['parametros'])
                 nueva.calcular()
                 self.assertEqual(nueva.presentacion.calculo.valor, s.presentacion.calculo.valor)
+
+    def test_desbordamiento_muestra_el_motivo_de_ambos_metodos(self):
+        """La tarjeta informa valores no finitos sin confundirlos con agotar el máximo."""
+        s = Sesion('num_comparar_iterativos')
+        s.entradas['A'] = [['1e-308', '1e308'], ['1', '1']]
+        s.parametros.update(vector_b='1, 1', inicial='1, 1', reordenar='no')
+        s.calcular()
+        c = s.presentacion.calculo
+        for metodo in ('jacobi', 'gauss_seidel'):
+            self.assertEqual(c.datos[metodo]['filas'], [])
+            self.assertEqual(c.datos[metodo]['inicial'], [1, 1])
+        self.assertIn('Parada Jacobi: La iteración produjo valores no finitos',
+                      s.presentacion.resumen)
+        self.assertIn('Parada Gauss-Seidel: La iteración produjo valores no finitos',
+                      s.presentacion.resumen)
+
+    def test_jacobi_ofrece_reordenar_y_conserva_opcion_guardada(self):
+        """Jacobi también permite corregir la diagonal desde el formulario y la biblioteca."""
+        from interfaz.qt.catalogo import campos_de
+        s = Sesion('num_jacobi')
+        self.assertIn('reordenar', campos_de(s.clave, 1))
+        s.cargar_ejemplo('Reordenar 2×2')
+        s.calcular()
+        self.assertTrue(s.presentacion.calculo.datos['reordenado'])
+        self.assertEqual(len(s.presentacion.calculo.datos['filas']), 7)
+        self.assertEqual(s.registro()['parametros']['reordenar'], 'si')

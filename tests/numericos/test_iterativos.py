@@ -7,6 +7,7 @@ Elaboración: equipo del proyecto, con apoyo de IA.
 from copy import deepcopy
 from fractions import Fraction
 import unittest
+from unittest.mock import patch
 
 from modulos.numericos.iterativos import (
     comparar_iterativos, gauss_seidel, jacobi, reordenar_ecuaciones,
@@ -257,3 +258,47 @@ class PruebasGaussSeidel(unittest.TestCase):
         self.assertEqual(len(c.datos['jacobi']['filas']), 6)
         self.assertEqual(len(c.datos['gauss_seidel']['filas']), 6)
         self.assertIn('Ninguno', c.datos['comparacion_iteraciones'])
+
+    def test_relajacion_no_promete_convergencia_por_dominancia(self):
+        """Una matriz dominante puede divergir con sobrerrelajación no adecuada."""
+        c = gauss_seidel([[1, 0.9], [-0.9, 1]], [1, 1], [0, 0],
+                         relajacion=1.9, max_iteraciones=20)
+        self.assertTrue(all(c.datos['dominantes']))
+        self.assertFalse(c.datos['convergio'])
+        self.assertNotIn('y garantiza convergencia.', c.pasos[0].detalle)
+        self.assertIn('no garantiza', c.pasos[0].detalle)
+        self.assertIn('relajación', c.pasos[0].detalle)
+        self.assertTrue(c.datos['advertencias'])
+
+    def test_reordenamiento_denso_no_explora_permutaciones_factoriales(self):
+        """Preparar prioridades acota el trabajo incluso sin dominancia en 9×9."""
+        from modulos.numericos import iterativos
+        n = 9
+        a = [[2 if i == j else 1 for j in range(n)] for i in range(n)]
+        b = [n + 1] * n
+        originales = deepcopy((a, b))
+        with patch.object(iterativos, '_margen_dominancia_fila',
+                          wraps=iterativos._margen_dominancia_fila) as margen:
+            nueva, derecha, perm, cambio = reordenar_ecuaciones(a, b)
+        self.assertLessEqual(margen.call_count, 4 * n * n)
+        self.assertEqual((a, b), originales)
+        self.assertEqual((nueva, derecha), originales)
+        self.assertEqual(perm, tuple(range(n)))
+        self.assertFalse(cambio)
+
+    def test_reordenamiento_grande_logra_dominancia_si_existe(self):
+        """Recupera un sistema 10×10 permutado y mueve los términos con sus filas."""
+        from modulos.numericos.iterativos import dominancia_diagonal
+        n = 10
+        a = [[20 if i == j else 1 for j in range(n)] for i in range(n)]
+        b = list(range(n))
+        desorden_a, desorden_b = a[1:] + a[:1], b[1:] + b[:1]
+        nueva, derecha, _, cambio = reordenar_ecuaciones(desorden_a, desorden_b)
+        self.assertTrue(cambio)
+        self.assertEqual((nueva, derecha), (a, b))
+        self.assertTrue(all(dominancia_diagonal(nueva)))
+
+    def test_sin_emparejamiento_no_fuerza_un_orden(self):
+        """Cada columna tiene no ceros, pero dos dependen de la misma fila."""
+        with self.assertRaisesRegex(ValueError, 'No es posible'):
+            reordenar_ecuaciones([[1, 1, 0], [0, 0, 1], [0, 0, 2]], [2, 1, 2])

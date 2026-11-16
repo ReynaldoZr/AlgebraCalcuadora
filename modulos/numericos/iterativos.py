@@ -61,52 +61,24 @@ def dominancia_diagonal(matriz):
     return tuple(_margen_dominancia_fila(fila, i)[0] for i, fila in enumerate(matriz))
 
 
-def _buscar_permutacion_optima(a):
-    """Busca la mejor permutación sin ceros en la diagonal, priorizando dominancia."""
+def _buscar_permutacion(a):
+    """Busca diagonal no nula con caminos aumentantes, priorizando dominancia."""
     orden = len(a)
+    # Cada fila se usa una vez. Preparar prioridades evita explorar n! órdenes.
     candidatos = [
-        [r for r in range(orden) if a[r][col] != 0]
+        sorted((r for r in range(orden) if a[r][col] != 0),
+               key=lambda r: (_margen_dominancia_fila(a[r], col)[0],
+                              r == col, _margen_dominancia_fila(a[r], col)[1]),
+               reverse=True)
         for col in range(orden)
     ]
     if any(not c for c in candidatos):
         return None
-    if orden <= 9:
-        mejor = None
-        usadas = [False] * orden
-        actual = [0] * orden
-        columnas = sorted(range(orden), key=lambda c: len(candidatos[c]))
-
-        def explorar(pos, doms, cambios, margen):
-            """Explora permutaciones válidas con poda por dominancia máxima posible."""
-            nonlocal mejor
-            if mejor is not None and doms + (orden - pos) < mejor[0]:
-                return
-            if pos == orden:
-                puntaje = (doms, -cambios, margen)
-                if mejor is None or puntaje > mejor[:3]:
-                    mejor = (*puntaje, tuple(actual))
-                return
-            col = columnas[pos]
-            for fila in sorted(candidatos[col],
-                               key=lambda r: _margen_dominancia_fila(a[r], col),
-                               reverse=True):
-                if usadas[fila]:
-                    continue
-                usadas[fila] = True
-                actual[col] = fila
-                es_dom, dif = _margen_dominancia_fila(a[fila], col)
-                explorar(pos + 1, doms + int(es_dom), cambios + int(fila != col), margen + dif)
-                usadas[fila] = False
-
-        explorar(0, 0, 0, 0.0)
-        return mejor[3] if mejor is not None else None
-
-    # Respaldo voraz con búsqueda de camino aumentante para sistemas grandes.
     asignacion = [-1] * orden
 
     def emparejar(col, visitado):
         """Asigna una fila con coeficiente no nulo a la columna mediante camino aumentante."""
-        for fila in sorted(candidatos[col], key=lambda r: _margen_dominancia_fila(a[r], col), reverse=True):
+        for fila in candidatos[col]:
             if visitado[fila]:
                 continue
             visitado[fila] = True
@@ -134,7 +106,7 @@ def reordenar_ecuaciones(matriz, vector_b):
     identidad_perm = tuple(range(orden))
     if all(dominancia_diagonal(a)):
         return a, b, identidad_perm, False
-    perm = _buscar_permutacion_optima(a)
+    perm = _buscar_permutacion(a)
     if perm is None:
         raise ValueError(
             'No es posible eliminar los ceros de la diagonal intercambiando ecuaciones.'
@@ -178,6 +150,9 @@ def _ejecutar_iterativo(metodo, a_orig, b_orig, a_trab, b_trab, x_ini, toleranci
     aviso = ('La diagonal es estrictamente dominante y garantiza convergencia.'
              if all(dominantes) else
              'Falta dominancia diagonal estricta. La convergencia no está garantizada.')
+    if metodo == 'Gauss-Seidel' and relajacion != 1.0:
+        aviso = ('Se aplica relajación: la dominancia por sí sola no garantiza '
+                 'convergencia para cualquier λ entre 0 y 2. Revisar error y residuo.')
     if reordenado:
         aviso = f'Ecuaciones reordenadas (orden aplicado: {list(orden_ecuaciones)}). ' + aviso
     datos = dict(
@@ -291,7 +266,7 @@ def comparar_iterativos(matriz, vector_b, inicial, tolerancia=0.0001, max_iterac
     elif dj['convergio']:
         comparacion = f'Jacobi convergió en {it_j} iteraciones; Gauss-Seidel no cumplió la tolerancia.'
     else:
-        comparacion = 'Ninguno de los dos métodos alcanzó la tolerancia dentro del máximo indicado.'
+        comparacion = 'Ninguno de los dos métodos alcanzó la tolerancia; revisar el motivo de cada parada.'
 
     columnas = ('Método',) + dj['columnas']
     filas = [('Jacobi', *fila) for fila in dj['filas']] + [

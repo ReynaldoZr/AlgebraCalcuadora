@@ -2,6 +2,8 @@
 
 ## Sin publicar
 
+- Revisión final del PR #20: el reordenamiento usa caminos aumentantes en lugar de enumerar permutaciones; Jacobi también expone esa opción y la conserva al guardar. El comparador muestra el motivo real de parada de cada método y la relajación no promete convergencia por dominancia. Se añaden pruebas de estos casos. Nueva paleta de Roberto aprobada expresamente por Reynaldo: verde salvia/crema en claro y azul profundo en oscuro.
+
 - Issues #15 y #16. Se implementa `gauss_seidel` (con soporte opcional de relajación `0 < λ < 2`), `reordenar_ecuaciones` (conservando A y B originales para el residuo y la referencia) y `comparar_iterativos` en `modulos/numericos/iterativos.py`. Se integran Gauss-Seidel y el comparador Jacobi vs Gauss-Seidel en consola, Qt y Tk con tablas completas sin truncar ni rellenar, gráfica comparativa de error, referencia NumPy y guardado en Biblioteca.
 
 - Avance local de #16. Jacobi se conecta a consola, Qt y Tk con datos vacíos al abrir, ejemplos explícitos, tabla completa, residuo, contraste NumPy, gráfica de error y biblioteca. La comparación con Gauss-Seidel depende de #15. Se corrige la serialización de los datos aproximados en los pasos de Jacobi para poder guardar el ejercicio.
