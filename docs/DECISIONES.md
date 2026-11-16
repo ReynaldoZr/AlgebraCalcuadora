@@ -35,11 +35,11 @@ La diferencia debe verse también en el código y la experiencia: tareas pequeñ
 - Repositorio elegido: https://github.com/ReynaldoZr/AlgebraCalcuadora.
 - Identidad de pantalla provisional: Cuaderno de Álgebra Lineal.
 - Identidad del segundo integrante y grupo académico confirmado.
-- Base: Python 3.11 o posterior; verificado localmente con Python 3.12.14. CI configurada para 3.11 y 3.13 en Windows y Linux; revisar sus resultados en el PR.
+- Base: Python 3.11 o posterior; verificado localmente con Python 3.12.14. CI actual configurada para 3.11 y 3.13 únicamente en Windows; revisar sus resultados en el PR.
 - Confirmar Python en la computadora del segundo integrante.
 - Alcance del próximo avance y tiempo disponible para reconstruir lo anterior.
 
-La primera implementación ya incluye suma/resta y ejemplos. Los datos del segundo integrante y grupo siguen pendientes de confirmar.
+Integrantes confirmados: Reynaldo y Roberto (@roberto7503), Grupo 9. El estado de las funcionalidades y entregas se consulta en CHANGELOG.md y en las issues del repositorio.
 
 ## Decisiones que pueden esperar
 
@@ -92,3 +92,17 @@ muestran la causa de parada individual, incluida la interrupción por valores no
 finitos. Con relajación distinta de 1 se advierte que dominancia y `0 < λ < 2`
 no garantizan convergencia para cualquier matriz. La comparación habitual usa
 λ=1 y conserva el criterio de error del enunciado definitivo.
+
+## 2026-11-15 · Soporte Windows y cierre del Programa 8
+
+Reynaldo indicó que las comprobaciones futuras deben ejecutarse únicamente en
+Windows. La CI conserva Python 3.11 y 3.13, el verificador y las pruebas completas
+de cálculo, consola, Tk y Qt. Se retiran los trabajos de otras plataformas y se
+actualizan los controles requeridos de main a las dos comprobaciones de Windows,
+manteniendo el PR obligatorio, la rama actualizada y el resto de protecciones.
+Las evidencias históricas de CI reflejan su configuración de aquel momento.
+
+Reynaldo confirma que el PDF y los demás materiales de la entrega ya están
+listos y autoriza cerrar el seguimiento #16. El cierre documental se basa en su
+confirmación; la validación de código corresponde al PR #20. También autoriza
+publicar e integrar este ajuste de CI y documentación después de comprobarlo.

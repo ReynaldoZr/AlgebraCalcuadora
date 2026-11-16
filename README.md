@@ -99,9 +99,9 @@ python -m unittest discover -s tests -v
 python herramientas/comprobar_reglas.py
 ```
 
-GitHub Actions ejecuta ambas comprobaciones en Windows y Linux con Python 3.11 y 3.13. Las cuatro combinaciones pasaron en el PR inicial; cada cambio posterior vuelve a comprobarse. main exige un PR con las cuatro comprobaciones aprobadas antes de integrar.
+GitHub Actions ejecuta las pruebas y el verificador únicamente en Windows con Python 3.11 y 3.13. main exige un PR con estas dos comprobaciones aprobadas antes de integrar. Este es el ámbito de soporte elegido por el equipo.
 
-Las pruebas de la ventana utilizan widgets reales. En Linux se ejecutan con `xvfb-run -a python -m unittest discover -s tests -v`. En CI, `CALCULADORA_EXIGIR_GUI=1` impide dar por aprobada la interfaz si se omitieron sus pruebas por falta de Tk o pantalla. Localmente, sin pantalla o Tk, se informa la omisión y siguen las pruebas de consola y cálculo.
+Las pruebas de la ventana utilizan widgets reales en Windows. En CI, `CALCULADORA_EXIGIR_GUI=1`, `CALCULADORA_EXIGIR_QT=1` y `CALCULADORA_EXIGIR_NUMERICOS=1` impiden aprobar si faltan las interfaces o las bibliotecas numéricas necesarias. Localmente, si falta una dependencia opcional, se informa la omisión y siguen las pruebas disponibles.
 
 El verificador analiza imports con AST, rechaza bibliotecas externas fuera del ámbito numérico autorizado, detecta entradas/salidas dentro del cálculo y comprueba docstrings. Es una ayuda de mantenimiento, no una prueba de corrección matemática ni una garantía contra cualquier incumplimiento.
 

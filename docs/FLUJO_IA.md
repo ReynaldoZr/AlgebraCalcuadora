@@ -42,7 +42,7 @@ El PR debe explicar problema, comportamiento resultante, alcance, fuente de clas
 
 ## 6. Revisar las comprobaciones de GitHub
 
-Consultar las cuatro combinaciones de CI: Windows/Linux con Python 3.11/3.13. Deben corresponder al último commit del PR. Si se añaden commits, las comprobaciones anteriores no prueban por sí solas el estado nuevo.
+Consultar las dos comprobaciones de CI de Windows con Python 3.11 y 3.13. Deben corresponder al último commit del PR. Si se añaden commits, las comprobaciones anteriores no prueban por sí solas el estado nuevo. El equipo decidió validar únicamente Windows; no añadir plataformas sin una nueva indicación.
 
 La IA puede reparar su rama, subir la corrección y comprobar de nuevo. No puede integrar, activar auto-merge, autoaprobarse, simular otra persona ni rebajar las reglas de protección. Si la CI no está disponible o falla por una causa externa, reportarlo y dejar el PR como borrador.
 

@@ -81,7 +81,7 @@ Los colores se ajustan en tema.py; la representación matemática en notacion.py
 
 ## Verificación y límites
 
-Ejecutar `python -m unittest discover -s tests -v`, `python herramientas/comprobar_reglas.py` y `git diff --check`. Las pruebas de ventana usan widgets reales; en Linux requieren Xvfb. CI usa CALCULADORA_EXIGIR_GUI=1 para impedir omisiones silenciosas.
+Ejecutar `python -m unittest discover -s tests -v`, `python herramientas/comprobar_reglas.py` y `git diff --check` en Windows. Las pruebas de ventana usan widgets reales. CI usa CALCULADORA_EXIGIR_GUI=1 para impedir omisiones silenciosas.
 
 La revisión visual local se hace en Windows; no implica haber revisado macOS, todas las escalas o lectores de pantalla. Tkinter tiene un árbol de accesibilidad limitado en Windows. Las fórmulas largas y matrices grandes tienen desplazamiento; la ventana requiere al menos 1120×760 unidades de Tk. No hay instalador, exportación ni guardado de sesiones.
 
