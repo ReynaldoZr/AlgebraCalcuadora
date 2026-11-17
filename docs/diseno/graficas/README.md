@@ -60,5 +60,3 @@ Conservar la paleta vigente, la separación cálculo/interfaz, los pasos complet
 ## Inversas: mapa del error por fila y columna
 
 ![Referencia de inversas](04-sistemas-inversas.png)
-
-
