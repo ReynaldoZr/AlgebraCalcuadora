@@ -2,6 +2,8 @@
 
 ## Sin publicar
 
+- Referencia #32 ajustada por Reynaldo: conservar el diseño actual y reorganizar únicamente el contenido del resumen de resultados. Se añade una base renderizada y una maqueta v2; los bocetos anteriores quedan como historial, sin autorizar cambios generales de estilo.
+
 - Referencias de la issue #32 para Roberto: tarjeta de resultados más sencilla, con aproximaciones y referencia en tabla, residuo explicado y detalles técnicos separados. Se conserva una maqueta de la tarjeta y otra dentro de la ventana completa; no se implementa el cambio.
 
 - Planificación de mejoras de gráficas: referencias visuales para bisección, Jacobi, Gauss-Seidel, su comparador, propagación, redondeo/truncamiento, sistemas e inversas. Son propuestas para futuras issues, sin cambios en el comportamiento de la calculadora.

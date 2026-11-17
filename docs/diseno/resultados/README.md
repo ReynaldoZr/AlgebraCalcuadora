@@ -6,12 +6,18 @@ La mejora afecta a la tarjeta de resultados: comparar aproximaciones en una tabl
 
 Las imágenes son maquetas generadas por IA, no capturas de la calculadora ni pruebas numéricas. Los valores y recuentos definitivos salen de los cálculos reales; la imagen no determina la cantidad de pasos. NumPy proporciona una referencia aproximada, no un valor real exacto por definición.
 
-## Vista completa de la calculadora
+## Referencia principal · mismo diseño, solo resultados
 
-![Resultados sencillos dentro de las tres tarjetas](calculadora-resultados-simples.png)
+Reynaldo precisó que debe mantenerse el diseño ya establecido. Esta versión parte de una imagen de la calculadora actual renderizada en una instancia aislada: se propone editar solo el contenido del resumen de la tarjeta derecha. Conservar encabezado, tarjetas, márgenes, tipografía, botones, matriz, opciones, navegación y vista previa. No copiar variaciones de estilo que pueda introducir la generación de imágenes.
 
-## Detalle de la tarjeta
+![Diseño actual con el contenido nuevo de resultados](calculadora-mismo-diseno-resultados-v2.png)
 
-![Detalle de la tarjeta de resultados propuesta](tarjeta-resultados-simples.png)
+## Diseño actual antes del cambio · comparación
+
+![Base renderizada de la calculadora actual](base-diseno-actual.png)
+
+## Bocetos anteriores sustituidos
+
+[Vista completa anterior](calculadora-resultados-simples.png) y [tarjeta ampliada anterior](tarjeta-resultados-simples.png) se conservan como historial. No usar sus cabeceras, iconos, proporciones ni estilos como instrucciones de rediseño. La versión v2 anterior es la referencia principal de esta issue.
 
 Ver criterios, datos de comprobación y pruebas de Windows en la issue. Esta publicación solo conserva las referencias; no implementa el rediseño ni cambia los algoritmos.
