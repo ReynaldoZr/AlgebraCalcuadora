@@ -2,6 +2,10 @@
 
 ## Sin publicar
 
+- Avance local de issues #32, #36, #37 y #38 (asignadas a Roberto):
+  - #32: tarjeta de resultados iterativos (`ResultadoIterativo.qml` y `resumen_iterativo_estructurado`) con tabla dinámica `x₁…xₙ`, etiqueta «Referencia para comparar», redondeo solo visual con notación científica para errores pequeños, resumen de residuo separado y sección desplegable «Ver detalles técnicos» con precisión completa.
+  - #36, #37 y #38 (Programa 9 · Provisional): adaptador de formulario y resumen (`interfaz/numericos/newton_adaptador.py`), presentador de vista previa, pasos y tabla completa (`interfaz/numericos/newton_presentacion.py`) y constructor de gráficas con tangente, error, residuo y comparación opcional con bisección (`interfaz/numericos/newton_graficas.py`), probados de forma independiente mediante fixtures del contrato #33.
+
 - Referencia #32 ajustada por Reynaldo: conservar el diseño actual y reorganizar únicamente el contenido del resumen de resultados. Se añade una base renderizada y una maqueta v2; los bocetos anteriores quedan como historial, sin autorizar cambios generales de estilo.
 
 - Referencias de la issue #32 para Roberto: tarjeta de resultados más sencilla, con aproximaciones y referencia en tabla, residuo explicado y detalles técnicos separados. Se conserva una maqueta de la tarjeta y otra dentro de la ventana completa; no se implementa el cambio.
