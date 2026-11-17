@@ -2,6 +2,8 @@
 
 ## Sin publicar
 
+- Planificación de mejoras de gráficas: referencias visuales para bisección, Jacobi, Gauss-Seidel, su comparador, propagación, redondeo/truncamiento, sistemas e inversas. Son propuestas para futuras issues, sin cambios en el comportamiento de la calculadora.
+
 - CI y guías actualizadas para trabajar únicamente en Windows con Python 3.11 y 3.13, por indicación de Reynaldo. Se retiran los trabajos de Linux y sus requisitos de integración, conservando las dos comprobaciones obligatorias de Windows y las demás protecciones. Reynaldo confirma que el PDF y los demás materiales del Programa 8 ya están listos y autoriza cerrar su seguimiento.
 
 - Revisión final del PR #20: el reordenamiento usa caminos aumentantes en lugar de enumerar permutaciones; Jacobi también expone esa opción y la conserva al guardar. El comparador muestra el motivo real de parada de cada método y la relajación no promete convergencia por dominancia. Se añaden pruebas de estos casos. Nueva paleta de Roberto aprobada expresamente por Reynaldo: verde salvia/crema en claro y azul profundo en oscuro.
