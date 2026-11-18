@@ -4,6 +4,7 @@ import QtQuick.Layouts
 
 ColumnLayout {
     id: raiz
+    objectName: "resultadoIterativo"
     property var datos: ({})
     property bool mostrarDetalles: false
     spacing: 10
@@ -89,6 +90,7 @@ ColumnLayout {
 
         Flickable {
             id: tablaScroll
+            objectName: "tablaResumenIterativo"
             anchors.fill: parent
             anchors.margins: 2
             readonly property int numCols: raiz.datos.columnas?.length || 1
@@ -191,7 +193,7 @@ ColumnLayout {
             anchors.fill: parent
             anchors.margins: 8
             spacing: 4
-            Label { visible: (raiz.datos.metodos?.length || 0) > 0; text: "Residuo ‖Ax − b‖∞ (ajuste de las ecuaciones)"; color: Paleta.texto; font.bold: true; font.pixelSize: 12; Layout.fillWidth: true; wrapMode: Text.Wrap }
+            Label { visible: (raiz.datos.metodos?.length || 0) > 0; text: "Residuo (ajuste de las ecuaciones)"; color: Paleta.texto; font.bold: true; font.pixelSize: 12; Layout.fillWidth: true; wrapMode: Text.Wrap }
             Repeater {
                 model: raiz.datos.metodos || []
                 Label {

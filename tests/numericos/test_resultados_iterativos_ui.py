@@ -80,22 +80,40 @@ class PruebasResultadosIterativosUI(unittest.TestCase):
         self.assertTrue(any('Residuo' in d['titulo'] for d in res['detalles_tecnicos']))
 
     def test_tabla_universal_para_otros_metodos(self):
-        """Bisección, errores y métodos exactos también generan tabla y detalles técnicos."""
+        """La issue 32 no cambia resúmenes de bisección, errores ni álgebra exacta."""
         calc_bis = ejecutar_numerico('num_biseccion', parametros_defecto('num_biseccion'))
         res_bis = resumen_estructurado('num_biseccion', Presentacion(calc_bis, resumen_numerico('num_biseccion', calc_bis), None))
-        self.assertTrue(res_bis['activo'])
-        self.assertEqual(res_bis['columnas'], ['Concepto', 'Valor'])
-        self.assertTrue(any(f[0] == 'Raíz aproximada' for f in res_bis['filas']))
+        self.assertFalse(res_bis['activo'])
 
         calc_err = ejecutar_numerico('num_errores', parametros_defecto('num_errores'))
         res_err = resumen_estructurado('num_errores', Presentacion(calc_err, resumen_numerico('num_errores', calc_err), None))
-        self.assertEqual(len(res_err['filas']), 3)
+        self.assertFalse(res_err['activo'])
 
         pres_exacta = Presentacion(Calculo([[2]], (), {}), 'Suma exacta', [[2]])
         res_suma = resumen_estructurado('sumar', pres_exacta)
-        self.assertTrue(res_suma['activo'])
-        self.assertEqual(res_suma['columnas'], ['Concepto', 'Resultado'])
-        self.assertEqual(res_suma['filas'][0], ['Tamaño de matriz', '1×1'])
+        self.assertFalse(res_suma['activo'])
+
+    def test_redondeo_no_oculta_aproximaciones_distintas(self):
+        """Aumenta la precisión visible cuando dos valores distintos redondean igual."""
+        params = dict(vector_b='1', inicial='0', epsilon='1e-8', maximo='20', reordenar='no')
+        calc = ejecutar_numerico('num_comparar_iterativos', params, {'A': [[1]]})
+        calc.datos['valor_jacobi'] = [1.00000000001]
+        calc.datos['valor_gauss_seidel'] = [1.00000000002]
+        res = resumen_iterativo_estructurado('num_comparar_iterativos', calc)
+        self.assertEqual(len(set(res['filas'][0][1:])), 3)
+        self.assertEqual(calc.datos['valor_jacobi'][0], 1.00000000001)
+
+    def test_causa_de_fallo_y_relajacion_visibles(self):
+        """El desbordamiento se informa aun antes de la primera iteración completa."""
+        params = dict(vector_b='1e308, 1e308', inicial='0, 0', epsilon='1e-8',
+                      maximo='20', reordenar='no')
+        calc = ejecutar_numerico('num_comparar_iterativos', params, {'A': [[1e-308, 1], [1, 1e-308]]})
+        res = resumen_iterativo_estructurado('num_comparar_iterativos', calc)
+        self.assertTrue(any('no finitos' in aviso for aviso in res['advertencias']))
+        params.update(vector_b='1', inicial='0', relajacion='1.5')
+        calc = ejecutar_numerico('num_gauss_seidel', params, {'A': [[2]]})
+        res = resumen_iterativo_estructurado('num_gauss_seidel', calc)
+        self.assertTrue(any('Relajación' in aviso for aviso in res['advertencias']))
 
 
 if __name__ == '__main__':

@@ -52,8 +52,8 @@ def pasos_previa_newton(calculo):
             f'Iteración {i}',
             f'Evaluamos f(xᵢ) y f\'(xᵢ), calculamos la siguiente aproximación y medimos el error.',
             formulas=(
-                (f'x{i} = {_celda_newton(xi)}', f'f(x{i}) = {_celda_newton(fxi)}', f"f'(x{i}) = {_celda_newton(dfxi)}"),
-                (f'x{i + 1 if isinstance(i, int) else "_sig"} = {_celda_newton(x_sig)}', err_txt),
+                (f'xᵢ = {_celda_newton(xi)}', f'f(xᵢ) = {_celda_newton(fxi)}', f"f'(xᵢ) = {_celda_newton(dfxi)}"),
+                (f'xᵢ₊₁ = {_celda_newton(x_sig)}', err_txt),
             ),
         ))
     if not etapas:

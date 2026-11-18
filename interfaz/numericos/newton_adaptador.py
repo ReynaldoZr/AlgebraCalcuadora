@@ -5,7 +5,6 @@ Elaboración: equipo del proyecto, con apoyo de IA.
 """
 
 from dataclasses import dataclass
-from math import isfinite
 
 from modulos.numericos.funciones import crear_funcion, formato, numero_finito
 
@@ -86,30 +85,7 @@ def ejemplo_newton(caso='exp(-x)-x'):
     return dict(casos[caso])
 
 
-def construir_derivada_numerica(funcion, h=None):
-    """Construye una derivada numérica centrada con validación del paso h."""
-    if h is not None and str(h).strip() != '':
-        paso_fijo = numero_finito(h, 'Paso h')
-        if paso_fijo <= 0:
-            raise ValueError('El paso h debe ser mayor que cero.')
-    else:
-        paso_fijo = None
-
-    def derivada_num(x):
-        """Evalúa la diferencia centrada en x cuidando dominio y paso finito."""
-        x_val = numero_finito(x, 'x')
-        paso = paso_fijo if paso_fijo is not None else 1e-6 * max(1.0, abs(x_val))
-        izq = funcion(x_val - paso)
-        der = funcion(x_val + paso)
-        resultado = (der - izq) / (2.0 * paso)
-        if not isfinite(resultado):
-            raise ValueError('La derivada numérica produjo un valor no finito.')
-        return resultado
-
-    return derivada_num
-
-
-def validar_entrada_newton(parametros):
+def validar_entrada_newton(parametros, proveedor_derivada=None):
     """Valida campos del formulario antes de invocar el núcleo de Newton."""
     p = parametros
     funcion_txt = str(p.get('funcion', '')).strip()
@@ -132,7 +108,17 @@ def validar_entrada_newton(parametros):
             raise ValueError("Escribe la derivada analítica f'(x) o elige derivada numérica.")
         derivada = crear_funcion(deriv_txt)
     else:
-        derivada = construir_derivada_numerica(funcion, p.get('h'))
+        h = numero_finito(p.get('h', ''), 'Paso h')
+        if h <= 0:
+            raise ValueError('El paso h debe ser mayor que cero.')
+        if x0 + h == x0 or x0 - h == x0:
+            raise ValueError('El paso h debe ser distinguible de x₀ en punto flotante.')
+        # El cálculo de la derivada pertenece al proveedor numérico de la issue 34.
+        if proveedor_derivada is None:
+            raise NotImplementedError('El proveedor de derivada numérica (#34) aún no está integrado.')
+        derivada = proveedor_derivada(funcion, h)
+        if not callable(derivada):
+            raise ValueError('El proveedor debe devolver una función de derivada.')
 
     criterio = str(p.get('criterio', 'absoluto')).strip().lower()
     if criterio not in CRITERIOS_NEWTON:
@@ -146,8 +132,8 @@ def validar_entrada_newton(parametros):
         maximo = int(str(p.get('maximo', '')).strip())
     except ValueError:
         raise ValueError('El máximo de iteraciones debe ser un entero positivo.') from None
-    if maximo <= 0:
-        raise ValueError('El máximo de iteraciones debe ser mayor que cero.')
+    if not 1 <= maximo <= 10000:
+        raise ValueError('El máximo de iteraciones debe estar entre 1 y 10000.')
 
     return dict(
         funcion=funcion,
@@ -176,9 +162,9 @@ def resumen_newton(calculo):
     )
 
 
-def ejecutar_newton_adaptador(parametros, solver=None):
+def ejecutar_newton_adaptador(parametros, solver=None, proveedor_derivada=None):
     """Valida entradas y ejecuta Newton usando un solver inyectado o el núcleo de #33."""
-    args = validar_entrada_newton(parametros)
+    args = validar_entrada_newton(parametros, proveedor_derivada)
     if solver is None:
         try:
             from modulos.numericos.newton import resolver_newton

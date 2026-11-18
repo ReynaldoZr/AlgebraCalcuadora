@@ -196,6 +196,16 @@ def _resumen_metodo_iterativo(nombre, datos, diferencia_ref=None):
     )
 
 
+def _aproximaciones_visuales(valores):
+    """Amplía la precisión de una fila cuando el redondeo oculta diferencias."""
+    textos = [formato_visual(v) for v in valores]
+    # Solo ampliamos si dos valores diferentes producen la misma celda visible.
+    if any(a != b and ta == tb for i, (a, ta) in enumerate(zip(valores, textos))
+           for b, tb in zip(valores[i + 1:], textos[i + 1:])):
+        return [format(float(v), '.17g') for v in valores]
+    return textos
+
+
 def resumen_iterativo_estructurado(clave, calculo):
     """Estructura aproximaciones, referencia y detalles técnicos para la tarjeta de resultados."""
     from modulos.numericos.funciones import formato
@@ -227,9 +237,10 @@ def resumen_iterativo_estructurado(clave, calculo):
         filas = [
             [
                 f'x{subindice(i + 1)}',
-                formato_visual(vj_vec[i]),
-                formato_visual(vgs_vec[i]),
-                formato_visual(ref[i]) if ref_disponible else 'No disponible',
+                *_aproximaciones_visuales(
+                    [vj_vec[i], vgs_vec[i]] + ([ref[i]] if ref_disponible else [])
+                ),
+                *([] if ref_disponible else ['No disponible']),
             ]
             for i in range(len(vj_vec))
         ]
@@ -251,8 +262,8 @@ def resumen_iterativo_estructurado(clave, calculo):
         filas = [
             [
                 f'x{subindice(i + 1)}',
-                formato_visual(vec[i]),
-                formato_visual(ref[i]) if ref_disponible else 'No disponible',
+                *_aproximaciones_visuales([vec[i]] + ([ref[i]] if ref_disponible else [])),
+                *([] if ref_disponible else ['No disponible']),
             ]
             for i in range(len(vec))
         ]
@@ -261,12 +272,22 @@ def resumen_iterativo_estructurado(clave, calculo):
     if not ref_disponible:
         advertencias.append(f'Referencia para comparar no disponible: {d.get("error_referencia", "error numérico")}')
 
+    # El motivo crítico debe verse sin abrir el panel de detalles.
+    for metodo in metodos:
+        if not metodo['convergio']:
+            advertencias.append(f'{metodo["nombre"]}: {metodo["motivo"]}')
+    if clave == 'num_gauss_seidel' and d.get('relajacion', 1.0) != 1.0:
+        advertencias.append(
+            f'Relajación λ={formato(d["relajacion"])}: la dominancia por sí sola '
+            'no garantiza convergencia con cualquier valor de λ.'
+        )
+
     orden_txt = f'Reordenadas ({list(d["orden_ecuaciones"])})' if d.get('reordenado') else 'Original'
     dominancia_txt = 'Sí' if all(d['dominantes']) else 'Sin garantía'
     detalles = [
         dict(titulo='Tolerancia ε', valor=formato(d['tolerancia'])),
         dict(titulo='Orden de ecuaciones', valor=orden_txt),
-        dict(titulo='Diagonal dominante', valor=dominancia_txt),
+        dict(titulo='Diagonal estrictamente dominante', valor=dominancia_txt),
     ]
     if clave == 'num_gauss_seidel':
         detalles.append(dict(titulo='Relajación λ', valor=formato(d['relajacion'])))

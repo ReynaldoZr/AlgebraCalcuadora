@@ -8,7 +8,7 @@ import math
 import unittest
 
 from interfaz.numericos.newton_adaptador import (
-    construir_derivada_numerica, ejemplo_newton, ejecutar_newton_adaptador,
+    ejemplo_newton, ejecutar_newton_adaptador,
     parametros_vacios_newton, resumen_newton, validar_entrada_newton,
 )
 from interfaz.numericos.newton_graficas import datos_tangente, figura_newton
@@ -70,10 +70,7 @@ class PruebasNewtonUI(unittest.TestCase):
             validar_entrada_newton(ej)
 
     def test_derivada_numerica_y_resumen_36(self):
-        """La derivada numérica evalúa correctamente y el resumen evita el término valor real."""
-        d_num = construir_derivada_numerica(lambda x: x ** 2, h='1e-5')
-        self.assertAlmostEqual(d_num(3.0), 6.0, places=7)
-
+        """El resumen evita llamar valor real a una aproximación del solver inyectado."""
         ej = ejemplo_newton('exp(-x)-x')
         calculo = _fixture_newton(
             [dict(i=1, xi=0.0, fxi=1.0, derivada=-2.0, x_siguiente=0.5,
@@ -121,17 +118,50 @@ class PruebasNewtonUI(unittest.TestCase):
 
         calc = _fixture_newton([reg], valor=0.5, convergio=False, motivo='Máximo de iteraciones.', residuo=0.0)
         fig = figura_newton(calc, funcion=lambda x: math.exp(-x) - x)
-        self.assertEqual(len(fig.axes), 2)
-        self.assertEqual(fig.axes[1].get_yscale(), 'linear')
+        self.assertEqual(len(fig.axes), 3)
+        self.assertEqual(fig.axes[2].get_yscale(), 'linear')
 
         # Discontinuidad en 1/x no debe lanzar excepción al graficar
         fig_disc = figura_newton(calc, funcion=lambda x: 1.0 / x)
-        self.assertEqual(len(fig_disc.axes), 2)
+        self.assertEqual(len(fig_disc.axes), 3)
 
         # Comparación opcional con bisección
         bis = Calculo(0.567, (), dict(filas=[(1, 0, 1, 0.5, 1, 0.1, 0.1, 1, 0.5)]))
         fig_comp = figura_newton(calc, funcion=lambda x: math.exp(-x) - x, comparacion_biseccion=bis)
-        self.assertEqual(len(fig_comp.axes), 2)
+        self.assertEqual(len(fig_comp.axes), 3)
+        sin_funcion = figura_newton(calc)
+        self.assertFalse(any('aproximación' in c.get_label().lower()
+                             for c in sin_funcion.axes[0].collections))
+
+    def test_derivada_numerica_es_proveedor_pendiente_y_valida_h(self):
+        """El adaptador no duplica el cálculo de #34 ni acepta un h indistinguible."""
+        from unittest.mock import Mock
+        ej = ejemplo_newton()
+        ej.update(modo_derivada='numerica', h='1e-5')
+        with self.assertRaises(NotImplementedError):
+            validar_entrada_newton(ej)
+        derivada = lambda x: -math.exp(-x) - 1
+        proveedor = Mock(return_value=derivada)
+        args = validar_entrada_newton(ej, proveedor)
+        self.assertIs(args['derivada'], derivada)
+        self.assertEqual(proveedor.call_args.args[1], 1e-5)
+        for valor in ('0', '-1', 'nan', 'inf', '1e-300'):
+            with self.subTest(h=valor), self.assertRaises(ValueError):
+                validar_entrada_newton(dict(ej, x0='2', h=valor), proveedor)
+        with self.assertRaises(ValueError):
+            validar_entrada_newton(dict(ej, maximo='10001'), proveedor)
+
+    def test_porcentaje_y_residuo_separan_unidades(self):
+        """La tolerancia porcentual no se dibuja sobre el residuo ni una cota absoluta."""
+        reg = dict(i=1, xi=0., fxi=1., derivada=-2., x_siguiente=.5,
+                   error_absoluto=.5, error_porcentual=100., residuo=.1)
+        calc = _fixture_newton([reg], .5, criterio='porcentual', convergio=False)
+        fig = figura_newton(calc, lambda x: math.exp(-x) - x)
+        self.assertIn('%', fig.axes[1].get_ylabel())
+        self.assertEqual(fig.axes[2].get_ylabel(), 'Residuo |f(x)|')
+        self.assertFalse(any('Tolerancia' in line.get_label() for line in fig.axes[2].lines))
+        with self.assertRaisesRegex(ValueError, 'no es porcentual'):
+            figura_newton(calc, comparacion_biseccion=Calculo(.5))
 
 
 if __name__ == '__main__':

@@ -22,7 +22,7 @@ def datos_tangente(registro):
 
 
 def _evaluar_seguro(funcion, x):
-    """Evalúa f(x) devolviendo NaN en discontinuidades para no unir segmentos prohibidos."""
+    """Interrumpe la curva ante evaluaciones inválidas; no detecta todas las asíntotas."""
     try:
         y = funcion(x)
         return float(y) if isfinite(y) else float('nan')
@@ -81,8 +81,8 @@ def figura_newton(calculo, funcion=None, iteracion_seleccionada=None, comparacio
             ty = [m * tx[0] + b, m * tx[1] + b]
             eje_f.plot(tx, ty, linestyle='--', color='#f472b6', label=f'Tangente (i={reg_sel.get("i")})')
 
-    if calculo.valor is not None and isfinite(calculo.valor):
-        y_raiz = _evaluar_seguro(funcion, calculo.valor) if funcion is not None else 0.0
+    if funcion is not None and calculo.valor is not None and isfinite(calculo.valor):
+        y_raiz = _evaluar_seguro(funcion, calculo.valor)
         etiqueta_raiz = 'Raíz aproximada' if d.get('convergio') else 'Última aproximación (sin converger)'
         eje_f.scatter([calculo.valor], [y_raiz], color='#22c55e' if d.get('convergio') else '#ef4444',
                       zorder=5, label=etiqueta_raiz)
@@ -109,14 +109,22 @@ def figura_newton(calculo, funcion=None, iteracion_seleccionada=None, comparacio
 
     if iters_err:
         eje_e.plot(iters_err, vals_err, marker='.', color='#a5a6ff', label=etiqueta_err)
+    # Residuo y cambio no comparten necesariamente unidades ni tolerancia.
+    eje_res = eje_e.twinx()
+    eje_res.set_ylabel('Residuo |f(x)|', color='#087c9e')
     if iters_res:
-        eje_e.plot(iters_res, vals_res, marker='x', linestyle=':', color='#38bdf8', label='Residuo |f(x)|')
+        eje_res.plot(iters_res, vals_res, marker='x', linestyle=':', color='#087c9e', label='Residuo |f(x)|')
+        if all(v > 0 for v in vals_res):
+            eje_res.set_yscale('log')
+        eje_res.legend(loc='upper right', fontsize='small')
 
     tol = d.get('tolerancia')
     if tol is not None and isfinite(tol) and tol > 0:
         eje_e.axhline(float(tol), color='#22c55e', linestyle='--', linewidth=1.0, label=f'Tolerancia ε={tol:g}')
 
     if comparacion_biseccion is not None:
+        if criterio == 'porcentual':
+            raise ValueError('Compara con bisección usando cambio absoluto; la cota no es porcentual.')
         filas_b = comparacion_biseccion.datos.get('filas', ())
         if filas_b:
             eje_e.plot(
@@ -128,13 +136,12 @@ def figura_newton(calculo, funcion=None, iteracion_seleccionada=None, comparacio
                 label='Bisección (cota de intervalo, criterio distinto)',
             )
 
-    valores_positivos = [v for v in vals_err + vals_res if v > 0]
-    if valores_positivos and all(v > 0 for v in vals_err + vals_res):
+    if vals_err and all(v > 0 for v in vals_err):
         eje_e.set_yscale('log')
 
     eje_e.set(xlabel='Iteración', ylabel=etiqueta_err, title='Evolución de error y residuo')
     eje_e.grid(alpha=0.3)
     if iters_err or iters_res or (tol is not None and tol > 0):
-        eje_e.legend(loc='best', fontsize='small')
+        eje_e.legend(loc='upper left', fontsize='small')
 
     return figura
