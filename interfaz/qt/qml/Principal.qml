@@ -53,6 +53,7 @@ ApplicationWindow {
 
     Shortcut { sequence: "Ctrl+Return"; enabled: pagina === "calculadora" && !cuaderno.estado.ocupado; onActivated: cuaderno.calcular() }
     Shortcut { sequence: "Ctrl+Z"; enabled: pagina === "calculadora" && !cuaderno.estado.ocupado; onActivated: cuaderno.deshacer() }
+    Component.onCompleted: Paleta.oscuro = cuaderno.temaOscuroInicial
     onClosing: cuaderno.pausar()
     NumberAnimation { id: transicion; target: paginas; property: "opacity"; from: 0.6; to: 1; duration: 180; easing.type: Easing.OutCubic }
 
@@ -69,12 +70,17 @@ ApplicationWindow {
             Boton { text: "☰  Temas"; onClicked: temas.open(); enabled: !cuaderno.estado.ocupado }
             Boton { text: "Inicio"; discreto: pagina !== "inicio"; onClicked: ventana.cambiarPagina("inicio") }
             Boton { text: "Biblioteca"; discreto: pagina !== "biblioteca"; onClicked: ventana.cambiarPagina("biblioteca") }
-            Boton { text: "Estudio ⌄"; onClicked: estudio.open() }
-            Menu {
-                id: estudio
-                MenuItem { text: "Teoremas del tema"; onTriggered: cuaderno.consultar("Teoremas") }
-                MenuItem { text: "Ayudas de estudio"; onTriggered: cuaderno.consultar("Ayudas") }
-                MenuItem { text: "Exportar ejercicio a PDF…"; enabled: cuaderno.estado.vigente; onTriggered: cuaderno.exportar("", false) }
+            Boton {
+                id: botonEstudio
+                text: "Estudio ⌄"
+                onClicked: estudio.open()
+                Menu {
+                    id: estudio
+                    y: botonEstudio.height + 4
+                    MenuItem { text: "Teoremas del tema"; onTriggered: cuaderno.consultar("Teoremas") }
+                    MenuItem { text: "Ayudas de estudio"; onTriggered: cuaderno.consultar("Ayudas") }
+                    MenuItem { text: "Exportar ejercicio a PDF…"; enabled: cuaderno.estado.vigente; onTriggered: cuaderno.exportar("", false) }
+                }
             }
             Boton { text: Paleta.oscuro ? "☀" : "☾"; Accessible.name: "Cambiar tema claro u oscuro"; onClicked: Paleta.oscuro = !Paleta.oscuro }
         }
@@ -112,7 +118,8 @@ ApplicationWindow {
                                 contentItem: ColumnLayout {
                                     spacing: 10
                                     RowLayout {
-                                        Label { visible: modelData.nombre !== "Matrices"; text: modelData.simbolo; color: Paleta.acento; font.pixelSize: 27; Layout.preferredWidth: 46 }
+                                        spacing: 12
+                                        Label { visible: modelData.nombre !== "Matrices"; text: modelData.simbolo; color: Paleta.acento; font.pixelSize: 27; Layout.minimumWidth: 46; Layout.preferredWidth: Math.max(46, implicitWidth) }
                                         Grid { visible: modelData.nombre === "Matrices"; columns: 3; spacing: 3; Layout.preferredWidth: 46; Repeater { model: 9; Rectangle { width: 7; height: 7; color: "transparent"; border.color: Paleta.acento } } }
                                         Label { text: modelData.nombre; color: Paleta.texto; font.pixelSize: 19; font.bold: true; Layout.fillWidth: true }
                                         Label { text: "›"; color: Paleta.secundario; font.pixelSize: 23 }
@@ -220,7 +227,23 @@ ApplicationWindow {
                                             width: parent.width
                                             spacing: 14
                                             MatrizVista { visible: (cuaderno.resultado.matriz?.length || 0) > 0; matriz: cuaderno.resultado.matriz || []; Layout.fillWidth: true }
-                                            TextArea { objectName: "resumenResultado"; text: cuaderno.resultado.resumen || "Todavía no hay resultado."; readOnly: true; selectByMouse: true; wrapMode: TextEdit.Wrap; color: Paleta.texto; font.pixelSize: 13; Layout.fillWidth: true; background: null }
+                                            ResultadoIterativo {
+                                                visible: Boolean(cuaderno.resultado.detalleIterativo?.activo)
+                                                datos: cuaderno.resultado.detalleIterativo || ({})
+                                                Layout.fillWidth: true
+                                            }
+                                            TextArea {
+                                                objectName: "resumenResultado"
+                                                visible: !Boolean(cuaderno.resultado.detalleIterativo?.activo)
+                                                text: cuaderno.resultado.resumen || "Todavía no hay resultado."
+                                                readOnly: true
+                                                selectByMouse: true
+                                                wrapMode: TextEdit.Wrap
+                                                color: Paleta.texto
+                                                font.pixelSize: 13
+                                                Layout.fillWidth: true
+                                                background: null
+                                            }
                                         }
                                     }
                                     RowLayout {

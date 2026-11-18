@@ -98,6 +98,32 @@ class PruebasQtQuick(unittest.TestCase):
         self.assertTrue(self.control.estado['vigente'])
         self.assertEqual(self.control.formulario['camposA'][0]['valor'], 'x^4-5*x^3+0.5*x^2-11*x+10')
 
+    def test_tarjeta_iterativa_minima_detalles_y_metodos_anteriores(self):
+        """La tabla y sus detalles funcionan en tamaño mínimo sin ampliar otros métodos."""
+        from PySide6.QtCore import QMetaObject
+        self.ventana.setWidth(1100)
+        self.ventana.setHeight(760)
+        self.control.abrirTema('Numéricos')
+        self.control.seleccionar('num_comparar_iterativos')
+        self.control.cargarEjemplo('')
+        self.control.calcular()
+        self.esperar_calculo()
+        tarjeta = self.buscar_control('resultadoIterativo')
+        tabla = self.buscar_control('tablaResumenIterativo')
+        self.assertTrue(tarjeta.isVisible())
+        self.assertGreater(tabla.height(), 0)
+        self.assertGreater(tabla.width(), 0)
+        boton = self.buscar_control('verDetallesTecnicos')
+        self.assertTrue(QMetaObject.invokeMethod(boton, 'clicked'))
+        self.app.processEvents()
+        self.assertTrue(self.buscar_control('panelDetallesTecnicos').isVisible())
+        self.control.seleccionar('num_biseccion')
+        self.control.cargarEjemplo('')
+        self.control.calcular()
+        self.esperar_calculo()
+        self.assertFalse(tarjeta.isVisible())
+        self.assertTrue(self.buscar_control('resumenResultado').isVisible())
+
     def test_teclado_qml_edicion_deshacer_y_limpiar(self):
         """Los botones QML escriben en el cursor y deshacer conserva el método."""
         from PySide6.QtCore import QObject, QMetaObject

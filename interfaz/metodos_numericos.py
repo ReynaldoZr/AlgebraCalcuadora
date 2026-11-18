@@ -158,6 +158,177 @@ def ejecutar_numerico(clave, parametros, matrices=None):
     raise ValueError('Método numérico no disponible.')
 
 
+def subindice(numero):
+    """Convierte un entero positivo en subíndice Unicode para etiquetar variables."""
+    tabla = str.maketrans('0123456789', '₀₁₂₃₄₅₆₇₈₉')
+    return str(numero).translate(tabla)
+
+
+def formato_visual(valor):
+    """Redondea solo para mostrar; usa notación científica en magnitudes pequeñas o grandes."""
+    if valor is None:
+        return 'No definido'
+    numero = float(valor)
+    if numero == 0:
+        return '0'
+    magnitud = abs(numero)
+    if magnitud < 1e-4 or magnitud >= 1e6:
+        return f'{numero:.4e}'
+    return f'{numero:.4f}'
+
+
+def _resumen_metodo_iterativo(nombre, datos, diferencia_ref=None):
+    """Prepara métricas breves y completas de un método iterativo sin recalcular."""
+    from modulos.numericos.funciones import formato
+    convergio = bool(datos['convergio'])
+    return dict(
+        nombre=nombre,
+        convergio=convergio,
+        iteraciones=len(datos['filas']),
+        estado='Alcanzó la tolerancia' if convergio else 'No alcanzó la tolerancia',
+        residuo_corto=formato_visual(datos['residuo']),
+        residuo_completo=formato(datos['residuo']),
+        error_corto=formato_visual(datos['error']),
+        error_completo=formato(datos['error']),
+        motivo=datos['motivo'],
+        diferencia_ref_completa=formato(diferencia_ref) if diferencia_ref is not None else None,
+        advertencias=list(datos.get('advertencias', ())),
+    )
+
+
+def _aproximaciones_visuales(valores):
+    """Amplía la precisión de una fila cuando el redondeo oculta diferencias."""
+    textos = [formato_visual(v) for v in valores]
+    # Solo ampliamos si dos valores diferentes producen la misma celda visible.
+    if any(a != b and ta == tb for i, (a, ta) in enumerate(zip(valores, textos))
+           for b, tb in zip(valores[i + 1:], textos[i + 1:])):
+        return [format(float(v), '.17g') for v in valores]
+    return textos
+
+
+def resumen_iterativo_estructurado(clave, calculo):
+    """Estructura aproximaciones, referencia y detalles técnicos para la tarjeta de resultados."""
+    from modulos.numericos.funciones import formato
+    if clave not in ('num_comparar_iterativos', 'num_jacobi', 'num_gauss_seidel'):
+        return dict(activo=False)
+    d = calculo.datos
+    es_comparacion = clave == 'num_comparar_iterativos'
+    ref = d.get('referencia')
+    ref_disponible = ref is not None
+    advertencias = []
+    if es_comparacion:
+        dj, dgs = d['jacobi'], d['gauss_seidel']
+        vj_vec, vgs_vec = d['valor_jacobi'], d['valor_gauss_seidel']
+        metodos = [
+            _resumen_metodo_iterativo('Jacobi', dj, d.get('diferencia_referencia_jacobi')),
+            _resumen_metodo_iterativo('Gauss-Seidel', dgs, d.get('diferencia_referencia_gauss_seidel')),
+        ]
+        if dj['convergio'] and dgs['convergio']:
+            estado_general = 'Ambos métodos alcanzaron la tolerancia.'
+            comparacion = d['comparacion_iteraciones']
+        elif dj['convergio'] or dgs['convergio']:
+            estado_general = d['comparacion_iteraciones']
+            comparacion = ''
+        else:
+            estado_general = 'Ninguno de los dos métodos alcanzó la tolerancia.'
+            comparacion = ''
+            advertencias.append('Ninguno alcanzó la tolerancia solicitada; revisa el motivo de parada.')
+        columnas = ['Variable', 'Jacobi ≈', 'Gauss-Seidel ≈', 'Referencia para comparar']
+        filas = [
+            [
+                f'x{subindice(i + 1)}',
+                *_aproximaciones_visuales(
+                    [vj_vec[i], vgs_vec[i]] + ([ref[i]] if ref_disponible else [])
+                ),
+                *([] if ref_disponible else ['No disponible']),
+            ]
+            for i in range(len(vj_vec))
+        ]
+        advertencias.extend(dj.get('advertencias', ()))
+        advertencias.extend(dgs.get('advertencias', ()))
+    else:
+        nombre = d.get('metodo', 'Jacobi' if clave == 'num_jacobi' else 'Gauss-Seidel')
+        vec = calculo.valor
+        metodos = [_resumen_metodo_iterativo(nombre, d, d.get('diferencia_referencia'))]
+        estado_general = (
+            f'{nombre} alcanzó la tolerancia.'
+            if d['convergio']
+            else f'{nombre} no alcanzó la tolerancia.'
+        )
+        comparacion = ''
+        if not d['convergio']:
+            advertencias.append(f'{nombre} no alcanzó la tolerancia: {d["motivo"]}')
+        columnas = ['Variable', f'{nombre} ≈', 'Referencia para comparar']
+        filas = [
+            [
+                f'x{subindice(i + 1)}',
+                *_aproximaciones_visuales([vec[i]] + ([ref[i]] if ref_disponible else [])),
+                *([] if ref_disponible else ['No disponible']),
+            ]
+            for i in range(len(vec))
+        ]
+        advertencias.extend(d.get('advertencias', ()))
+
+    if not ref_disponible:
+        advertencias.append(f'Referencia para comparar no disponible: {d.get("error_referencia", "error numérico")}')
+
+    # El motivo crítico debe verse sin abrir el panel de detalles.
+    for metodo in metodos:
+        if not metodo['convergio']:
+            advertencias.append(f'{metodo["nombre"]}: {metodo["motivo"]}')
+    if clave == 'num_gauss_seidel' and d.get('relajacion', 1.0) != 1.0:
+        advertencias.append(
+            f'Relajación λ={formato(d["relajacion"])}: la dominancia por sí sola '
+            'no garantiza convergencia con cualquier valor de λ.'
+        )
+
+    orden_txt = f'Reordenadas ({list(d["orden_ecuaciones"])})' if d.get('reordenado') else 'Original'
+    dominancia_txt = 'Sí' if all(d['dominantes']) else 'Sin garantía'
+    detalles = [
+        dict(titulo='Tolerancia ε', valor=formato(d['tolerancia'])),
+        dict(titulo='Orden de ecuaciones', valor=orden_txt),
+        dict(titulo='Diagonal estrictamente dominante', valor=dominancia_txt),
+    ]
+    if clave == 'num_gauss_seidel':
+        detalles.append(dict(titulo='Relajación λ', valor=formato(d['relajacion'])))
+    for m in metodos:
+        detalles.append(dict(titulo=f'Cambio final ({m["nombre"]})', valor=m['error_completo']))
+        detalles.append(dict(titulo=f'Residuo ‖Ax − b‖∞ ({m["nombre"]})', valor=m['residuo_completo']))
+        detalles.append(dict(titulo=f'Parada ({m["nombre"]})', valor=m['motivo']))
+        if m['diferencia_ref_completa'] is not None:
+            detalles.append(dict(titulo=f'Diferencia máx. con referencia ({m["nombre"]})', valor=m['diferencia_ref_completa']))
+    if es_comparacion:
+        detalles.append(dict(titulo='Diferencia máx. entre métodos', valor=formato(d['diferencia_metodos'])))
+        detalles.append(dict(titulo='Vector completo Jacobi', valor='(' + ', '.join(formato(v) for v in d['valor_jacobi']) + ')'))
+        detalles.append(dict(titulo='Vector completo Gauss-Seidel', valor='(' + ', '.join(formato(v) for v in d['valor_gauss_seidel']) + ')'))
+    else:
+        detalles.append(dict(titulo='Vector completo', valor='(' + ', '.join(formato(v) for v in calculo.valor) + ')'))
+    detalles.append(dict(
+        titulo='Referencia para comparar (NumPy)',
+        valor='(' + ', '.join(formato(v) for v in ref) + ')' if ref_disponible else d.get('error_referencia', 'No disponible'),
+    ))
+
+    return dict(
+        activo=True,
+        es_comparacion=es_comparacion,
+        estado_general=estado_general,
+        comparacion_iteraciones=comparacion,
+        metodos=metodos,
+        columnas=columnas,
+        filas=filas,
+        referencia_disponible=ref_disponible,
+        nota_referencia=(
+            'Referencia para comparar (NumPy): aproximación independiente para contraste; no es una solución exacta.'
+            if ref_disponible
+            else f'Referencia para comparar no disponible: {d.get("error_referencia", "")}'
+        ),
+        nota_precision='Valores redondeados solo para mostrar; cálculos, tablas y guardados conservan la precisión completa.',
+        explicacion_residuo='El residuo ‖Ax − b‖∞ comprueba cuánto falta para satisfacer las ecuaciones. Es distinto al cambio entre iteraciones y a la diferencia con la referencia.',
+        advertencias=list(dict.fromkeys(advertencias)),
+        detalles_tecnicos=detalles,
+    )
+
+
 def resumen_numerico(clave, calculo):
     """Explica los resultados y límites de precisión con nombres de sus magnitudes."""
     from modulos.numericos.funciones import formato
@@ -173,10 +344,10 @@ def resumen_numerico(clave, calculo):
                               ' · No garantiza convergencia para cualquier λ; revisar el residuo.\n')
         return (f'{d["metodo"]} · X ≈ ({vector})\n{d["motivo"]}\n'
                 f'{relajacion_txt}'
-                f'Iteraciones: {len(d["filas"])} · Error máximo: {formato(d["error"])}\n'
+                f'Iteraciones: {len(d["filas"])} · Cambio entre iteraciones: {formato(d["error"])}\n'
                 f'Residuo ‖Ax − b‖∞: {formato(d["residuo"])}\n'
                 f'Orden de ecuaciones: {orden_txt} · Diagonal dominante: {"Sí" if all(d["dominantes"]) else "Sin garantía"}\n'
-                f'Referencia NumPy: {referencia}\nDiferencia máxima: {formato(d["diferencia_referencia"])}\n'
+                f'Referencia para comparar (Referencia NumPy): {referencia}\nDiferencia frente a la referencia: {formato(d["diferencia_referencia"])}\n'
                 + '\n'.join(d['advertencias']))
     if clave == 'num_comparar_iterativos':
         dj, dgs = d['jacobi'], d['gauss_seidel']
@@ -187,12 +358,12 @@ def resumen_numerico(clave, calculo):
         avisos = dj['advertencias'] + dgs['advertencias']
         return (f'{d["comparacion_iteraciones"]}\n'
                 f'Orden de ecuaciones: {orden_txt} · Diagonal dominante: {"Sí" if all(d["dominantes"]) else "Sin garantía"}\n'
-                f'Jacobi ({len(dj["filas"])} it., {"convergió" if dj["convergio"] else "sin converger"}): X ≈ ({vec_j}) · Error: {formato(dj["error"])} · Residuo: {formato(dj["residuo"])}\n'
+                f'Jacobi ({len(dj["filas"])} it., {"convergió" if dj["convergio"] else "sin converger"}): X ≈ ({vec_j}) · Cambio: {formato(dj["error"])} · Residuo: {formato(dj["residuo"])}\n'
                 f'Parada Jacobi: {dj["motivo"]}\n'
-                f'Gauss-Seidel ({len(dgs["filas"])} it., {"convergió" if dgs["convergio"] else "sin converger"}): X ≈ ({vec_gs}) · Error: {formato(dgs["error"])} · Residuo: {formato(dgs["residuo"])}\n'
+                f'Gauss-Seidel ({len(dgs["filas"])} it., {"convergió" if dgs["convergio"] else "sin converger"}): X ≈ ({vec_gs}) · Cambio: {formato(dgs["error"])} · Residuo: {formato(dgs["residuo"])}\n'
                 f'Parada Gauss-Seidel: {dgs["motivo"]}\n'
                 f'Diferencia entre métodos: {formato(d["diferencia_metodos"])}\n'
-                f'Referencia NumPy: {referencia} · Dif. Jacobi: {formato(d["diferencia_referencia_jacobi"])} · Dif. Gauss-Seidel: {formato(d["diferencia_referencia_gauss_seidel"])}\n'
+                f'Referencia para comparar (Referencia NumPy): {referencia} · Dif. Jacobi: {formato(d["diferencia_referencia_jacobi"])} · Dif. Gauss-Seidel: {formato(d["diferencia_referencia_gauss_seidel"])}\n'
                 + '\n'.join(dict.fromkeys(avisos)))
     if clave == 'num_biseccion':
         raices = d.get('raices_extremos', ())

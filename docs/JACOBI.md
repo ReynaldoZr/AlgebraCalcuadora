@@ -1,5 +1,13 @@
 # Jacobi · Programa 8 · Issue #14
 
+## Lectura de resultados en Qt · Issue #32
+
+Jacobi, Gauss-Seidel y su comparador muestran una fila por variable, referencia NumPy y estado/iteraciones por método dentro de la tarjeta existente. «Referencia para comparar» es una aproximación independiente, no una solución exacta. El redondeo es solo visual y aumenta su precisión cuando ocultaría diferencias; cálculos y guardados conservan sus valores originales.
+
+El residuo comprueba el ajuste de las ecuaciones y se distingue del cambio entre iteraciones y de la diferencia con NumPy. Los motivos de fallo, desbordamiento y advertencias de relajación se muestran sin abrir «Ver detalles técnicos». Ese botón despliega tolerancia, orden, dominancia, vectores completos y referencia. Los demás métodos conservan sus resúmenes anteriores.
+
+## Núcleo y criterios
+
 El núcleo se encuentra en modulos/numericos/iterativos.py. Recibe A cuadrada,
 B y X₀ como vectores planos, tolerancia positiva y máximo entero entre 1 y 10000.
 Acepta listas o tuplas con valores convertibles a números finitos, incluidos

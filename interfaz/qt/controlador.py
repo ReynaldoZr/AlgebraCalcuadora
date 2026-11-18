@@ -6,6 +6,7 @@ Elaboración: equipo del proyecto, con apoyo de IA.
 
 from copy import deepcopy
 from pathlib import Path
+import sys
 
 from PySide6.QtCore import QObject, Property, QRunnable, QThreadPool, QTimer, Signal, Slot
 from PySide6.QtGui import QGuiApplication
@@ -22,9 +23,35 @@ from interfaz.qt.catalogo import (
     metodos_tema, tema_de,
 )
 from interfaz.qt.presentacion import matriz_visual, paso_visual, previa_visual, tabla_visual
+from interfaz.qt.resumen_tabla import resumen_estructurado
 from interfaz.qt.sesion import Sesion
 from interfaz.recorrido import INTERVALO_PASOS_MS
 from teoremas.resumen_teoremas import teoremas_tema
+
+
+def detectar_tema_oscuro():
+    """Detecta si el sistema usa modo oscuro; ante valor desconocido usa oscuro por defecto."""
+    try:
+        from PySide6.QtCore import Qt
+        esquema = QGuiApplication.styleHints().colorScheme()
+        if esquema == Qt.ColorScheme.Light:
+            return False
+        if esquema == Qt.ColorScheme.Dark:
+            return True
+    except AttributeError:
+        pass
+    if sys.platform == 'win32':
+        try:
+            import winreg
+            with winreg.OpenKey(
+                winreg.HKEY_CURRENT_USER,
+                r'Software\Microsoft\Windows\CurrentVersion\Themes\Personalize',
+            ) as clave:
+                valor, _ = winreg.QueryValueEx(clave, 'AppsUseLightTheme')
+                return valor == 0
+        except OSError:
+            pass
+    return True
 
 
 class Respuesta(QObject):
@@ -80,6 +107,7 @@ class Controlador(QObject):
         self._tarea = None
         self._registrar = True
         self._fuente_grafica = None
+        self._tema_oscuro_inicial = detectar_tema_oscuro()
         self.reloj = QTimer(self)
         self.reloj.setInterval(INTERVALO_PASOS_MS)
         self.reloj.timeout.connect(self.siguiente)
@@ -88,6 +116,11 @@ class Controlador(QObject):
     def sesion(self):
         """Obtiene la sesión activa sin mezclar ejercicios de otros métodos."""
         return self.sesiones[self.clave]
+
+    @Property(bool, constant=True)
+    def temaOscuroInicial(self):
+        """Indica si el sistema operativo prefiere modo oscuro al abrir la ventana."""
+        return self._tema_oscuro_inicial
 
     @Property('QVariantList', constant=True)
     def temas(self):
@@ -301,11 +334,22 @@ class Controlador(QObject):
         s = self.sesion
         self._indice = 0 if s.vigente and s.breves else -1
         if s.presentacion is not self._presentacion_publicada or not self._salida:
-            self._salida = dict(resumen='Todavía no hay resultado para este método.', matriz=[], pasos=[], tabla=dict(columnas=[], filas=[]))
+            self._salida = dict(
+                resumen='Todavía no hay resultado para este método.',
+                matriz=[],
+                pasos=[],
+                tabla=dict(columnas=[], filas=[]),
+                detalleIterativo=dict(activo=False),
+            )
             if s.presentacion:
                 p = s.presentacion
-                self._salida.update(resumen=p.resumen, matriz=matriz_visual(p.matriz),
-                                    pasos=[paso_visual(paso) for paso in p.calculo.pasos], tabla=tabla_visual(p.calculo))
+                self._salida.update(
+                    resumen=p.resumen,
+                    matriz=matriz_visual(p.matriz),
+                    pasos=[paso_visual(paso) for paso in p.calculo.pasos],
+                    tabla=tabla_visual(p.calculo),
+                    detalleIterativo=resumen_estructurado(self.clave, p),
+                )
             self._presentacion_publicada = s.presentacion
             self.resultadoCambiado.emit()
         self._actualizar_previa()
