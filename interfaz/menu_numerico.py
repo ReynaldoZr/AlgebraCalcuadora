@@ -6,8 +6,9 @@ Elaboración: equipo del proyecto, con apoyo de IA.
 
 from interfaz.entradas import elegir_matriz, leer_opcion
 from interfaz.menu_algebra import formatear_pasos
-from interfaz.metodos_numericos import CAMPOS, METODOS_NUMERICOS, ejecutar_numerico, parametros_defecto, resumen_numerico
+from interfaz.metodos_numericos import METODOS_NUMERICOS, ejecutar_numerico, parametros_defecto, resumen_numerico
 from teoremas.resumen_teoremas import teoremas_tema
+from interfaz.metodos_numericos import campo_visible, etiqueta_campo
 
 
 def menu_numerico(ultimo_resultado=None):
@@ -27,7 +28,9 @@ def menu_numerico(ultimo_resultado=None):
         clave = claves[int(opcion) - 1]
         metodo, parametros = METODOS_NUMERICOS[clave], parametros_defecto(clave)
         for nombre in metodo.campos_a + metodo.campos_b:
-            valor = input(f'{CAMPOS[nombre][0]} [{parametros[nombre]}]: ').strip()
+            if not campo_visible(clave, nombre, parametros):
+                continue
+            valor = input(f'{etiqueta_campo(clave, nombre)} [{parametros[nombre]}]: ').strip()
             if valor:
                 parametros[nombre] = valor
         matrices = {nombre: elegir_matriz(nombre, ultimo_resultado) for nombre in metodo.matrices}

@@ -18,6 +18,8 @@ class MetodoNumerico:
 
 
 CAMPOS = {
+    'x0': ('Valor inicial x₀', ''), 'derivada': ("Derivada f'(x)", ''),
+    'modo_derivada': ('Tipo de derivada', 'analitica'),
     'funcion': ('f(x)', 'x^4-5*x^3+0.5*x^2-11*x+10'), 'a': ('Extremo a', '0.55'), 'b': ('Extremo b', '1.1'),
     'tolerancia': ('Tolerancia en x o %', '0.0001'), 'tolerancia_f': ('Tolerancia |f(xr)|', '0.0001'),
     'maximo': ('Máximo de iteraciones', '200'), 'criterio': ('Criterio de error', 'intervalo'),
@@ -45,12 +47,20 @@ METODOS_NUMERICOS = {
     'num_jacobi': MetodoNumerico('Jacobi · sistemas iterativos', (), ('vector_b', 'inicial', 'epsilon', 'maximo', 'reordenar'), ('A',)),
     'num_gauss_seidel': MetodoNumerico('Gauss-Seidel · sistemas iterativos', (), ('vector_b', 'inicial', 'epsilon', 'maximo', 'relajacion', 'reordenar'), ('A',)),
     'num_comparar_iterativos': MetodoNumerico('Comparar Jacobi y Gauss-Seidel', (), ('vector_b', 'inicial', 'epsilon', 'maximo', 'reordenar'), ('A',)),
+    'num_newton': MetodoNumerico(
+        'Newton-Raphson · raíces de funciones',
+        ('funcion', 'x0', 'modo_derivada', 'derivada'),
+        ('h', 'criterio', 'tolerancia', 'tolerancia_f', 'maximo'),
+    ),
 }
 
 
 def parametros_defecto(clave):
     """Devuelve una copia de valores iniciales pertinente a cada método."""
     datos = {k: v[1] for k, v in CAMPOS.items()}
+    if clave == 'num_newton':
+        from interfaz.numericos.newton_adaptador import ejemplo_newton
+        datos.update(ejemplo_newton())
     if clave == 'num_jacobi':
         datos['reordenar'] = 'no'
     if clave == 'num_propagacion':
@@ -63,10 +73,37 @@ def parametros_defecto(clave):
 def parametros_vacios(clave):
     """Mantiene ajustes de cálculo, pero deja sin llenar los datos del ejercicio."""
     datos = parametros_defecto(clave)
+    if clave == 'num_newton':
+        from interfaz.numericos.newton_adaptador import parametros_vacios_newton
+        datos.update(parametros_vacios_newton())
     # Tolerancias y límites son ajustes; función, extremos y cantidades son el ejercicio.
-    for nombre in ('funcion', 'a', 'b', 'verdadero', 'aproximado', 'x', 'delta', 'capital', 'tasa', 'numero', 'vector_b', 'inicial'):
+    for nombre in ('funcion', 'a', 'b', 'verdadero', 'aproximado', 'x', 'delta', 'capital', 'tasa', 'numero', 'vector_b', 'inicial', 'x0', 'derivada'):
         datos[nombre] = ''
     return datos
+
+
+def etiqueta_campo(clave, nombre):
+    """Resuelve etiquetas del método sin cambiar las del resto de la calculadora."""
+    if clave == 'num_newton':
+        from interfaz.numericos.newton_adaptador import CAMPOS_NEWTON
+        return CAMPOS_NEWTON[nombre].etiqueta
+    return CAMPOS[nombre][0]
+
+
+def opciones_campo(clave, nombre):
+    """Comparte opciones válidas entre Qt, Tk y consola."""
+    if nombre == 'criterio':
+        return ('absoluto', 'porcentual') if clave == 'num_newton' else ('intervalo', 'porcentual')
+    return {'base': ('2', '10'), 'reordenar': ('si', 'no'),
+            'modo_derivada': ('analitica', 'numerica')}.get(nombre, ())
+
+
+def campo_visible(clave, nombre, parametros):
+    """Muestra solo la entrada de derivada que corresponde al modo elegido."""
+    if clave != 'num_newton':
+        return True
+    numerica = str(parametros.get('modo_derivada', 'analitica')).strip().lower() == 'numerica'
+    return not ((nombre == 'h' and not numerica) or (nombre == 'derivada' and numerica))
 
 
 def entero(texto, nombre):
@@ -112,6 +149,11 @@ def ejecutar_numerico(clave, parametros, matrices=None):
     from modulos.numericos.errores import calcular_errores, descomponer, inestabilidad, propagacion, punto_flotante, simulacion
     matrices = matrices or {}
     p = parametros
+    if clave == 'num_newton':
+        from interfaz.numericos.newton_adaptador import ejecutar_newton_adaptador
+        calculo = ejecutar_newton_adaptador(p)
+        calculo.datos.update(funcion=p['funcion'], modo_derivada=p['modo_derivada'])
+        return calculo
     if clave in ('num_jacobi', 'num_gauss_seidel', 'num_comparar_iterativos'):
         from modulos.numericos.iterativos import comparar_iterativos, gauss_seidel, jacobi
         from modulos.numericos.comparadores import verificar_iterativo
@@ -332,6 +374,9 @@ def resumen_iterativo_estructurado(clave, calculo):
 def resumen_numerico(clave, calculo):
     """Explica los resultados y límites de precisión con nombres de sus magnitudes."""
     from modulos.numericos.funciones import formato
+    if clave == 'num_newton':
+        from interfaz.numericos.newton_adaptador import resumen_newton
+        return resumen_newton(calculo)
     d = calculo.datos
     if clave in ('num_jacobi', 'num_gauss_seidel'):
         vector = ', '.join(formato(v) for v in calculo.valor)
@@ -392,6 +437,7 @@ def resumen_numerico(clave, calculo):
 def casos_numericos(clave):
     """Devuelve casos pequeños para practicar criterios y fallos de precondiciones."""
     return {'num_biseccion': ('Ejemplo del profesor', 'cos(x)-x', 'Sin cambio de signo', 'Raíz en extremo'),
+            'num_newton': ('exp(-x)-x', 'Ciclo cúbico', 'Salto x^10-1'),
             'num_jacobi': ('Diagonal dominante', 'Reordenar 2×2', 'Sin convergencia', 'Diagonal con cero'),
             'num_gauss_seidel': ('Diagonal dominante', 'Reordenar 2×2', 'Diagonal con cero', 'Sin convergencia'),
             'num_comparar_iterativos': ('Diagonal dominante', 'Reordenar 2×2', 'Diagonal con cero', 'Sin convergencia'),

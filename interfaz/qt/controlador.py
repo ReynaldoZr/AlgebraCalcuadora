@@ -16,7 +16,7 @@ from interfaz.biblioteca import Biblioteca, leer_matriz_guardada, ruta_bibliotec
 from interfaz.datos import convertir_numero
 from interfaz.ejemplos_casos import AYUDAS
 from interfaz.exportar_pdf import exportar_pdf
-from interfaz.metodos_numericos import CAMPOS, METODOS_NUMERICOS
+from interfaz.metodos_numericos import METODOS_NUMERICOS
 from interfaz.pegado import interpretar_matriz, texto_matriz
 from interfaz.qt.catalogo import (
     AYUDA_NUMERICA, CATALOGO, TEMAS, campos_de, ejecutar, matrices_de,
@@ -24,6 +24,7 @@ from interfaz.qt.catalogo import (
 )
 from interfaz.qt.presentacion import matriz_visual, paso_visual, previa_visual, tabla_visual
 from interfaz.qt.resumen_tabla import resumen_estructurado
+from interfaz.metodos_numericos import campo_visible, etiqueta_campo, opciones_campo
 from interfaz.qt.sesion import Sesion
 from interfaz.recorrido import INTERVALO_PASOS_MS
 from teoremas.resumen_teoremas import teoremas_tema
@@ -141,9 +142,14 @@ class Controlador(QObject):
         for columna in (0, 1):
             lista = []
             for nombre in campos_de(self.clave, columna):
-                opciones = ['intervalo', 'porcentual'] if nombre == 'criterio' else ['2', '10'] if nombre == 'base' else ['si', 'no'] if nombre == 'reordenar' else []
-                lista.append(dict(clave=nombre, etiqueta='Escalar k' if nombre == 'escalar' else CAMPOS[nombre][0],
-                                  valor=s.parametros[nombre], opciones=opciones))
+                if not campo_visible(self.clave, nombre, s.parametros):
+                    continue
+                lista.append(dict(
+                    clave=nombre,
+                    etiqueta='Escalar k' if nombre == 'escalar' else etiqueta_campo(self.clave, nombre),
+                    valor=s.parametros[nombre], opciones=list(opciones_campo(self.clave, nombre)),
+                    placeholder='Escribe h, por ejemplo 1e-5' if self.clave == 'num_newton' and nombre == 'h' else '',
+                ))
             campos.append(lista)
         ayuda = AYUDA_NUMERICA[self.clave] if tema == 'Numéricos' else CATALOGO[self.clave].ayuda
         return dict(clave=self.clave, tema=tema, metodos=metodos_tema(tema),
@@ -234,7 +240,7 @@ class Controlador(QObject):
             return
         self._editar()
         self.sesion.parametros[nombre] = valor
-        self._terminar_edicion()
+        self._terminar_edicion(nombre == 'modo_derivada')
 
     @Slot(str, int, int, str)
     def editarCelda(self, nombre, fila, columna, valor):
@@ -322,6 +328,8 @@ class Controlador(QObject):
         self.sesion.aceptar(*respuesta)
         self._publicar()
         self.avisar('Cálculo completado · Consulta el recorrido o todos los pasos.')
+        if self.clave == 'num_newton' and not self.sesion.presentacion.calculo.datos['convergio']:
+            self.avisar('Newton sin convergencia: ' + self.sesion.presentacion.calculo.datos['motivo'], True)
         if self._registrar:
             try:
                 self.biblioteca.registrar_historial(self.sesion.registro())
@@ -452,10 +460,10 @@ class Controlador(QObject):
 
     def _destinos_valores(self):
         """Enumera los campos reales del método activo que reciben números."""
-        excluidos = {'funcion', 'criterio', 'base', 'maximo', 'iteraciones', 'decimales', 'cifras'}
-        return [dict(clave=nombre, etiqueta='Escalar k' if nombre == 'escalar' else CAMPOS[nombre][0])
+        excluidos = {'funcion', 'derivada', 'modo_derivada', 'criterio', 'base', 'maximo', 'iteraciones', 'decimales', 'cifras'}
+        return [dict(clave=nombre, etiqueta='Escalar k' if nombre == 'escalar' else etiqueta_campo(self.clave, nombre))
                 for columna in (0, 1) for nombre in campos_de(self.clave, columna)
-                if nombre not in excluidos]
+                if nombre not in excluidos and campo_visible(self.clave, nombre, self.sesion.parametros)]
 
     def _usar_valor(self, registro, destino):
         """Coloca el valor en el campo elegido y registra la edición."""

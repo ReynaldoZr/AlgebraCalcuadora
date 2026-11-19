@@ -1,6 +1,6 @@
 # Preparación de Newton-Raphson
 
-Estado al 17 de noviembre de 2026: el PR #39 incorpora adaptadores parciales de #36, #37 y #38. **Newton todavía no aparece como método disponible en la calculadora.** Estas issues permanecen abiertas; integrar adaptadores no significa terminar el Programa 9.
+Estado al 18 de noviembre de 2026: #33–#35 están integradas y la propuesta de #36 conecta Newton al formulario, resumen y resultado guardable de Numéricos. El PR #39 había preparado adaptadores parciales. **Las mejoras específicas de #37 y #38 siguen pendientes**; esta conexión no significa terminar el Programa 9. Uso y pruebas en [NEWTON_FORMULARIO.md](NEWTON_FORMULARIO.md).
 
 La fuente provisional es la Sesión 22, sobre Newton-Raphson, derivada numérica, convergencia y polinomios, y el Plan semanal 14 del [curso UAM](https://uamvirtual.uam.edu.ni/grado/course/view.php?id=8202&section=14). El plan aún contiene la rúbrica del Programa 8. No se ha confirmado el enunciado, rúbrica ni fecha del Programa 9; no extender permisos académicos a otros módulos.
 
@@ -19,7 +19,7 @@ El contrato propuesto está en la [issue #33](https://github.com/ReynaldoZr/Alge
 
 ## Archivos y uso para desarrollo
 
-`interfaz/numericos/newton_adaptador.py` describe campos vacíos, ejemplos explícitos, validación y resumen. `ejecutar_newton_adaptador(parametros, solver=None, proveedor_derivada=None)` admite un solver inyectado compatible con #33. Si el núcleo aún no existe, devuelve un diagnóstico explícito. Para derivada numérica exige h positivo, finito y distinguible de x0, y un proveedor que reciba `(funcion, h)` y devuelva una función de derivada. Validar todos los puntos de cada iteración corresponde al módulo numérico; la interfaz no implementa diferencias finitas ni otro bucle de Newton.
+`interfaz/numericos/newton_adaptador.py` describe campos vacíos, ejemplos explícitos, validación y resumen. `ejecutar_newton_adaptador(parametros, solver=None, proveedor_derivada=None)` utiliza el núcleo y proveedor ya integrados, y conserva inyección para pruebas. Para derivada numérica exige h positivo, finito y distinguible de x0; el proveedor recibe `(funcion, h)` y devuelve una función de derivada. Validar todos los puntos de cada iteración corresponde al módulo numérico; la interfaz no implementa diferencias finitas ni otro bucle de Newton.
 
 `newton_presentacion.py` consume pasos, filas y registros; no resuelve Newton. Falta conectar reproducción manual de 2 segundos, navegación y Mostrar tabla al recorrido existente.
 

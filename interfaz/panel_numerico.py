@@ -17,6 +17,7 @@ from interfaz.procedimiento import VistaProcedimiento
 from interfaz.recorrido import INTERVALO_PASOS_MS, ReproductorPasos
 from interfaz.lenguaje_pasos import explicar_paso
 from interfaz.numericos.teclado import TecladoFuncion
+from interfaz.metodos_numericos import campo_visible, etiqueta_campo, opciones_campo
 
 
 class PanelNumerico(ttk.Frame):
@@ -41,8 +42,8 @@ class PanelNumerico(ttk.Frame):
         self._crear_previa()
         self._crear_desarrollo()
         self.reproductor = ReproductorPasos(self.after, self.after_cancel, self._mostrar_paso, lambda: INTERVALO_PASOS_MS, self._actualizar_controles)
-        for variable in self.parametros.values():
-            variable.trace_add('write', self.marcar_cambio)
+        for nombre, variable in self.parametros.items():
+            variable.trace_add('write', lambda *args, campo=nombre: self._campo_editado(campo))
         self._configurar()
         self._cargando = False
         self._presentar()
@@ -70,6 +71,7 @@ class PanelNumerico(ttk.Frame):
         self.tarjetas.grid(row=1, column=0, sticky='nsew')
         self.tarjetas.rowconfigure(0, weight=1)
         self.grupos, self.campos, self.entradas = [], {}, {}
+        self.etiquetas, self.selectores = {}, {}
         for columna, titulo in enumerate(('Datos del ejercicio', 'Opciones y referencia')):
             self.tarjetas.columnconfigure(columna, weight=1, uniform='numericos')
             grupo = ttk.Frame(self.tarjetas, style='Tarjeta.TFrame', padding=12)
@@ -77,12 +79,14 @@ class PanelNumerico(ttk.Frame):
             ttk.Label(grupo, text=titulo, style='TarjetaTitulo.TLabel').pack(anchor='w')
             self.grupos.append(grupo)
         for nombre, (etiqueta, _) in CAMPOS.items():
-            columna = 0 if nombre in ('funcion', 'a', 'b', 'verdadero', 'aproximado', 'x', 'delta', 'capital', 'tasa', 'numero') else 1
+            columna = 0 if nombre in ('funcion', 'a', 'b', 'verdadero', 'aproximado', 'x', 'delta', 'capital', 'tasa', 'numero', 'x0', 'modo_derivada', 'derivada') else 1
             marco = ttk.Frame(self.grupos[columna], style='Interior.TFrame')
-            ttk.Label(marco, text=etiqueta, style='Tarjeta.TLabel').pack(anchor='w')
-            if nombre in ('criterio', 'base', 'reordenar'):
-                valores = ('intervalo', 'porcentual') if nombre == 'criterio' else ('2', '10') if nombre == 'base' else ('si', 'no')
-                ttk.Combobox(marco, textvariable=self.parametros[nombre], values=valores, state='readonly', width=16).pack(fill='x', pady=(2, 0))
+            self.etiquetas[nombre] = ttk.Label(marco, text=etiqueta, style='Tarjeta.TLabel')
+            self.etiquetas[nombre].pack(anchor='w')
+            if nombre in ('criterio', 'base', 'reordenar', 'modo_derivada'):
+                selector = ttk.Combobox(marco, textvariable=self.parametros[nombre], values=opciones_campo(self.clave, nombre), state='readonly', width=16)
+                selector.pack(fill='x', pady=(2, 0))
+                self.selectores[nombre] = selector
             else:
                 entrada = ttk.Entry(marco, textvariable=self.parametros[nombre], width=18)
                 entrada.pack(fill='x', pady=(2, 0))
@@ -163,10 +167,16 @@ class PanelNumerico(ttk.Frame):
         for editor in self.editores.values():
             editor.grid_remove()
         for nombre in metodo.campos_a + metodo.campos_b:
+            self.etiquetas[nombre].configure(text=etiqueta_campo(self.clave, nombre))
+            if nombre in self.selectores:
+                self.selectores[nombre].configure(values=opciones_campo(self.clave, nombre))
+            if not campo_visible(self.clave, nombre, {n: v.get() for n, v in self.parametros.items()}):
+                continue
             self.campos[nombre].pack(fill='x', pady=(4, 0))
             if nombre == 'funcion':
                 self.teclado.pack(fill='x', pady=(6, 2))
         ayudas = {
+            'num_newton': 'Newton: absoluto usa unidades de x y porcentual usa %. El residuo tiene tolerancia independiente. No garantiza convergencia ni todas las raíces.',
             'num_jacobi': 'Cada componente usa el vector anterior. Escribe b y X₀ separados por comas. El residuo comprueba el sistema original.',
             'num_gauss_seidel': 'Usa de inmediato los valores recién calculados. Puede reordenar ecuaciones y usar relajación 0 < λ < 2.',
             'num_comparar_iterativos': 'Ejecuta Jacobi y Gauss-Seidel con los mismos datos, conserva ambas tablas y compara sus curvas de error.',
@@ -202,6 +212,14 @@ class PanelNumerico(ttk.Frame):
             return
         self._recordar()
         self.clave = clave
+        # Los métodos no comparten el nombre del criterio absoluto/intervalo.
+        opciones = opciones_campo(clave, 'criterio')
+        if self.parametros['criterio'].get() not in opciones:
+            self._cargando = True
+            try:
+                self.parametros['criterio'].set(opciones[0])
+            finally:
+                self._cargando = False
         # Una respuesta de otro método no debe aparecer bajo la selección nueva.
         self.presentacion = None
         self._configurar()
@@ -236,6 +254,12 @@ class PanelNumerico(ttk.Frame):
         self._actualizar_controles()
         self._cambiar_vista()
 
+    def _campo_editado(self, nombre):
+        """Actualiza entradas condicionales sin perder texto ni cambiar el método."""
+        self.marcar_cambio()
+        if not self._cargando and nombre == 'modo_derivada':
+            self._configurar()
+
     def marcar_cambio(self, *argumentos):
         """Registra cambios solo después de terminar la construcción de los editores."""
         if self._cargando or any(e.cargando for e in self.editores.values()):
@@ -269,6 +293,9 @@ class PanelNumerico(ttk.Frame):
         if caso not in self.casos():
             raise ValueError('El caso no corresponde al método seleccionado.')
         datos = parametros_defecto(self.clave)
+        if self.clave == 'num_newton':
+            from interfaz.numericos.newton_adaptador import ejemplo_newton
+            datos.update(ejemplo_newton(caso))
         with self._edicion():
             if self.clave in ('num_jacobi', 'num_gauss_seidel', 'num_comparar_iterativos'):
                 matriz, ajustes = ejemplo_jacobi(caso)

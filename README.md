@@ -14,7 +14,7 @@ Calculadora educativa local para un equipo de dos estudiantes. **Versión v0.1.0
 
 ## Antes de trabajar con una IA
 
-**Preparación provisional del Programa 9:** existen adaptadores de Newton para desarrollar y probar en paralelo. Newton aún no está disponible en el menú y falta conectar su núcleo, los pasos y las gráficas. Estado y contrato en [docs/NEWTON_PROVISIONAL.md](docs/NEWTON_PROVISIONAL.md); las issues #36–#38 permanecen abiertas.
+**Programa 9 provisional · Newton:** la propuesta de #36 conecta el núcleo a **Numéricos → Newton-Raphson**, con derivada analítica/numérica, estado, residuo y resultado reutilizable. Conserva el diseño y las entradas vacías. [Guía del formulario](docs/NEWTON_FORMULARIO.md). Las mejoras específicas de pasos/tabla (#37) y gráfica (#38) siguen pendientes; el enunciado académico definitivo todavía debe confirmarse.
 
 **Guardados y estudio (local):** abre **Guardar / Estudio** para guardar una matriz, un ejercicio completo, cargar casos o consultar ayudas. La pestaña **Guardados** conserva elementos con símbolos como **Aᵀ** y nombres automáticos (**Transpuesta 1**, **Transpuesta 2**), nombres/símbolos propios y notas. Incluye búsqueda, historial de cien ejercicios, recuperación y PDF con todos los pasos. Cada editor permite copiar/pegar matrices. Los datos permanecen en tu equipo al cerrar. [Guía y ubicación de los datos](docs/GUARDADOS_Y_ESTUDIO.md).
 

@@ -124,6 +124,73 @@ class PruebasQtQuick(unittest.TestCase):
         self.assertFalse(tarjeta.isVisible())
         self.assertTrue(self.buscar_control('resumenResultado').isVisible())
 
+    def test_newton_formulario_vacio_modos_y_residuo(self):
+        """Newton usa entradas vacías, campos condicionales y proveedor real de derivada."""
+        self.control.abrirTema('Numéricos')
+        self.control.seleccionar('num_newton')
+        for campo in ('funcion', 'x0', 'derivada', 'h'):
+            self.assertEqual(self.control.sesion.parametros[campo], '')
+        self.assertNotIn('h', [c['clave'] for c in self.control.formulario['camposB']])
+        self.control.editarCampo('modo_derivada', 'numerica')
+        self.app.processEvents()
+        self.assertNotIn('derivada', [c['clave'] for c in self.control.formulario['camposA']])
+        self.assertTrue(self.buscar_control('campo_h').isVisible())
+        for campo, valor in dict(funcion='exp(-x)-x', x0='0', h='1e-5').items():
+            self.control.editarCampo(campo, valor)
+        self.control.calcular()
+        self.esperar_calculo()
+        self.assertTrue(self.control.sesion.presentacion.calculo.datos['convergio'])
+        self.assertAlmostEqual(self.control.sesion.presentacion.calculo.valor, .5671432904, places=9)
+        self.assertIn('Raíz aproximada', self.control.resultado['resumen'])
+        self.control.editarCampo('tolerancia_f', '0')
+        self.control.calcular()
+        self.esperar_calculo()
+        self.assertFalse(self.control.estado['vigente'])
+        self.assertTrue(self.control.estado['error'])
+
+    def test_newton_guardar_reutilizar_navegar_y_deshacer(self):
+        """Guarda el escalar, lo reutiliza en bisección y conserva la sesión al limpiar."""
+        self.control.abrirTema('Numéricos')
+        self.control.seleccionar('num_newton')
+        self.control.cargarEjemplo('')
+        self.control.calcular()
+        self.esperar_calculo()
+        raiz = self.control.sesion.presentacion.calculo.valor
+        self.control.guardar('resultado', 'Mi raíz Newton', 'N₁', '')
+        registro = self.control.guardados[0]
+        self.assertAlmostEqual(float(registro['valor']), raiz)
+        self.control.seleccionar('num_biseccion')
+        self.control.usarGuardado(registro['id'], False, 'a')
+        self.assertAlmostEqual(float(self.control.sesion.parametros['a']), raiz)
+        self.control.seleccionar('num_newton')
+        self.assertTrue(self.control.estado['vigente'])
+        self.assertEqual(self.control.sesion.parametros['funcion'], 'exp(-x)-x')
+        self.control.limpiar()
+        self.assertEqual(self.control.clave, 'num_newton')
+        self.assertEqual(self.control.sesion.parametros['funcion'], '')
+        self.control.deshacer()
+        self.assertTrue(self.control.estado['vigente'])
+        self.assertEqual(self.control.sesion.presentacion.calculo.valor, raiz)
+
+    def test_newton_ciclo_y_dominio_no_se_presentan_como_raiz(self):
+        """Los fallos conservan diagnóstico; sin punto evaluado no se guarda un escalar."""
+        self.control.abrirTema('Numéricos')
+        self.control.seleccionar('num_newton')
+        self.control.cargarEjemplo('Ciclo cúbico')
+        self.control.calcular()
+        self.esperar_calculo()
+        self.assertFalse(self.control.sesion.presentacion.calculo.datos['convergio'])
+        self.assertIn('Última aproximación', self.control.resultado['resumen'])
+        self.assertIn('ciclo', self.control.estado['mensaje'])
+        for campo, valor in dict(funcion='log(x)', derivada='1/x', x0='-1').items():
+            self.control.editarCampo(campo, valor)
+        self.control.calcular()
+        self.esperar_calculo()
+        self.assertIsNone(self.control.sesion.presentacion.calculo.valor)
+        self.control.guardar('resultado', '', '', '')
+        self.assertEqual(self.control.guardados, [])
+        self.assertIn('No hay una aproximación', self.control.estado['mensaje'])
+
     def test_teclado_qml_edicion_deshacer_y_limpiar(self):
         """Los botones QML escriben en el cursor y deshacer conserva el método."""
         from PySide6.QtCore import QObject, QMetaObject

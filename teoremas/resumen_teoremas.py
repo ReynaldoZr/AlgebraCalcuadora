@@ -39,6 +39,8 @@ def teoremas_tema(tema):
                      'Parada iterativa: diferencia máxima ≤ tolerancia. Comprobar también ‖Ax−b‖∞.\n'
                      'La dominancia diagonal estricta garantiza convergencia de Jacobi y Gauss-Seidel sin relajación.\n'
                      'Su ausencia no demuestra divergencia. Con relajación λ≠1 no basta esa garantía para cualquier λ.\n'
+                     'Newton: x_nuevo=x−f(x)/f\'(x). Requiere derivada no nula; no garantiza convergencia ni todas las raíces.\n'
+                     'Newton comprueba el cambio y |f(x)| con tolerancias separadas, y limita las iteraciones.\n'
                      'Cota del punto medio: (xu-xl)/2. Predicción de reducciones: n≥log2((b-a)/E).\n'
                      'Ea(%)=100·|xr_actual−xr_anterior|/|xr_actual|, no definido si xr=0.\n'
                      'Tolerancia en x, porcentaje y residuo son magnitudes distintas.\n'
