@@ -3,6 +3,8 @@
 ## Sin publicar
 
 - Issue #35: Horner extendido para polinomio/derivada, proveedores para Newton y deflación con cociente, resto y aceptación explícita. Conserva términos ausentes y coeficientes originales; pruebas de reconstrucción, referencia NumPy y límites reales. No busca todas las raíces ni modifica la interfaz. Contrato en `docs/HORNER_Y_DEFLACION.md`.
+- Issue #34: diferencias propias hacia adelante y central, con pasos/muestras, proveedor callable para Newton, validación de h y dominio por punto y avisos de cancelación/subdesbordamiento. Módulo numérico independiente de la interfaz; ejemplos y límites en `docs/DERIVADAS_NUMERICAS.md`. La conexión final requiere #33 y #36–#38.
+- Issue #33: núcleo propio de Newton-Raphson con tabla, registros, pasos y causas de parada. Verifica residuo con tolerancia independiente, distingue ciclo/estancamiento y admite derivadas pequeñas con corrección finita. Contraste opcional SciPy y pruebas de adaptadores reales. La conexión al menú sigue en #36–#38; contrato en `docs/NEWTON_NUCLEO.md`.
 
 - Resultados iterativos y preparación parcial de Newton (#32, #36, #37 y #38, asignadas a Roberto):
   - #32: tarjeta de resultados iterativos (`ResultadoIterativo.qml` y `resumen_iterativo_estructurado`) con tabla dinámica `x₁…xₙ`, etiqueta «Referencia para comparar», redondeo solo visual con notación científica para errores pequeños, resumen de residuo separado y sección desplegable «Ver detalles técnicos» con precisión completa.
