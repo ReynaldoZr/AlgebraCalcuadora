@@ -59,10 +59,12 @@ def figura_numerica(clave, calculo, oscuro=False, **opciones):
         if clave == 'num_biseccion':
             raices = d.get('raices_extremos') or (calculo.valor,)
             etiqueta = 'Raíces en los extremos' if d.get('raices_extremos') else 'Aproximación'
-            eje.scatter(raices, [funcion(x) for x in raices], label=etiqueta, color='#a5a6ff', zorder=3)
+            # Las raíces contrastan con la curva azul y con el fondo de cada tema.
+            color_raiz = '#ffb454' if oscuro else '#b52b27'
+            eje.scatter(raices, [funcion(x) for x in raices], label=etiqueta, color=color_raiz, zorder=3)
             for raiz in raices:
                 eje.annotate(f'x={raiz:g}', (raiz, funcion(raiz)), xytext=(0, 10),
-                             textcoords='offset points', ha='center', color='#a5a6ff')
+                             textcoords='offset points', ha='center', color=color_raiz)
             if con_iteraciones:
                 error = figura.add_subplot(212)
                 filas = d['filas']
