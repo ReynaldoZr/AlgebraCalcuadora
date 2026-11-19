@@ -22,6 +22,8 @@
 - Referencias de la issue #32 para Roberto: tarjeta de resultados más sencilla, con aproximaciones y referencia en tabla, residuo explicado y detalles técnicos separados. Se conserva una maqueta de la tarjeta y otra dentro de la ventana completa; no se implementa el cambio.
 
 - Planificación de mejoras de gráficas: referencias visuales para bisección, Jacobi, Gauss-Seidel, su comparador, propagación, redondeo/truncamiento, sistemas e inversas. Son propuestas para futuras issues, sin cambios en el comportamiento de la calculadora.
+- Avance parcial de #23: puntos y etiquetas de las raíces de bisección en rojo oscuro para el tema claro y ámbar para el oscuro. Se conservan curva, cálculo y datos. La interacción ampliada de #23 sigue pendiente.
+- Guía de estudio del avance de Newton en `docs/GUIA_EXPOSICION_NEWTON.md`: orden de lectura, funciones principales, ejemplos y límites para la exposición.
 
 - CI y guías actualizadas para trabajar únicamente en Windows con Python 3.11 y 3.13, por indicación de Reynaldo. Se retiran los trabajos de Linux y sus requisitos de integración, conservando las dos comprobaciones obligatorias de Windows y las demás protecciones. Reynaldo confirma que el PDF y los demás materiales del Programa 8 ya están listos y autoriza cerrar su seguimiento.
 
