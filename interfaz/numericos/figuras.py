@@ -9,8 +9,12 @@ from matplotlib.figure import Figure
 from modulos.numericos.funciones import crear_funcion
 
 
-def figura_numerica(clave, calculo):
+def figura_numerica(clave, calculo, oscuro=False, **opciones):
     """Construye una figura exportable sin abrir ventanas ni usar pyplot global."""
+    if clave == 'num_newton':
+        from interfaz.numericos.newton_graficas import figura_newton
+        return figura_newton(calculo, crear_funcion(calculo.datos['funcion']),
+                             oscuro=oscuro, **opciones)
     figura = Figure(figsize=(9, 6), dpi=100, layout='constrained')
     d = calculo.datos
     if clave in ('num_jacobi', 'num_gauss_seidel'):

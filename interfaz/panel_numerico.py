@@ -347,7 +347,11 @@ class PanelNumerico(ttk.Frame):
         self._escribir_resultado()
         self.formula.mostrar_formula([])
         self.titulo_paso.configure(text='Vista previa del procedimiento · Pulsa Calcular')
-        self.reproductor.preparar(self.presentacion.calculo.pasos if self.vigente and self.presentacion else ())
+        pasos = self.presentacion.calculo.pasos if self.vigente and self.presentacion else ()
+        if pasos and self.clave == 'num_newton':
+            from interfaz.numericos.newton_presentacion import etapas_newton
+            pasos = etapas_newton(self.presentacion.calculo)
+        self.reproductor.preparar(pasos)
         if self.vigente:
             self.reproductor.reiniciar()
         self.estado.set('Cálculo numérico completado · Consulta tabla y todos los pasos.' if self.vigente else 'Último cálculo · datos modificados' if self.presentacion else 'Completa los datos o carga un ejemplo y pulsa Calcular.')
@@ -406,7 +410,7 @@ class PanelNumerico(ttk.Frame):
             boton.configure(state='normal' if self.vigente else 'disabled')
         self.reproducir.configure(text='Ⅱ Pausar' if self.reproductor.activo else '▶ Reproducir')
         self.deshacer_boton.configure(state='normal' if self.historial else 'disabled')
-        graficable = self.clave in ('num_biseccion', 'num_propagacion', 'num_simulacion', 'num_inversa', 'num_sistema', 'num_jacobi', 'num_gauss_seidel', 'num_comparar_iterativos')
+        graficable = self.clave in ('num_newton', 'num_biseccion', 'num_propagacion', 'num_simulacion', 'num_inversa', 'num_sistema', 'num_jacobi', 'num_gauss_seidel', 'num_comparar_iterativos')
         self.grafica.configure(state='normal' if self.vigente and graficable else 'disabled')
 
     def alternar_recorrido(self):
@@ -427,12 +431,14 @@ class PanelNumerico(ttk.Frame):
             self.tabla.delete(item)
         self.marco_tabla.pack_forget()
         if calculo is not None and calculo.datos.get('filas'):
-            columnas = calculo.datos['columnas']
+            from interfaz.numericos.newton_presentacion import tabla_newton
+            datos_tabla = tabla_newton(calculo) if self.clave == 'num_newton' else calculo.datos
+            columnas = datos_tabla['columnas']
             self.tabla.configure(columns=tuple(str(i) for i in range(len(columnas))))
             for i, nombre in enumerate(columnas):
                 self.tabla.heading(str(i), text=nombre)
                 self.tabla.column(str(i), width=120, stretch=False)
-            for fila in calculo.datos['filas']:
+            for fila in datos_tabla['filas']:
                 self.tabla.insert('', 'end', values=tuple('No definido' if v is None else f'{v:.14g}' if isinstance(v, float) else str(v) for v in fila))
             self.marco_tabla.pack(fill='x', before=self.desarrollo)
         self.desarrollo.mostrar_procedimiento(calculo.pasos if calculo else (),

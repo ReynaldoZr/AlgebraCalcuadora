@@ -2,7 +2,9 @@
 
 ## Sin publicar
 
-- Issue #36: Newton se conecta al catálogo de Numéricos, formulario Qt/Tk y consola. Entradas de ejercicio vacías, ejemplos explícitos, modo analítico/numérico, h condicional y tolerancias separadas. Resumen de convergencia/fallo, guardado y reutilización del escalar sin cambiar el diseño. Guía en `docs/NEWTON_FORMULARIO.md`; #37 y #38 siguen pendientes.
+- Issues #37 y #38: conexión real de la vista previa breve, todos los pasos y tabla completa de Newton. Figura con tangente seleccionable sin recalcular, cambio/residuo en ejes separados, comparación opcional con bisección vigente de la misma función, contraste por tema y PNG. Casos iniciales, fallos y límites gráficos explícitos; pruebas de integración. Guía en `docs/NEWTON_PASOS_Y_GRAFICAS.md`.
+
+- Issue #36: Newton se conecta al catálogo de Numéricos, formulario Qt/Tk y consola. Entradas de ejercicio vacías, ejemplos explícitos, modo analítico/numérico, h condicional y tolerancias separadas. Resumen de convergencia/fallo, guardado y reutilización del escalar sin cambiar el diseño. Guía en `docs/NEWTON_FORMULARIO.md`; su recorrido específico se conecta en #37 y #38.
 
 - Issue #35: Horner extendido para polinomio/derivada, proveedores para Newton y deflación con cociente, resto y aceptación explícita. Conserva términos ausentes y coeficientes originales; pruebas de reconstrucción, referencia NumPy y límites reales. No busca todas las raíces ni modifica la interfaz. Contrato en `docs/HORNER_Y_DEFLACION.md`.
 - Issue #34: diferencias propias hacia adelante y central, con pasos/muestras, proveedor callable para Newton, validación de h y dominio por punto y avisos de cancelación/subdesbordamiento. Módulo numérico independiente de la interfaz; ejemplos y límites en `docs/DERIVADAS_NUMERICAS.md`. La conexión final requiere #33 y #36–#38.
@@ -15,7 +17,7 @@
 - Referencia #32 ajustada por Reynaldo: conservar el diseño actual y reorganizar únicamente el contenido del resumen de resultados. Se añade una base renderizada y una maqueta v2; los bocetos anteriores quedan como historial, sin autorizar cambios generales de estilo.
 
 - Revisión del PR #39: tabla limitada a Jacobi/Gauss-Seidel (#32), conservando los demás resúmenes y la paleta aprobada. Precisión visual ampliada cuando oculta diferencias; causas de fallo y relajación visibles. Pruebas Qt de tamaño mínimo y detalles sin controlar la pantalla.
-- Newton sigue sin opción activa en el menú: #36–#38 son preparación parcial. La derivada numérica se inyecta desde el futuro módulo #34; no se calcula en la interfaz. Residuo y error se dibujan en ejes distintos; no se compara cota absoluta con error porcentual. Pendientes en `docs/NEWTON_PROVISIONAL.md`.
+- Estado histórico del PR #39: Newton todavía no tenía opción activa en el menú; #36–#38 eran preparación parcial. La derivada numérica se inyecta desde el futuro módulo #34; no se calcula en la interfaz. Residuo y error se dibujan en ejes distintos; no se compara cota absoluta con error porcentual. Pendientes en `docs/NEWTON_PROVISIONAL.md`.
 
 - Referencias de la issue #32 para Roberto: tarjeta de resultados más sencilla, con aproximaciones y referencia en tabla, residuo explicado y detalles técnicos separados. Se conserva una maqueta de la tarjeta y otra dentro de la ventana completa; no se implementa el cambio.
 

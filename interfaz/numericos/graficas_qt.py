@@ -12,9 +12,9 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg
 from interfaz.numericos.figuras import figura_numerica
 
 
-def imagen_grafica(clave, calculo, oscuro=True):
+def imagen_grafica(clave, calculo, oscuro=True, **opciones):
     """Dibuja las mismas curvas y datos en memoria, sin archivos temporales ni Tk."""
-    figura = figura_numerica(clave, calculo)
+    figura = figura_numerica(clave, calculo, oscuro=oscuro, **opciones)
     fondo, texto = ('#001233', '#e8ecf4') if oscuro else ('#dad7cd', '#344e41')
     figura.set_facecolor(fondo)
     for eje in figura.axes:
@@ -24,6 +24,15 @@ def imagen_grafica(clave, calculo, oscuro=True):
             etiqueta.set_color(texto)
         for borde in eje.spines.values():
             borde.set_color(texto)
+        for anotacion in eje.texts:
+            if anotacion.get_color() == 'black':
+                anotacion.set_color(texto)
+        leyenda = eje.get_legend()
+        if leyenda:
+            leyenda.get_frame().set_facecolor(fondo)
+            leyenda.get_frame().set_edgecolor(texto)
+            for etiqueta in leyenda.get_texts():
+                etiqueta.set_color(texto)
     memoria = BytesIO()
     FigureCanvasAgg(figura).print_png(memoria)
     return QImage.fromData(memoria.getvalue(), 'PNG')
