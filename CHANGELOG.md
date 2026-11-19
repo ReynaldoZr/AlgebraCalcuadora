@@ -2,6 +2,8 @@
 
 ## Sin publicar
 
+- Issue #35: Horner extendido para polinomio/derivada, proveedores para Newton y deflación con cociente, resto y aceptación explícita. Conserva términos ausentes y coeficientes originales; pruebas de reconstrucción, referencia NumPy y límites reales. No busca todas las raíces ni modifica la interfaz. Contrato en `docs/HORNER_Y_DEFLACION.md`.
+
 - Resultados iterativos y preparación parcial de Newton (#32, #36, #37 y #38, asignadas a Roberto):
   - #32: tarjeta de resultados iterativos (`ResultadoIterativo.qml` y `resumen_iterativo_estructurado`) con tabla dinámica `x₁…xₙ`, etiqueta «Referencia para comparar», redondeo solo visual con notación científica para errores pequeños, resumen de residuo separado y sección desplegable «Ver detalles técnicos» con precisión completa.
   - #36, #37 y #38 (Programa 9 · Provisional): adaptador de formulario y resumen (`interfaz/numericos/newton_adaptador.py`), presentador de vista previa, pasos y tabla completa (`interfaz/numericos/newton_presentacion.py`) y constructor de gráficas con tangente, error, residuo y comparación opcional con bisección (`interfaz/numericos/newton_graficas.py`), probados de forma independiente mediante fixtures del contrato #33.
