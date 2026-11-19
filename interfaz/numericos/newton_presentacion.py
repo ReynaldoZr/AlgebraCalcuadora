@@ -15,7 +15,7 @@ COLUMNAS_TABLA_NEWTON = (
     'derivada',
     'x siguiente',
     'cambio absoluto',
-    'error porcentual',
+    'error porcentual (%)',
     'residuo',
 )
 
@@ -29,16 +29,14 @@ def _celda_newton(valor):
     return formato(valor)
 
 
-def pasos_previa_newton(calculo):
-    """Construye etapas breves para la vista previa con reproducción bajo demanda cada 2 s."""
+def etapas_newton(calculo):
+    """Devuelve pasos breves reutilizables por Qt y Tk, sin repetir el cálculo."""
     d = calculo.datos
     registros = d.get('registros', ())
     etapas = []
     for reg in registros:
         i = reg.get('i')
         xi = reg.get('xi')
-        fxi = reg.get('fxi')
-        dfxi = reg.get('derivada')
         x_sig = reg.get('x_siguiente')
         err_abs = reg.get('error_absoluto')
         err_pct = reg.get('error_porcentual')
@@ -50,10 +48,10 @@ def pasos_previa_newton(calculo):
         )
         etapas.append(Paso(
             f'Iteración {i}',
-            f'Evaluamos f(xᵢ) y f\'(xᵢ), calculamos la siguiente aproximación y medimos el error.',
+            f'Evaluamos la función y su derivada para avanzar con la tangente. {err_txt}; '
+            f'residuo |f(x)| = {_celda_newton(reg.get("residuo"))}.',
             formulas=(
-                (f'xᵢ = {_celda_newton(xi)}', f'f(xᵢ) = {_celda_newton(fxi)}', f"f'(xᵢ) = {_celda_newton(dfxi)}"),
-                (f'xᵢ₊₁ = {_celda_newton(x_sig)}', err_txt),
+                (f'xᵢ = {_celda_newton(xi)}', '→', f'xᵢ₊₁ = {_celda_newton(x_sig)}'),
             ),
         ))
     if not etapas:
@@ -62,7 +60,12 @@ def pasos_previa_newton(calculo):
             d.get('motivo', 'Sin iteraciones adicionales.'),
             formulas=((f'x = {_celda_newton(calculo.valor)}', f'|f(x)| = {_celda_newton(d.get("residuo"))}'),),
         ))
-    return tuple(paso_visual(p, completo=False) for p in etapas)
+    return tuple(etapas)
+
+
+def pasos_previa_newton(calculo):
+    """Presenta las etapas breves mediante el contrato visual existente."""
+    return tuple(paso_visual(p, completo=False) for p in etapas_newton(calculo))
 
 
 def pasos_completos_newton(calculo):
@@ -91,8 +94,5 @@ def tabla_newton(calculo):
             ]
             for r in registros
         ]
-    criterio = d.get('criterio', 'absoluto')
     columnas = list(COLUMNAS_TABLA_NEWTON)
-    if criterio == 'porcentual':
-        columnas[6] = 'error porcentual (%)'
     return dict(columnas=columnas, filas=filas)

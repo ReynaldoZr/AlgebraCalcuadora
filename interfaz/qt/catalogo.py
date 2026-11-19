@@ -135,6 +135,9 @@ def ejecutar(clave, parametros, entradas):
     if clave in METODOS_NUMERICOS:
         calculo = ejecutar_numerico(clave, parametros, matrices)
         presentacion = Presentacion(calculo, resumen_numerico(clave, calculo), None)
+        if clave == 'num_newton':
+            from interfaz.numericos.newton_presentacion import etapas_newton
+            return presentacion, etapas_newton(calculo)
         return presentacion, calculo.pasos
     escalar = convertir_numero(parametros['escalar']) if CATALOGO[clave].escalar else 2
     if clave in MATRICES:

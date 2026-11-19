@@ -16,7 +16,7 @@ def abrir_grafica(padre, clave, calculo, tema):
     ventana = tk.Toplevel(padre)
     ventana.title('Gráfica del ejercicio · Numéricos')
     ventana.geometry('980x720')
-    figura = figura_numerica(clave, calculo)
+    figura = figura_numerica(clave, calculo, oscuro=tema.oscuro)
     figura.set_facecolor(tema.colores['fondo'])
     for eje in figura.axes:
         eje.set_facecolor(tema.colores['tarjeta'])

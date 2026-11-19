@@ -1,6 +1,6 @@
 # Newton en la calculadora · issue 36
 
-La propuesta conecta el núcleo y los proveedores de #33–#35 al catálogo existente de Numéricos. No cambia las tres tarjetas, paleta, navegación ni esquema de Biblioteca. La instrucción de Reynaldo del 18/11/2026 autoriza trabajar esta primera conexión, antes asignada a Roberto. Las mejoras específicas de pasos/tabla (#37) y gráfica (#38) conservan su alcance y siguen pendientes.
+La propuesta conecta el núcleo y los proveedores de #33–#35 al catálogo existente de Numéricos. No cambia las tres tarjetas, paleta, navegación ni esquema de Biblioteca. La instrucción de Reynaldo del 18/11/2026 autoriza trabajar esta primera conexión, antes asignada a Roberto. La conexión de pasos/tabla (#37) y gráfica (#38) se describe en [NEWTON_PASOS_Y_GRAFICAS.md](NEWTON_PASOS_Y_GRAFICAS.md).
 
 Las orientaciones académicas disponibles son Sesión 22 y Plan semanal 14; el enunciado definitivo del Programa 9 todavía debe confirmarse. Las tolerancias adicionales y valores iniciales de ajuste se explican en [NEWTON_NUCLEO.md](NEWTON_NUCLEO.md).
 
@@ -16,7 +16,7 @@ Las orientaciones académicas disponibles son Sesión 22 y Plan semanal 14; el e
 
 El ejemplo **Ciclo cúbico** muestra no convergencia y «Última aproximación», no una raíz válida. Un fallo de dominio sin punto evaluado no se guarda como escalar ficticio. Las entradas inválidas dan un diagnóstico y exigen corregir/recalcular. Un ejercicio que no converge puede consultarse con su causa e historial; su último valor, si existe, se identifica como aproximación sin converger.
 
-Los pasos y la tabla genéricos ya consumen Calculo/Paso. No se presenta esta conexión como cumplimiento de la mejora didáctica específica #37. **Ver gráfica** permanece deshabilitado para Newton hasta la conexión y revisión de #38; no se dibuja un gráfico de otro método bajo su nombre.
+La conexión de #37 usa etapas breves para la previa y conserva todo Calculo/Paso en el desarrollo. **Ver gráfica** abre ahora la figura específica de Newton (#38), con selección de tangentes y comparación opcional. Véase la guía del recorrido para condiciones y límites.
 
 ## Organización y compatibilidad
 

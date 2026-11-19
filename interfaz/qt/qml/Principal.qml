@@ -455,6 +455,37 @@ ApplicationWindow {
         background: Rectangle { radius: 14; color: Paleta.tarjeta; border.color: Paleta.borde }
         ColumnLayout {
             anchors.fill: parent
+            RowLayout {
+                visible: cuaderno.graficaNewton.activo
+                Boton {
+                    objectName: "tangenteAnterior"
+                    text: "‹"
+                    enabled: cuaderno.graficaNewton.total > 0 && cuaderno.graficaNewton.indice > 0
+                    onClicked: cuaderno.seleccionarIteracionGrafica(cuaderno.graficaNewton.indice - 1)
+                }
+                Label {
+                    text: cuaderno.graficaNewton.total > 0
+                          ? "Tangente · iteración " + (cuaderno.graficaNewton.indice + 1) + " / " + cuaderno.graficaNewton.total
+                          : "Sin iteraciones · consulta el motivo de parada"
+                    color: Paleta.texto
+                }
+                Boton {
+                    objectName: "tangenteSiguiente"
+                    text: "›"
+                    enabled: cuaderno.graficaNewton.indice + 1 < cuaderno.graficaNewton.total
+                    onClicked: cuaderno.seleccionarIteracionGrafica(cuaderno.graficaNewton.indice + 1)
+                }
+                Item { Layout.fillWidth: true }
+                CheckBox {
+                    objectName: "compararBiseccion"
+                    text: "Comparar con última bisección"
+                    enabled: cuaderno.graficaNewton.comparable
+                    checked: cuaderno.graficaNewton.comparar
+                    onClicked: cuaderno.compararBiseccionGrafica(checked)
+                    ToolTip.visible: hovered
+                    ToolTip.text: "Calcula antes una bisección de la misma función. Newton debe usar cambio absoluto; las curvas tienen criterios distintos."
+                }
+            }
             Image { id: imagenGrafica; objectName: "imagenGrafica"; Layout.fillWidth: true; Layout.fillHeight: true; fillMode: Image.PreserveAspectFit; cache: false }
             Boton { text: "Guardar imagen…"; onClicked: cuaderno.guardarGrafica() }
         }
@@ -476,6 +507,6 @@ ApplicationWindow {
         target: cuaderno
         function onNavegar(pagina) { ventana.vista = "calculadora"; ventana.cambiarPagina(pagina) }
         function onDialogoTexto(titulo, contenido) { consulta.title = titulo; consulta.contenido = contenido; consulta.open() }
-        function onGraficaLista(fuente) { imagenGrafica.source = fuente; grafica.open() }
+        function onGraficaLista(fuente) { imagenGrafica.source = fuente; if (!grafica.visible) grafica.open() }
     }
 }

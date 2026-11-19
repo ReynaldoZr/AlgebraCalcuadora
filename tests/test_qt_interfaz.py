@@ -148,6 +148,83 @@ class PruebasQtQuick(unittest.TestCase):
         self.assertFalse(self.control.estado['vigente'])
         self.assertTrue(self.control.estado['error'])
 
+    def test_newton_pasos_tabla_grafica_seleccion_y_exportacion(self):
+        """Los controles reales usan filas guardadas, sin recalcular ni perder datos."""
+        from copy import deepcopy
+        from unittest.mock import patch
+        from PySide6.QtCore import QMetaObject
+        self.control.abrirTema('Numéricos')
+        self.control.seleccionar('num_newton')
+        self.control.cargarEjemplo('')
+        self.control.calcular()
+        self.esperar_calculo()
+        original = deepcopy(self.control.sesion.capturar())
+        c = self.control.sesion.presentacion.calculo
+        self.assertEqual(self.control.previa['total'], c.datos['iteraciones'])
+        self.assertEqual(len(self.control.resultado['pasos']), len(c.pasos))
+        self.control.reproducir()
+        self.assertEqual(self.control.reloj.interval(), 2000)
+        self.control.verGrafica(False)
+        self.app.processEvents()
+        self.assertFalse(self.control.reloj.isActive())
+        self.assertFalse(self.control._fuente_grafica.imagen.isNull())
+        boton = self.buscar_control('tangenteSiguiente')
+        self.assertTrue(boton.isVisible())
+        self.assertTrue(boton.isEnabled())
+        with patch('interfaz.qt.catalogo.ejecutar', side_effect=AssertionError('No recalcular')):
+            self.assertTrue(QMetaObject.invokeMethod(boton, 'clicked'))
+            self.app.processEvents()
+            self.assertEqual(self.control.graficaNewton['indice'], 1)
+            self.control.seleccionarIteracionGrafica(99999)
+            self.assertEqual(self.control.graficaNewton['indice'], c.datos['iteraciones'] - 1)
+            self.control.verGrafica(True)
+            self.app.processEvents()
+        self.assertEqual(self.control.sesion.capturar(), original)
+        with tempfile.TemporaryDirectory() as carpeta:
+            destino = Path(carpeta) / 'newton.png'
+            with patch('interfaz.qt.controlador.QFileDialog.getSaveFileName', return_value=(str(destino), 'PNG')):
+                self.control.guardarGrafica()
+            self.assertTrue(destino.read_bytes().startswith(b'\x89PNG'))
+        self.ventana.setProperty('vista', 'pasos')
+        self.app.processEvents()
+        tabla = self.buscar_control('mostrarTabla')
+        self.assertTrue(tabla.isVisible())
+        self.assertTrue(QMetaObject.invokeMethod(tabla, 'clicked'))
+        self.app.processEvents()
+        self.assertEqual(tabla.property('text'), 'Volver a los pasos')
+        self.assertTrue(QMetaObject.invokeMethod(tabla, 'clicked'))
+        self.control.reiniciar()
+        self.assertEqual(self.control.previa['indice'], 0)
+
+    def test_newton_comparacion_solo_biseccion_vigente_misma_funcion(self):
+        """La comparación no usa datos obsoletos, otra función ni unidades porcentuales."""
+        self.control.seleccionar('num_biseccion')
+        for campo, valor in dict(funcion='exp(-x)-x', a='0', b='1').items():
+            self.control.editarCampo(campo, valor)
+        self.control.calcular()
+        self.esperar_calculo()
+        self.control.seleccionar('num_newton')
+        self.control.cargarEjemplo('')
+        self.control.calcular()
+        self.esperar_calculo()
+        self.assertTrue(self.control.graficaNewton['comparable'])
+        self.control.verGrafica(False)
+        self.control.compararBiseccionGrafica(True)
+        self.assertTrue(self.control.graficaNewton['comparar'])
+        self.control.editarCampo('criterio', 'porcentual')
+        self.control.calcular()
+        self.esperar_calculo()
+        self.assertFalse(self.control.graficaNewton['comparable'])
+        self.control.compararBiseccionGrafica(True)
+        self.assertFalse(self.control.graficaNewton['comparar'])
+        self.control.editarCampo('criterio', 'absoluto')
+        self.control.calcular()
+        self.esperar_calculo()
+        self.control.seleccionar('num_biseccion')
+        self.control.editarCampo('funcion', 'x')
+        self.control.seleccionar('num_newton')
+        self.assertFalse(self.control.graficaNewton['comparable'])
+
     def test_newton_guardar_reutilizar_navegar_y_deshacer(self):
         """Guarda el escalar, lo reutiliza en bisección y conserva la sesión al limpiar."""
         self.control.abrirTema('Numéricos')

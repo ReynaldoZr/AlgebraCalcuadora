@@ -108,6 +108,8 @@ class Controlador(QObject):
         self._tarea = None
         self._registrar = True
         self._fuente_grafica = None
+        self._iteracion_grafica, self._comparar_grafica = 0, False
+        self._oscuro_grafica = True
         self._tema_oscuro_inicial = detectar_tema_oscuro()
         self.reloj = QTimer(self)
         self.reloj.setInterval(INTERVALO_PASOS_MS)
@@ -176,7 +178,30 @@ class Controlador(QObject):
                     matriz=s.vigente and s.presentacion is not None and s.presentacion.matriz is not None,
                     destinos=list(s.entradas),
                     destinosValores=self._destinos_valores(),
-                    graficable=s.vigente and self.clave in ('num_biseccion', 'num_propagacion', 'num_simulacion', 'num_inversa', 'num_sistema', 'num_jacobi', 'num_gauss_seidel', 'num_comparar_iterativos'))
+                    graficable=s.vigente and self.clave in ('num_newton', 'num_biseccion', 'num_propagacion', 'num_simulacion', 'num_inversa', 'num_sistema', 'num_jacobi', 'num_gauss_seidel', 'num_comparar_iterativos'))
+
+    @Property('QVariantMap', notify=estadoCambiado)
+    def graficaNewton(self):
+        """Describe controles de la figura sin resolver ni cambiar la sesión."""
+        s = self.sesion
+        activo = self.clave == 'num_newton' and s.vigente and s.presentacion is not None
+        registros = s.presentacion.calculo.datos.get('registros', ()) if activo else ()
+        return dict(activo=activo, total=len(registros), indice=self._iteracion_grafica,
+                    comparable=activo and self._biseccion_comparable() is not None,
+                    comparar=self._comparar_grafica)
+
+    def _biseccion_comparable(self):
+        """Reutiliza solamente una bisección vigente de la misma expresión literal."""
+        b = self.sesiones.get('num_biseccion')
+        n = self.sesion.presentacion
+        if self.clave != 'num_newton' or not n or not b or not b.vigente or not b.presentacion:
+            return None
+        d = n.calculo.datos
+        if d.get('criterio') == 'porcentual':
+            return None
+        if d.get('funcion') != b.presentacion.calculo.datos.get('funcion'):
+            return None
+        return b.presentacion.calculo
 
     @Property('QVariantList', notify=bibliotecaCambiada)
     def guardados(self):
@@ -358,6 +383,10 @@ class Controlador(QObject):
                     tabla=tabla_visual(p.calculo),
                     detalleIterativo=resumen_estructurado(self.clave, p),
                 )
+                if self.clave == 'num_newton':
+                    from interfaz.numericos.newton_presentacion import pasos_completos_newton, tabla_newton
+                    self._salida.update(pasos=pasos_completos_newton(p.calculo),
+                                        tabla=tabla_newton(p.calculo))
             self._presentacion_publicada = s.presentacion
             self.resultadoCambiado.emit()
         self._actualizar_previa()
@@ -604,10 +633,43 @@ class Controlador(QObject):
         """Genera la figura bajo demanda, fuera de los módulos de cálculo."""
         if not self.estado['graficable'] or self._fuente_grafica is None:
             return
+        self.pausar()
+        self._oscuro_grafica = oscuro
+        total = self.graficaNewton['total']
+        self._iteracion_grafica = min(max(self._indice, 0), max(total - 1, 0))
+        self._comparar_grafica = False
+        self._dibujar_grafica()
+
+    @Slot(int)
+    def seleccionarIteracionGrafica(self, indice):
+        """Selecciona una fila ya calculada; conserva entradas, resultado y reloj."""
+        datos = self.graficaNewton
+        if not datos['activo'] or not datos['total']:
+            return
+        self._iteracion_grafica = min(max(indice, 0), datos['total'] - 1)
+        self._dibujar_grafica()
+
+    @Slot(bool)
+    def compararBiseccionGrafica(self, comparar):
+        """Activa la cota existente solo si los criterios tienen unidades compatibles."""
+        self._comparar_grafica = comparar and self._biseccion_comparable() is not None
+        self._dibujar_grafica()
+
+    def _dibujar_grafica(self):
+        """Renderiza datos guardados; ningún cambio de selección ejecuta Newton."""
+        if not self.estado['graficable'] or self._fuente_grafica is None:
+            return
         try:
             from interfaz.numericos.graficas_qt import imagen_grafica
-            self._fuente_grafica.imagen = imagen_grafica(self.clave, self.sesion.presentacion.calculo, oscuro)
+            opciones = {}
+            if self.clave == 'num_newton':
+                opciones = dict(iteracion_seleccionada=self._iteracion_grafica,
+                                comparacion_biseccion=self._biseccion_comparable()
+                                if self._comparar_grafica else None)
+            self._fuente_grafica.imagen = imagen_grafica(
+                self.clave, self.sesion.presentacion.calculo, self._oscuro_grafica, **opciones)
             self._revision_grafica += 1
+            self.estadoCambiado.emit()
             self.graficaLista.emit(f'image://graficas/{self._revision_grafica}')
         except (ImportError, ValueError) as error:
             self.avisar(f'No se pudo mostrar la gráfica: {error}', True)
