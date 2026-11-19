@@ -1,5 +1,9 @@
 # Decisiones y pendientes
 
+## 2026-11-18 · Núcleo Newton y residuo independiente
+
+Reynaldo autoriza avanzar sus issues en orden, empezando por #33, con pruebas y PR. La Sesión 22 pide comprobar la raíz en la función original y limitar iteraciones; el enunciado del Programa 9 sigue pendiente. El equipo añade `tolerancia_f=1e-8` configurable e independiente del cambio absoluto/porcentual para evitar falso éxito por estancamiento. Es una protección provisional, no una cifra exigida por el profesor; puede alterar el conteo de clase y depende de la escala de la función. No cambia bisección ni las restricciones del álgebra exacta. Contrato y límites en [NEWTON_NUCLEO.md](NEWTON_NUCLEO.md).
+
 ## 2026-11-06 — Migración autorizada a Qt Quick
 
 Después de comparar propuestas de CustomTkinter, PySide6/QML, Flet y web, el usuario eligió PySide6 + QML y autorizó implementarlo para el avance de la próxima semana. La interfaz nueva se mantiene separada del núcleo y conserva las restricciones académicas, consola, estructura y Biblioteca. La interfaz Tk continúa disponible durante la revisión; gui.py abre Qt y gui_tk.py permite comparar. La autorización no permite subir la rama, abrir PR ni publicar versiones. Alcance y contratos en MIGRACION_QT.md. No se afirma una autorización académica expresa de PySide6 ausente de los documentos revisados.

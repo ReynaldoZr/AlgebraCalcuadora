@@ -2,6 +2,8 @@
 
 ## Sin publicar
 
+- Issue #33: núcleo propio de Newton-Raphson con tabla, registros, pasos y causas de parada. Verifica residuo con tolerancia independiente, distingue ciclo/estancamiento y admite derivadas pequeñas con corrección finita. Contraste opcional SciPy y pruebas de adaptadores reales. La conexión al menú sigue en #36–#38; contrato en `docs/NEWTON_NUCLEO.md`.
+
 - Resultados iterativos y preparación parcial de Newton (#32, #36, #37 y #38, asignadas a Roberto):
   - #32: tarjeta de resultados iterativos (`ResultadoIterativo.qml` y `resumen_iterativo_estructurado`) con tabla dinámica `x₁…xₙ`, etiqueta «Referencia para comparar», redondeo solo visual con notación científica para errores pequeños, resumen de residuo separado y sección desplegable «Ver detalles técnicos» con precisión completa.
   - #36, #37 y #38 (Programa 9 · Provisional): adaptador de formulario y resumen (`interfaz/numericos/newton_adaptador.py`), presentador de vista previa, pasos y tabla completa (`interfaz/numericos/newton_presentacion.py`) y constructor de gráficas con tangente, error, residuo y comparación opcional con bisección (`interfaz/numericos/newton_graficas.py`), probados de forma independiente mediante fixtures del contrato #33.
