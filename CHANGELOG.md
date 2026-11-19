@@ -2,6 +2,8 @@
 
 ## Sin publicar
 
+- Issue #34: diferencias propias hacia adelante y central, con pasos/muestras, proveedor callable para Newton, validación de h y dominio por punto y avisos de cancelación/subdesbordamiento. Módulo numérico independiente de la interfaz; ejemplos y límites en `docs/DERIVADAS_NUMERICAS.md`. La conexión final requiere #33 y #36–#38.
+
 - Resultados iterativos y preparación parcial de Newton (#32, #36, #37 y #38, asignadas a Roberto):
   - #32: tarjeta de resultados iterativos (`ResultadoIterativo.qml` y `resumen_iterativo_estructurado`) con tabla dinámica `x₁…xₙ`, etiqueta «Referencia para comparar», redondeo solo visual con notación científica para errores pequeños, resumen de residuo separado y sección desplegable «Ver detalles técnicos» con precisión completa.
   - #36, #37 y #38 (Programa 9 · Provisional): adaptador de formulario y resumen (`interfaz/numericos/newton_adaptador.py`), presentador de vista previa, pasos y tabla completa (`interfaz/numericos/newton_presentacion.py`) y constructor de gráficas con tangente, error, residuo y comparación opcional con bisección (`interfaz/numericos/newton_graficas.py`), probados de forma independiente mediante fixtures del contrato #33.
