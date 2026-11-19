@@ -6,6 +6,8 @@ La fuente provisional es la Sesión 22, sobre Newton-Raphson, derivada numérica
 
 ## Responsabilidades y conexión pendiente
 
+La propuesta de #33 incorpora `modulos/numericos/newton.py`, compatible con los adaptadores preparados. Contrato y tolerancia adicional en [NEWTON_NUCLEO.md](NEWTON_NUCLEO.md). Incorporar el núcleo no cierra las issues de conexión de Roberto.
+
 - #33, Reynaldo: núcleo propio de Newton, contrato Calculo/Paso, validaciones y pruebas matemáticas.
 - #34, Reynaldo: proveedores de derivada numérica, validación de h y pruebas de precisión.
 - #35, Reynaldo: Horner, derivada y deflación con resto.
