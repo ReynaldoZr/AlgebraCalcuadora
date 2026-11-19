@@ -29,6 +29,7 @@ ColumnLayout {
     Component {
         id: seleccion
         Selector {
+            objectName: "selector_" + campo.datos.clave
             model: campo.datos.opciones
             currentIndex: Math.max(0, model.indexOf(campo.datos.valor))
             onActivated: cuaderno.editarCampo(campo.datos.clave, currentText)
@@ -40,7 +41,7 @@ ColumnLayout {
             id: texto
             objectName: "campo_" + campo.datos.clave
             text: campo.datos.valor
-            placeholderText: campo.datos.clave === "funcion" ? "Escribe una función o carga un ejemplo" : campo.datos.clave === "h" ? "Automático" : ""
+            placeholderText: campo.datos.placeholder || (campo.datos.clave === "funcion" ? "Escribe una función o carga un ejemplo" : campo.datos.clave === "h" ? "Automático" : "")
             Accessible.name: campo.datos.etiqueta
             onTextEdited: cuaderno.editarCampo(campo.datos.clave, text)
         }

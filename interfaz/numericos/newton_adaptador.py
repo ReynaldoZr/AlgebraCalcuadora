@@ -28,7 +28,8 @@ CAMPOS_NEWTON = {
     'derivada': CampoNewton('derivada', "f'(x)", ''),
     'h': CampoNewton('h', 'Paso h (derivada numérica)', ''),
     'criterio': CampoNewton('criterio', 'Criterio de error', 'absoluto'),
-    'tolerancia': CampoNewton('tolerancia', 'Tolerancia ε', '0.0001'),
+    'tolerancia': CampoNewton('tolerancia', 'Tolerancia del cambio (en x o %)', '0.0001'),
+    'tolerancia_f': CampoNewton('tolerancia_f', 'Tolerancia del residuo |f(x)|', '1e-8'),
     'maximo': CampoNewton('maximo', 'Máximo de iteraciones', '200'),
 }
 
@@ -56,7 +57,8 @@ def ejemplo_newton(caso='exp(-x)-x'):
             derivada='-exp(-x)-1',
             h='',
             criterio='absoluto',
-            tolerancia='1e-8',
+            tolerancia='0.0001',
+            tolerancia_f='1e-8',
             maximo='50',
         ),
         'Ciclo cúbico': dict(
@@ -67,6 +69,7 @@ def ejemplo_newton(caso='exp(-x)-x'):
             h='',
             criterio='absoluto',
             tolerancia='1e-6',
+            tolerancia_f='1e-8',
             maximo='20',
         ),
         'Salto x^10-1': dict(
@@ -77,6 +80,7 @@ def ejemplo_newton(caso='exp(-x)-x'):
             h='',
             criterio='absoluto',
             tolerancia='1e-6',
+            tolerancia_f='1e-8',
             maximo='50',
         ),
     }
@@ -113,9 +117,10 @@ def validar_entrada_newton(parametros, proveedor_derivada=None):
             raise ValueError('El paso h debe ser mayor que cero.')
         if x0 + h == x0 or x0 - h == x0:
             raise ValueError('El paso h debe ser distinguible de x₀ en punto flotante.')
-        # El cálculo de la derivada pertenece al proveedor numérico de la issue 34.
+        # El cálculo se delega al módulo numérico; la interfaz no deriva la función.
         if proveedor_derivada is None:
-            raise NotImplementedError('El proveedor de derivada numérica (#34) aún no está integrado.')
+            from modulos.numericos.derivadas import crear_derivada
+            proveedor_derivada = crear_derivada
         derivada = proveedor_derivada(funcion, h)
         if not callable(derivada):
             raise ValueError('El proveedor debe devolver una función de derivada.')
@@ -127,6 +132,9 @@ def validar_entrada_newton(parametros, proveedor_derivada=None):
     tolerancia = numero_finito(p.get('tolerancia', ''), 'Tolerancia ε')
     if tolerancia <= 0:
         raise ValueError('La tolerancia ε debe ser mayor que cero.')
+    tolerancia_f = numero_finito(p.get('tolerancia_f', '1e-8'), 'Tolerancia del residuo')
+    if tolerancia_f <= 0:
+        raise ValueError('La tolerancia del residuo debe ser mayor que cero.')
 
     try:
         maximo = int(str(p.get('maximo', '')).strip())
@@ -142,6 +150,7 @@ def validar_entrada_newton(parametros, proveedor_derivada=None):
         tolerancia=tolerancia,
         max_iteraciones=maximo,
         criterio=criterio,
+        tolerancia_f=tolerancia_f,
     )
 
 
@@ -151,14 +160,16 @@ def resumen_newton(calculo):
     convergio = bool(d.get('convergio'))
     unidad = '%' if d.get('criterio') == 'porcentual' else '(cambio absoluto)'
     raiz_txt = formato(calculo.valor) if calculo.valor is not None else 'No disponible'
+    etiqueta = 'Raíz aproximada' if convergio else 'Última aproximación'
     residuo_txt = formato(d.get('residuo'))
     estado = 'Convergió' if convergio else 'No convergió'
     return (
-        f'Raíz aproximada: {raiz_txt}\n'
+        f'{etiqueta}: {raiz_txt}\n'
         f'Estado: {estado} · Iteraciones: {d.get("iteraciones", len(d.get("filas", ())))}\n'
         f'Motivo: {d.get("motivo", "")}\n'
         f'Criterio: {d.get("criterio", "absoluto")} {unidad} · Tolerancia: {formato(d.get("tolerancia"))}\n'
-        f'Comprobación en la función |f(x)| (residuo): {residuo_txt}'
+        f'Comprobación |f(x)| (residuo): {residuo_txt}\n'
+        f'Tolerancia del residuo: {formato(d.get("tolerancia_f"))}'
     )
 
 
@@ -166,13 +177,8 @@ def ejecutar_newton_adaptador(parametros, solver=None, proveedor_derivada=None):
     """Valida entradas y ejecuta Newton usando un solver inyectado o el núcleo de #33."""
     args = validar_entrada_newton(parametros, proveedor_derivada)
     if solver is None:
-        try:
-            from modulos.numericos.newton import resolver_newton
-            solver = resolver_newton
-        except ImportError as error:
-            raise NotImplementedError(
-                'El núcleo resolver_newton (#33) aún no está integrado en modulos/numericos/newton.py.'
-            ) from error
+        from modulos.numericos.newton import resolver_newton
+        solver = resolver_newton
     return solver(
         args['funcion'],
         args['derivada'],
@@ -180,4 +186,5 @@ def ejecutar_newton_adaptador(parametros, solver=None, proveedor_derivada=None):
         args['tolerancia'],
         args['max_iteraciones'],
         criterio=args['criterio'],
+        tolerancia_f=args['tolerancia_f'],
     )

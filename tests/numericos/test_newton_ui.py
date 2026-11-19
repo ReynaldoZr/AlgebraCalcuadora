@@ -133,13 +133,13 @@ class PruebasNewtonUI(unittest.TestCase):
         self.assertFalse(any('aproximación' in c.get_label().lower()
                              for c in sin_funcion.axes[0].collections))
 
-    def test_derivada_numerica_es_proveedor_pendiente_y_valida_h(self):
+    def test_derivada_numerica_usa_proveedor_integrado_y_valida_h(self):
         """El adaptador no duplica el cálculo de #34 ni acepta un h indistinguible."""
         from unittest.mock import Mock
         ej = ejemplo_newton()
         ej.update(modo_derivada='numerica', h='1e-5')
-        with self.assertRaises(NotImplementedError):
-            validar_entrada_newton(ej)
+        args_reales = validar_entrada_newton(ej)
+        self.assertAlmostEqual(args_reales['derivada'](0), -2, places=8)
         derivada = lambda x: -math.exp(-x) - 1
         proveedor = Mock(return_value=derivada)
         args = validar_entrada_newton(ej, proveedor)

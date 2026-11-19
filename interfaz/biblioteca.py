@@ -18,6 +18,7 @@ from modulos.procedimientos import Paso
 from modulos.validaciones import validar_matriz
 
 ETIQUETAS = {
+    'num_newton': ('Newton-Raphson', 'N≈x'),
     'num_biseccion': ('Bisección', '≈x'), 'num_errores': ('Errores numéricos', 'Ea'),
     'num_propagacion': ('Propagación', 'Δy'), 'num_simulacion': ('Redondeo y truncamiento', '≈'),
     'num_flotante': ('Punto flotante', 'ε'), 'num_inestabilidad': ('Estabilidad', '≈'),

@@ -45,6 +45,22 @@ class PruebasIntegracionNumerica(unittest.TestCase):
         self.raiz.update_idletasks()
         self.app.cerrar()
 
+    def test_newton_tk_campos_condicionales_y_calculo(self):
+        """Tk conserva el formulario vacío y delega la derivada numérica al núcleo real."""
+        self.panel.seleccionar('num_newton')
+        self.assertEqual(self.panel.parametros['funcion'].get(), '')
+        self.assertEqual(self.panel.parametros['x0'].get(), '')
+        self.panel.parametros['modo_derivada'].set('numerica')
+        self.raiz.update_idletasks()
+        self.assertEqual(self.panel.campos['derivada'].winfo_manager(), '')
+        self.assertEqual(self.panel.campos['h'].winfo_manager(), 'pack')
+        for nombre, valor in dict(funcion='exp(-x)-x', x0='0', h='1e-5').items():
+            self.panel.parametros[nombre].set(valor)
+        self.panel.calcular()
+        self.assertTrue(self.panel.vigente)
+        self.assertTrue(self.panel.presentacion.calculo.datos['convergio'])
+        self.assertAlmostEqual(self.panel.presentacion.calculo.valor, .5671432904, places=8)
+
     def test_catalogo_completo_y_tablas_sin_recortes(self):
         """Los nueve métodos calculan sus ejemplos y exponen todas las filas del resultado."""
         from interfaz.metodos_numericos import METODOS_NUMERICOS
@@ -213,6 +229,10 @@ class PruebasIntegracionNumerica(unittest.TestCase):
                     self.assertLessEqual(control.winfo_rooty() + control.winfo_height(), self.raiz.winfo_rooty() + self.raiz.winfo_height())
                 for nombre in metodo.campos_a + metodo.campos_b:
                     campo = self.panel.campos[nombre]
+                    if clave == 'num_newton' and nombre == 'h':
+                        self.assertEqual(self.panel.parametros['modo_derivada'].get(), 'analitica')
+                        self.assertFalse(campo.winfo_ismapped(), 'h se reserva para derivada numérica.')
+                        continue
                     self.assertTrue(campo.winfo_ismapped())
                     self.assertLessEqual(campo.winfo_rooty() + campo.winfo_height(), campo.master.winfo_rooty() + campo.master.winfo_height())
                 if 'funcion' in metodo.campos_a:
@@ -220,6 +240,16 @@ class PruebasIntegracionNumerica(unittest.TestCase):
                     self.assertLessEqual(
                         self.panel.teclado.winfo_rooty() + self.panel.teclado.winfo_height(),
                         self.panel.grupos[0].winfo_rooty() + self.panel.grupos[0].winfo_height(),
+                    )
+                if clave == 'num_newton':
+                    self.panel.parametros['modo_derivada'].set('numerica')
+                    self.raiz.update()
+                    self.assertFalse(self.panel.campos['derivada'].winfo_ismapped())
+                    campo_h = self.panel.campos['h']
+                    self.assertTrue(campo_h.winfo_ismapped())
+                    self.assertLessEqual(
+                        campo_h.winfo_rooty() + campo_h.winfo_height(),
+                        campo_h.master.winfo_rooty() + campo_h.master.winfo_height(),
                     )
 
 

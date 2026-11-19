@@ -70,6 +70,9 @@ class Sesion:
             self.parametros['escalar'] = escalar
             return
         self.parametros.update(parametros_defecto(self.clave))
+        if self.clave == 'num_newton':
+            from interfaz.numericos.newton_adaptador import ejemplo_newton
+            self.parametros.update(ejemplo_newton(caso))
         if self.clave in ('num_jacobi', 'num_gauss_seidel', 'num_comparar_iterativos'):
             a, ajustes = ejemplo_jacobi(caso)
             self.entradas['A'] = [[str(v) for v in f] for f in a]
@@ -133,6 +136,8 @@ class Sesion:
                                   resultado=p.matriz, tipo='matriz')
         registro = crear_registro(tema, self.clave, {}, resumen=p.resumen, tipo='resultado')
         valor = p.calculo.valor
+        if self.clave == 'num_newton' and valor is None:
+            raise ValueError('No hay una aproximación numérica de Newton para guardar.')
         if (type(valor) is int or isinstance(valor, Fraction)
                 or isinstance(valor, float) and isfinite(valor)
                 or isinstance(valor, Decimal) and valor.is_finite()):
