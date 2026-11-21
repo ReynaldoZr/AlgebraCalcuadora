@@ -207,7 +207,7 @@ def subindice(numero):
 
 
 def formato_visual(valor):
-    """Redondea solo para mostrar; usa notación científica en magnitudes pequeñas o grandes."""
+    """Redondea a 6 decimales solo para mostrar; usa notación científica en magnitudes extremas."""
     if valor is None:
         return 'No definido'
     numero = float(valor)
@@ -215,8 +215,8 @@ def formato_visual(valor):
         return '0'
     magnitud = abs(numero)
     if magnitud < 1e-4 or magnitud >= 1e6:
-        return f'{numero:.4e}'
-    return f'{numero:.4f}'
+        return f'{numero:.6e}'
+    return f'{numero:.6f}'
 
 
 def _resumen_metodo_iterativo(nombre, datos, diferencia_ref=None):

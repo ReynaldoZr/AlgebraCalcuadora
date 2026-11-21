@@ -4,6 +4,7 @@ Tema: consumo exclusivo del contrato Calculo/Paso de #33, sin cálculos ni parse
 Elaboración: equipo del proyecto, con apoyo de IA.
 """
 
+from interfaz.metodos_numericos import formato_visual
 from interfaz.qt.presentacion import paso_visual
 from modulos.numericos.funciones import formato
 from modulos.procedimientos import Paso
@@ -68,9 +69,21 @@ def pasos_previa_newton(calculo):
     return tuple(paso_visual(p, completo=False) for p in etapas_newton(calculo))
 
 
+def _fmt6(valor):
+    """Formatea valores numéricos a 6 decimales únicamente para presentar pasos."""
+    if valor is None:
+        return 'No definido'
+    if isinstance(valor, int) and not isinstance(valor, bool):
+        return str(valor)
+    return formato_visual(valor)
+
+
 def _enriquecer_paso_newton(paso, reg, datos):
-    """Añade la resta explícita del error y la comprobación ¿Detener? sin alterar el cálculo."""
+    """Presenta la iteración de Newton a 6 decimales con resta de error y ¿Detener?."""
+    k = reg.get('i')
     xi = reg.get('xi')
+    fxi = reg.get('fxi')
+    derivada = reg.get('derivada')
     x_sig = reg.get('x_siguiente')
     err_abs = reg.get('error_absoluto')
     err_pct = reg.get('error_porcentual')
@@ -80,34 +93,38 @@ def _enriquecer_paso_newton(paso, reg, datos):
     tol_f = datos.get('tolerancia_f')
     err_val = err_pct if criterio == 'porcentual' else err_abs
 
-    formulas_extra = [
-        (f'εa = |{_celda_newton(x_sig)} − ({_celda_newton(xi)})| = {_celda_newton(err_abs)}',),
+    formulas = [
+        (f'x{k - 1}={_fmt6(xi)}', f'f(x{k - 1})={_fmt6(fxi)}', f"f'(x{k - 1})={_fmt6(derivada)}"),
+        (f'x{k}={_fmt6(xi)}−({_fmt6(fxi)})/({_fmt6(derivada)})={_fmt6(x_sig)}',),
+        (f'Cambio absoluto={_fmt6(err_abs)}', f'Error porcentual (%)={_fmt6(err_pct)}'),
+        (f'|f(x{k})|={_fmt6(residuo)}',),
+        (f'εa = |{_fmt6(x_sig)} − ({_fmt6(xi)})| = {_fmt6(err_abs)}',),
     ]
     if tol is not None and tol_f is not None:
         if err_val is None:
             err_cmp = 'Error no definido → seguir'
         elif err_val < tol:
-            err_cmp = f'{_celda_newton(err_val)} < {_celda_newton(tol)} (cambio OK)'
+            err_cmp = f'{_fmt6(err_val)} < {_fmt6(tol)} (cambio OK)'
         else:
-            err_cmp = f'{_celda_newton(err_val)} ≥ {_celda_newton(tol)} → NO, seguir'
+            err_cmp = f'{_fmt6(err_val)} ≥ {_fmt6(tol)} → NO, seguir'
 
         if residuo == 0:
             res_cmp = 'f(x) = 0 (detener)'
         elif residuo is not None and residuo < tol_f:
-            res_cmp = f'|f(x)| = {_celda_newton(residuo)} < {_celda_newton(tol_f)} (residuo OK)'
+            res_cmp = f'|f(x)| = {_fmt6(residuo)} < {_fmt6(tol_f)} (residuo OK)'
         else:
-            res_cmp = f'|f(x)| = {_celda_newton(residuo)} ≥ {_celda_newton(tol_f)} → NO, seguir'
+            res_cmp = f'|f(x)| = {_fmt6(residuo)} ≥ {_fmt6(tol_f)} → NO, seguir'
 
         detener = residuo == 0 or (
             err_val is not None and err_val < tol and residuo is not None and residuo < tol_f
         )
         decision = 'Detener (tolerancias cumplidas)' if detener else 'Seguir'
-        formulas_extra.append((f'¿Detener? {decision}', err_cmp, res_cmp))
+        formulas.append((f'¿Detener? {decision}', err_cmp, res_cmp))
 
     return Paso(
         paso.titulo,
         paso.detalle,
-        formulas=tuple(paso.formulas) + tuple(formulas_extra),
+        formulas=tuple(formulas),
         matriz=paso.matriz,
         separador=paso.separador,
     )
