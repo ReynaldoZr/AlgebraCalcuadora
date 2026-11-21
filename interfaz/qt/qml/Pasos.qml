@@ -16,13 +16,43 @@ ColumnLayout {
         function onResultadoCambiado() { pagina.tablaAbierta = false }
     }
     RowLayout {
+        Layout.fillWidth: true
         spacing: 12
         Label { text: pagina.tablaAbierta ? "Tabla del cálculo" : "Todos los pasos"; color: Paleta.texto; font.pixelSize: 23; font.bold: true }
+        Rectangle {
+            visible: !pagina.tablaAbierta && (cuaderno.resultado.pasos?.length || 0) > 0
+            radius: 10
+            color: Paleta.entrada
+            border.color: Paleta.borde
+            implicitWidth: conteoPasos.implicitWidth + 16
+            implicitHeight: conteoPasos.implicitHeight + 8
+            Label {
+                id: conteoPasos
+                anchors.centerIn: parent
+                text: (cuaderno.resultado.pasos?.length || 0) + " etapas"
+                color: Paleta.secundario
+                font.pixelSize: 12
+                font.bold: true
+            }
+        }
         Boton {
             objectName: "mostrarTabla"
             visible: pagina.hayTabla
             text: pagina.tablaAbierta ? "Volver a los pasos" : "Mostrar tabla"
             onClicked: pagina.tablaAbierta = !pagina.tablaAbierta
+        }
+        Item { Layout.fillWidth: true }
+        Boton {
+            visible: !pagina.tablaAbierta && (cuaderno.resultado.pasos?.length || 0) > 2
+            discreto: true
+            text: "↑ Inicio"
+            onClicked: lista.positionViewAtBeginning()
+        }
+        Boton {
+            visible: !pagina.tablaAbierta && (cuaderno.resultado.pasos?.length || 0) > 2
+            discreto: true
+            text: "↓ Ir al final"
+            onClicked: lista.positionViewAtEnd()
         }
     }
     Label { visible: !cuaderno.estado.vigente; text: cuaderno.resultado.pasos && cuaderno.resultado.pasos.length ? "Cálculo anterior · Recalcula para actualizarlo." : "Calcula un ejercicio para ver su desarrollo completo."; color: Paleta.acento }
@@ -34,39 +64,111 @@ ColumnLayout {
 
         Tarjeta {
             objectName: "tablaPasos"
-            padding: 18
-            Flickable {
-                id: tabla
-                readonly property int totalColumnas: cuaderno.resultado.tabla?.columnas?.length || 0
-                readonly property real anchoColumna: Math.max(155, (width - 12) / Math.max(1, totalColumnas))
+            padding: 16
+            Rectangle {
                 anchors.fill: parent
-                contentWidth: Math.max(width, totalColumnas * anchoColumna + 12)
-                contentHeight: height
+                radius: 10
+                color: Paleta.entrada
+                border.color: Paleta.borde
                 clip: true
-                ScrollBar.horizontal: ScrollBar { }
-                ColumnLayout {
-                    width: parent.contentWidth
-                    height: parent.height - 12
-                    spacing: 6
-                    Row {
-                        Repeater {
-                            model: cuaderno.resultado.tabla?.columnas || []
-                            Label { required property var modelData; text: modelData; color: Paleta.acento; font.bold: true; width: tabla.anchoColumna; padding: 8 }
+
+                Flickable {
+                    id: tabla
+                    readonly property int totalColumnas: cuaderno.resultado.tabla?.columnas?.length || 0
+                    readonly property real anchoColumna: Math.max(130, (width - 8) / Math.max(1, totalColumnas))
+                    anchors.fill: parent
+                    anchors.margins: 2
+                    contentWidth: Math.max(width, totalColumnas * anchoColumna)
+                    contentHeight: height
+                    clip: true
+                    ScrollBar.horizontal: ScrollBar { }
+                    ColumnLayout {
+                        width: tabla.contentWidth
+                        height: tabla.height
+                        spacing: 0
+
+                        Rectangle {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 40
+                            implicitHeight: 40
+                            color: Paleta.tarjeta
+                            Row {
+                                anchors.fill: parent
+                                Repeater {
+                                    model: cuaderno.resultado.tabla?.columnas || []
+                                    Label {
+                                        required property var modelData
+                                        width: tabla.anchoColumna
+                                        height: 40
+                                        verticalAlignment: Text.AlignVCenter
+                                        horizontalAlignment: Text.AlignLeft
+                                        leftPadding: 12
+                                        rightPadding: 8
+                                        text: modelData
+                                        color: Paleta.acento
+                                        font.bold: true
+                                        font.pixelSize: 13
+                                        elide: Text.ElideRight
+                                    }
+                                }
+                            }
+                            Rectangle {
+                                anchors.left: parent.left
+                                anchors.right: parent.right
+                                anchors.bottom: parent.bottom
+                                height: 2
+                                color: Paleta.acento
+                            }
                         }
-                    }
-                    ListView {
-                        Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        clip: true
-                        model: cuaderno.resultado.tabla?.filas || []
-                        reuseItems: true
-                        ScrollBar.vertical: ScrollBar { }
-                        delegate: Row {
-                            required property var modelData
-                            height: 36
-                            Repeater {
-                                model: parent.modelData
-                                Label { required property var modelData; text: modelData; width: tabla.anchoColumna; padding: 8; color: Paleta.texto; font.pixelSize: 13; elide: Text.ElideRight; ToolTip.visible: hover.hovered; ToolTip.text: text; HoverHandler { id: hover } }
+
+                        ListView {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            Layout.minimumHeight: 100
+                            clip: true
+                            model: cuaderno.resultado.tabla?.filas || []
+                            ScrollBar.vertical: ScrollBar { }
+                            delegate: Rectangle {
+                                id: filaFondo
+                                required property var modelData
+                                required property int index
+                                width: tabla.contentWidth
+                                height: 38
+                                implicitHeight: 38
+                                color: filaHover.hovered ? Paleta.borde : (index % 2 === 0 ? Paleta.entrada : Paleta.tarjeta)
+                                HoverHandler { id: filaHover }
+                                Row {
+                                    anchors.fill: parent
+                                    Repeater {
+                                        model: filaFondo.modelData
+                                        Label {
+                                            required property var modelData
+                                            required property int index
+                                            width: tabla.anchoColumna
+                                            height: 38
+                                            verticalAlignment: Text.AlignVCenter
+                                            horizontalAlignment: Text.AlignLeft
+                                            leftPadding: 12
+                                            rightPadding: 8
+                                            text: modelData
+                                            color: index === 0 ? Paleta.acento : Paleta.texto
+                                            font.bold: index === 0
+                                            font.pixelSize: 13
+                                            elide: Text.ElideRight
+                                            ToolTip.visible: hover.hovered
+                                            ToolTip.text: text
+                                            HoverHandler { id: hover }
+                                        }
+                                    }
+                                }
+                                Rectangle {
+                                    anchors.left: parent.left
+                                    anchors.right: parent.right
+                                    anchors.bottom: parent.bottom
+                                    height: 1
+                                    color: Paleta.borde
+                                    opacity: 0.35
+                                }
                             }
                         }
                     }
@@ -90,8 +192,35 @@ ColumnLayout {
                 ColumnLayout {
                     id: contenido
                     width: parent.width
-                    spacing: 14
-                    Label { text: (index + 1) + ". " + Notacion.mostrarPotencias(modelData.titulo); textFormat: Text.PlainText; color: Paleta.texto; font.pixelSize: 16; font.bold: true; Layout.fillWidth: true; wrapMode: Text.Wrap }
+                    spacing: 12
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: 10
+                        Rectangle {
+                            width: Math.max(28, numPaso.implicitWidth + 12)
+                            height: 26
+                            radius: 13
+                            color: Paleta.acento
+                            Label {
+                                id: numPaso
+                                anchors.centerIn: parent
+                                text: String(index + 1)
+                                color: Paleta.sobreAcento
+                                font.bold: true
+                                font.pixelSize: 12
+                            }
+                        }
+                        Label {
+                            text: Notacion.mostrarPotencias(modelData.titulo)
+                            textFormat: Text.PlainText
+                            color: Paleta.texto
+                            font.pixelSize: 16
+                            font.bold: true
+                            Layout.fillWidth: true
+                            wrapMode: Text.Wrap
+                        }
+                    }
+                    Rectangle { Layout.fillWidth: true; height: 1; color: Paleta.borde; opacity: 0.6 }
                     Label {
                         text: Notacion.mostrarPotencias(modelData.detalle)
                         visible: text.length > 0
@@ -104,7 +233,23 @@ ColumnLayout {
                     }
                     Repeater {
                         model: modelData.formulas
-                        Formula { required property var modelData; tokens: modelData; Layout.fillWidth: true }
+                        Rectangle {
+                            required property var modelData
+                            readonly property bool esDecision: modelData.some(t => String(t?.arriba || t || "").indexOf("¿Detener?") !== -1)
+                            Layout.fillWidth: true
+                            implicitHeight: formulaItem.implicitHeight + 16
+                            radius: 8
+                            color: Paleta.entrada
+                            border.color: esDecision ? Paleta.acento : Paleta.borde
+                            Formula {
+                                id: formulaItem
+                                anchors.left: parent.left
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.margins: 10
+                                tokens: modelData
+                            }
+                        }
                     }
                     MatrizVista { visible: modelData.matriz.length > 0; matriz: modelData.matriz; separador: modelData.separador; Layout.fillWidth: true }
                 }

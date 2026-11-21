@@ -2,6 +2,15 @@
 
 ## Sin publicar
 
+- Revisión del PR #46: causas de no convergencia y guardado visibles, pasos completos de Newton sin sustituir cifras ni reinterpretar títulos, zoom en coordenadas logarítmicas y panel ampliado correcto, tablas largas con scroll. Paleta oscura negro/morado aprobada por Reynaldo el 21/11/2026. #23–#30 conservan pendientes de interacción; alcance en `docs/GRAFICAS_INTERACTIVAS.md`.
+
+- Issues #23 a #30 (Gráficas interactivas en Qt y renderizador compartido):
+  - #23: vista apilada de bisección (función arriba, error abajo), selección de fila y reproducción manual cada 2 s, ampliación por panel, zoom, restablecimiento y separación de criterio intervalo frente a porcentual.
+  - #24 y #25: gráficas individuales de Jacobi y Gauss-Seidel con línea de tolerancia `ε`, escala logarítmica segura sin `log(0)`, selección de fila con vector, marcador distinto y aviso de relajación `λ` / orden.
+  - #26: comparador Jacobi/Gauss-Seidel con longitudes reales (sin rellenar ni truncar), alternancia de curvas mediante casillas y recorrido sincronizado.
+  - #27 y #28: propagación enfocada alrededor de `x` y `x+Δx` con tangente lineal y corte en muestras de dominio inválido; simulación de redondeo frente a truncamiento con etiquetas finales sin solapamiento y alternancia de curvas.
+  - #29 y #30: barras agrupadas por variable (`x₁…xₙ`) comparando `Float propio` y `NumPy` frente a `Fraction`; mapa de calor `n×n` dinámico para inversas con mayor desviación resaltada y escala logarítmica opcional segura.
+
 - Issues #37 y #38: conexión real de la vista previa breve, todos los pasos y tabla completa de Newton. Figura con tangente seleccionable sin recalcular, cambio/residuo en ejes separados, comparación opcional con bisección vigente de la misma función, contraste por tema y PNG. Casos iniciales, fallos y límites gráficos explícitos; pruebas de integración. Guía en `docs/NEWTON_PASOS_Y_GRAFICAS.md`.
 
 - Issue #36: Newton se conecta al catálogo de Numéricos, formulario Qt/Tk y consola. Entradas de ejercicio vacías, ejemplos explícitos, modo analítico/numérico, h condicional y tolerancias separadas. Resumen de convergencia/fallo, guardado y reutilización del escalar sin cambiar el diseño. Guía en `docs/NEWTON_FORMULARIO.md`; su recorrido específico se conecta en #37 y #38.

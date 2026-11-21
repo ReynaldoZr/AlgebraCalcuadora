@@ -68,9 +68,34 @@ def pasos_previa_newton(calculo):
     return tuple(paso_visual(p, completo=False) for p in etapas_newton(calculo))
 
 
+def _enriquecer_paso_newton(paso, reg, datos, ultima):
+    """Añade la resta y el estado del núcleo sin reemplazar fórmulas ni decidir convergencia."""
+    formulas = list(paso.formulas)
+    formulas.append((
+        f'Cambio = |{_celda_newton(reg["x_siguiente"])} − '
+        f'({_celda_newton(reg["xi"])})| = {_celda_newton(reg["error_absoluto"])}',
+    ))
+    # El núcleo también detecta ciclos, estancamiento y fallos del intento siguiente.
+    if ultima:
+        decision = 'Detener: convergió.' if datos.get('convergio') else 'Detener sin convergencia; consulta el motivo final.'
+    else:
+        decision = 'Continuar con el siguiente registro.'
+    formulas.append((f'¿Detener? {decision}',))
+    return Paso(paso.titulo, paso.detalle, matriz=paso.matriz,
+                formulas=tuple(formulas), separador=paso.separador)
+
+
 def pasos_completos_newton(calculo):
-    """Conserva todas las etapas originales de Calculo sin truncar ni ocultar iteraciones."""
-    return [paso_visual(paso, completo=True) for paso in calculo.pasos]
+    """Conserva precisión y orden del contrato: datos, registros y terminación."""
+    registros = calculo.datos.get('registros', ())
+    pasos = list(calculo.pasos)
+    # La asociación es estructural; no extraemos números de títulos o frases.
+    if len(pasos) == len(registros) + 2:
+        for indice, reg in enumerate(registros, start=1):
+            pasos[indice] = _enriquecer_paso_newton(
+                pasos[indice], reg, calculo.datos, indice == len(registros),
+            )
+    return [paso_visual(paso, completo=True) for paso in pasos]
 
 
 def tabla_newton(calculo):

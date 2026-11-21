@@ -5,6 +5,7 @@ Elaboración: equipo del proyecto, con apoyo de IA.
 """
 
 from copy import deepcopy
+from math import isfinite, log10
 from pathlib import Path
 import sys
 
@@ -110,10 +111,20 @@ class Controlador(QObject):
         self._fuente_grafica = None
         self._iteracion_grafica, self._comparar_grafica = 0, False
         self._oscuro_grafica = True
+        self._visibles_grafica = {}
+        self._panel_grafica = None
+        self._log_grafica = False
+        self._zoom_factor_grafica = 1.0
+        self._pan_grafica = (0.0, 0.0)
+        self._base_limites_grafica = {}
+        self._escalas_grafica = {}
         self._tema_oscuro_inicial = detectar_tema_oscuro()
         self.reloj = QTimer(self)
         self.reloj.setInterval(INTERVALO_PASOS_MS)
         self.reloj.timeout.connect(self.siguiente)
+        self.reloj_grafica = QTimer(self)
+        self.reloj_grafica.setInterval(INTERVALO_PASOS_MS)
+        self.reloj_grafica.timeout.connect(self._avanzar_grafica)
 
     @property
     def sesion(self):
@@ -189,6 +200,27 @@ class Controlador(QObject):
         return dict(activo=activo, total=len(registros), indice=self._iteracion_grafica,
                     comparable=activo and self._biseccion_comparable() is not None,
                     comparar=self._comparar_grafica)
+
+    @Property('QVariantMap', notify=estadoCambiado)
+    def graficaEstado(self):
+        """Expone controles interactivos de gráfica para #23-#30 sin lógica en QML."""
+        s = self.sesion
+        if not (s.vigente and s.presentacion is not None and self.estado['graficable'] and self.clave != 'num_newton'):
+            return dict(activo=False, total=0, indice=0, detalle='', reproducible=False,
+                        reproduciendo=False, conPaneles=False, panelExpandido=-1,
+                        series=[], conLog=False, mostrarLog=False, zoomActivo=False)
+        from interfaz.numericos.figuras import datos_grafica_interactiva
+        info = datos_grafica_interactiva(
+            self.clave,
+            s.presentacion.calculo,
+            iteracion_seleccionada=self._iteracion_grafica,
+            visibles=self._visibles_grafica,
+            panel_expandido=self._panel_grafica,
+            mostrar_log=self._log_grafica,
+        )
+        info['reproduciendo'] = self.reloj_grafica.isActive()
+        info['zoomActivo'] = self._zoom_factor_grafica != 1.0 or self._pan_grafica != (0.0, 0.0)
+        return info
 
     def _biseccion_comparable(self):
         """Reutiliza solamente una bisección vigente de la misma expresión literal."""
@@ -403,6 +435,7 @@ class Controlador(QObject):
     def pausar(self):
         """Cancela el reloj al editar, navegar o cerrar la aplicación."""
         self.reloj.stop()
+        self.reloj_grafica.stop()
         self.estadoCambiado.emit()
 
     @Slot()
@@ -635,18 +668,101 @@ class Controlador(QObject):
             return
         self.pausar()
         self._oscuro_grafica = oscuro
-        total = self.graficaNewton['total']
-        self._iteracion_grafica = min(max(self._indice, 0), max(total - 1, 0))
+        self._visibles_grafica = {}
+        self._panel_grafica = None
+        self._log_grafica = False
+        self._zoom_factor_grafica = 1.0
+        self._pan_grafica = (0.0, 0.0)
+        self._base_limites_grafica = {}
         self._comparar_grafica = False
+        total = self.graficaNewton['total'] if self.clave == 'num_newton' else self.graficaEstado['total']
+        self._iteracion_grafica = min(max(self._indice, 0), max(total - 1, 0))
         self._dibujar_grafica()
+
+    def _avanzar_grafica(self):
+        """Avanza una iteración en el recorrido de la gráfica cuando el usuario lo inicia."""
+        total = self.graficaEstado['total']
+        if not total or self._iteracion_grafica + 1 >= total:
+            self.reloj_grafica.stop()
+            self.estadoCambiado.emit()
+            return
+        self._iteracion_grafica += 1
+        self._dibujar_grafica()
+
+    @Slot()
+    def reproducirGrafica(self):
+        """Alterna reproducción manual de dos segundos en el diálogo de gráfica."""
+        if self.reloj_grafica.isActive():
+            self.reloj_grafica.stop()
+            self.estadoCambiado.emit()
+            return
+        total = self.graficaEstado['total']
+        if total <= 0:
+            return
+        if self._iteracion_grafica >= total - 1:
+            self._iteracion_grafica = 0
+            self._dibujar_grafica()
+        self.reloj_grafica.start()
+        self.estadoCambiado.emit()
+
+    @Slot()
+    def pausarGrafica(self):
+        """Detiene la reproducción automática de la gráfica."""
+        self.reloj_grafica.stop()
+        self.estadoCambiado.emit()
 
     @Slot(int)
     def seleccionarIteracionGrafica(self, indice):
         """Selecciona una fila ya calculada; conserva entradas, resultado y reloj."""
-        datos = self.graficaNewton
+        self.reloj_grafica.stop()
+        if self.clave == 'num_newton':
+            datos = self.graficaNewton
+        else:
+            datos = self.graficaEstado
         if not datos['activo'] or not datos['total']:
             return
         self._iteracion_grafica = min(max(indice, 0), datos['total'] - 1)
+        self._dibujar_grafica()
+
+    @Slot(str)
+    def alternarSerieGrafica(self, serie):
+        """Oculta o restaura una curva sin recalcular ni alterar la tabla."""
+        actual = self._visibles_grafica.get(serie, True)
+        self._visibles_grafica[serie] = not actual
+        self._dibujar_grafica()
+
+    @Slot(int)
+    def expandirPanelGrafica(self, panel):
+        """Maximiza un panel individual o restaura ambos paneles apilados."""
+        self._panel_grafica = None if self._panel_grafica == panel else panel
+        self._zoom_factor_grafica = 1.0
+        self._pan_grafica = (0.0, 0.0)
+        self._base_limites_grafica = {}
+        self._dibujar_grafica()
+
+    @Slot()
+    def alternarEscalaLogGrafica(self):
+        """Alterna escala logarítmica opcional cuando los valores son positivos."""
+        self._log_grafica = not self._log_grafica
+        self._dibujar_grafica()
+
+    @Slot(float, float, float)
+    def ajustarZoomGrafica(self, factor, dx=0.0, dy=0.0):
+        """Aplica zoom o desplazamiento sobre los límites actuales de la figura."""
+        if not all(isfinite(v) for v in (factor, dx, dy)) or factor <= 0:
+            self.avisar('El zoom debe ser positivo y el desplazamiento finito.', True)
+            return
+        self._zoom_factor_grafica = max(0.05, min(20.0, self._zoom_factor_grafica * factor))
+        px, py = self._pan_grafica
+        self._pan_grafica = (px + dx, py + dy)
+        self._dibujar_grafica()
+
+    @Slot()
+    def reiniciarVistaGrafica(self):
+        """Restablece zoom, desplazamiento y panel expandido."""
+        self._zoom_factor_grafica = 1.0
+        self._pan_grafica = (0.0, 0.0)
+        self._panel_grafica = None
         self._dibujar_grafica()
 
     @Slot(bool)
@@ -655,17 +771,64 @@ class Controlador(QObject):
         self._comparar_grafica = comparar and self._biseccion_comparable() is not None
         self._dibujar_grafica()
 
+    def _calcular_limites_zoom(self):
+        """Traduce factor y desplazamiento a límites reales de los ejes base."""
+        if self._zoom_factor_grafica == 1.0 and self._pan_grafica == (0.0, 0.0):
+            return None
+        if not self._base_limites_grafica:
+            return None
+        resultado = {}
+        px, py = self._pan_grafica
+        for idx, (xmin, xmax, ymin, ymax) in self._base_limites_grafica.items():
+            logaritmico = self._escalas_grafica.get(idx) == 'log'
+            if logaritmico:
+                ymin, ymax = log10(ymin), log10(ymax)
+            cx = 0.5 * (xmin + xmax) + px * (xmax - xmin)
+            cy = 0.5 * (ymin + ymax) + py * (ymax - ymin)
+            rx = 0.5 * (xmax - xmin) * self._zoom_factor_grafica
+            ry = 0.5 * (ymax - ymin) * self._zoom_factor_grafica
+            inferior, superior = cy - ry, cy + ry
+            if logaritmico:
+                inferior = 10.0 ** max(-320, min(308, inferior))
+                superior = 10.0 ** max(-320, min(308, superior))
+            resultado[idx] = (cx - rx, cx + rx, inferior, superior)
+        return resultado
+
     def _dibujar_grafica(self):
         """Renderiza datos guardados; ningún cambio de selección ejecuta Newton."""
         if not self.estado['graficable'] or self._fuente_grafica is None:
             return
         try:
             from interfaz.numericos.graficas_qt import imagen_grafica
+            from interfaz.numericos.figuras import figura_numerica
             opciones = {}
             if self.clave == 'num_newton':
                 opciones = dict(iteracion_seleccionada=self._iteracion_grafica,
                                 comparacion_biseccion=self._biseccion_comparable()
                                 if self._comparar_grafica else None)
+            else:
+                if not self._base_limites_grafica:
+                    fig_base = figura_numerica(
+                        self.clave, self.sesion.presentacion.calculo, oscuro=self._oscuro_grafica,
+                        iteracion_seleccionada=self._iteracion_grafica,
+                        visibles=self._visibles_grafica,
+                        panel_expandido=self._panel_grafica,
+                        mostrar_log=self._log_grafica,
+                    )
+                    paneles = ([self._panel_grafica] if self.clave == 'num_biseccion'
+                               and self._panel_grafica is not None else range(len(fig_base.axes)))
+                    self._base_limites_grafica = {}
+                    self._escalas_grafica = {}
+                    for idx, eje in zip(paneles, fig_base.axes):
+                        self._base_limites_grafica[idx] = (*eje.get_xlim(), *eje.get_ylim())
+                        self._escalas_grafica[idx] = eje.get_yscale()
+                opciones = dict(
+                    iteracion_seleccionada=self._iteracion_grafica,
+                    visibles=self._visibles_grafica,
+                    panel_expandido=self._panel_grafica,
+                    mostrar_log=self._log_grafica,
+                    zoom=self._calcular_limites_zoom(),
+                )
             self._fuente_grafica.imagen = imagen_grafica(
                 self.clave, self.sesion.presentacion.calculo, self._oscuro_grafica, **opciones)
             self._revision_grafica += 1
