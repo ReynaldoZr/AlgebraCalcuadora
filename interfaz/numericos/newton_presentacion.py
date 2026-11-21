@@ -68,9 +68,65 @@ def pasos_previa_newton(calculo):
     return tuple(paso_visual(p, completo=False) for p in etapas_newton(calculo))
 
 
+def _enriquecer_paso_newton(paso, reg, datos):
+    """Añade la resta explícita del error y la comprobación ¿Detener? sin alterar el cálculo."""
+    xi = reg.get('xi')
+    x_sig = reg.get('x_siguiente')
+    err_abs = reg.get('error_absoluto')
+    err_pct = reg.get('error_porcentual')
+    residuo = reg.get('residuo')
+    criterio = datos.get('criterio', 'absoluto')
+    tol = datos.get('tolerancia')
+    tol_f = datos.get('tolerancia_f')
+    err_val = err_pct if criterio == 'porcentual' else err_abs
+
+    formulas_extra = [
+        (f'εa = |{_celda_newton(x_sig)} − ({_celda_newton(xi)})| = {_celda_newton(err_abs)}',),
+    ]
+    if tol is not None and tol_f is not None:
+        if err_val is None:
+            err_cmp = 'Error no definido → seguir'
+        elif err_val < tol:
+            err_cmp = f'{_celda_newton(err_val)} < {_celda_newton(tol)} (cambio OK)'
+        else:
+            err_cmp = f'{_celda_newton(err_val)} ≥ {_celda_newton(tol)} → NO, seguir'
+
+        if residuo == 0:
+            res_cmp = 'f(x) = 0 (detener)'
+        elif residuo is not None and residuo < tol_f:
+            res_cmp = f'|f(x)| = {_celda_newton(residuo)} < {_celda_newton(tol_f)} (residuo OK)'
+        else:
+            res_cmp = f'|f(x)| = {_celda_newton(residuo)} ≥ {_celda_newton(tol_f)} → NO, seguir'
+
+        detener = residuo == 0 or (
+            err_val is not None and err_val < tol and residuo is not None and residuo < tol_f
+        )
+        decision = 'Detener (tolerancias cumplidas)' if detener else 'Seguir'
+        formulas_extra.append((f'¿Detener? {decision}', err_cmp, res_cmp))
+
+    return Paso(
+        paso.titulo,
+        paso.detalle,
+        formulas=tuple(paso.formulas) + tuple(formulas_extra),
+        matriz=paso.matriz,
+        separador=paso.separador,
+    )
+
+
 def pasos_completos_newton(calculo):
-    """Conserva todas las etapas originales de Calculo sin truncar ni ocultar iteraciones."""
-    return [paso_visual(paso, completo=True) for paso in calculo.pasos]
+    """Conserva todas las etapas originales de Calculo y agrega error explícito y ¿Detener?."""
+    d = calculo.datos
+    por_iter = {r.get('i'): r for r in d.get('registros', ()) if r.get('i') is not None}
+    resultado = []
+    for paso in calculo.pasos:
+        reg = None
+        if paso.titulo.startswith('Iteración '):
+            trozo = paso.titulo[len('Iteración '):].split(' ', 1)[0]
+            if trozo.isdigit():
+                reg = por_iter.get(int(trozo))
+        paso_final = _enriquecer_paso_newton(paso, reg, d) if reg is not None else paso
+        resultado.append(paso_visual(paso_final, completo=True))
+    return resultado
 
 
 def tabla_newton(calculo):

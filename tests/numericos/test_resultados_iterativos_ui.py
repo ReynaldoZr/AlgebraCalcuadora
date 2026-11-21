@@ -80,18 +80,23 @@ class PruebasResultadosIterativosUI(unittest.TestCase):
         self.assertTrue(any('Residuo' in d['titulo'] for d in res['detalles_tecnicos']))
 
     def test_tabla_universal_para_otros_metodos(self):
-        """La issue 32 no cambia resúmenes de bisección, errores ni álgebra exacta."""
+        """Newton, bisección, errores y álgebra exacta muestran tabla adaptada y detalles."""
+        calc_new = ejecutar_numerico('num_newton', dict(parametros_defecto('num_newton'), funcion='exp(-x)-x', x0='0', derivada='-exp(-x)-1'))
+        res_new = resumen_estructurado('num_newton', Presentacion(calc_new, resumen_numerico('num_newton', calc_new), None))
+        self.assertTrue(res_new['activo'])
+        self.assertTrue(any(f[0] == 'Raíz aproximada' for f in res_new['filas']))
+
         calc_bis = ejecutar_numerico('num_biseccion', parametros_defecto('num_biseccion'))
         res_bis = resumen_estructurado('num_biseccion', Presentacion(calc_bis, resumen_numerico('num_biseccion', calc_bis), None))
-        self.assertFalse(res_bis['activo'])
+        self.assertTrue(res_bis['activo'])
 
         calc_err = ejecutar_numerico('num_errores', parametros_defecto('num_errores'))
         res_err = resumen_estructurado('num_errores', Presentacion(calc_err, resumen_numerico('num_errores', calc_err), None))
-        self.assertFalse(res_err['activo'])
+        self.assertTrue(res_err['activo'])
 
         pres_exacta = Presentacion(Calculo([[2]], (), {}), 'Suma exacta', [[2]])
         res_suma = resumen_estructurado('sumar', pres_exacta)
-        self.assertFalse(res_suma['activo'])
+        self.assertTrue(res_suma['activo'])
 
     def test_redondeo_no_oculta_aproximaciones_distintas(self):
         """Aumenta la precisión visible cuando dos valores distintos redondean igual."""
