@@ -1,5 +1,20 @@
 # Decisiones y pendientes
 
+## 2026-11-21 · Revisión del PR 46 y aprobación de tema oscuro
+
+Reynaldo pidió revisar los PR pendientes e integrar lo que funcione y cumpla las
+reglas. Aprobó expresamente «Aceptar el nuevo negro/morado» del PR #46 de Roberto.
+La aprobación sustituye únicamente el tema oscuro de Qt/gráficas; conserva claro,
+tarjetas, navegación y restricciones matemáticas. No cambia el flujo habitual de
+revisión de futuros trabajos ni permite aparentar una aprobación de otra persona.
+
+La revisión conserva el PR existente y la infraestructura compartida de las
+gráficas. Se corrigen regresiones de presentación, precisión, parada de Newton,
+zoom logarítmico y tablas extensas sin modificar los algoritmos del profesor.
+Se documenta el alcance real en GRAFICAS_INTERACTIVAS.md: #23–#30 permanecen
+abiertas porque aún faltan interacciones de sus criterios de aceptación. El
+enunciado definitivo del Programa 9 sigue pendiente de confirmación.
+
 ## 2026-11-18 · Núcleo Newton y residuo independiente
 
 Reynaldo autoriza avanzar sus issues en orden, empezando por #33, con pruebas y PR. La Sesión 22 pide comprobar la raíz en la función original y limitar iteraciones; el enunciado del Programa 9 sigue pendiente. El equipo añade `tolerancia_f=1e-8` configurable e independiente del cambio absoluto/porcentual para evitar falso éxito por estancamiento. Es una protección provisional, no una cifra exigida por el profesor; puede alterar el conteo de clase y depende de la escala de la función. No cambia bisección ni las restricciones del álgebra exacta. Contrato y límites en [NEWTON_NUCLEO.md](NEWTON_NUCLEO.md).

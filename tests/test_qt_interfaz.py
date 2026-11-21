@@ -124,6 +124,79 @@ class PruebasQtQuick(unittest.TestCase):
         self.assertTrue(tarjeta.isVisible())
         self.assertGreater(tabla.height(), 0)
 
+    def test_zoom_logaritmico_y_panel_error_ampliado(self):
+        """El zoom conserva límites positivos y aplica al panel lógico de error."""
+        from math import log10
+        from copy import deepcopy
+        self.control.abrirTema('Numéricos')
+        self.control.cargarEjemplo('cos(x)-x')
+        self.control.calcular()
+        self.esperar_calculo()
+        original = deepcopy(self.control.sesion.capturar())
+        self.control.verGrafica(True)
+        self.control.expandirPanelGrafica(1)
+        self.assertEqual(set(self.control._base_limites_grafica), {1})
+        self.assertEqual(self.control._escalas_grafica[1], 'log')
+        base = self.control._base_limites_grafica[1]
+        self.control.ajustarZoomGrafica(.7, 0, 0)
+        limites = self.control._calcular_limites_zoom()[1]
+        self.assertGreater(limites[2], 0)
+        self.assertAlmostEqual(log10(limites[3] / limites[2]),
+                               .7 * log10(base[3] / base[2]))
+        from interfaz.numericos.figuras import figura_numerica
+        fig = figura_numerica('num_biseccion', self.control.sesion.presentacion.calculo,
+                              panel_expandido=1, zoom={1: limites})
+        self.assertEqual(tuple(fig.axes[0].get_ylim()), limites[2:])
+        self.control.reiniciarVistaGrafica()
+        self.assertFalse(self.control.graficaEstado['zoomActivo'])
+        self.assertEqual(self.control.sesion.capturar(), original)
+
+    def test_reproduccion_grafica_manual_pausa_y_series_sin_recalculo(self):
+        """Reproducir, ocultar curvas y navegar no cambian el cálculo ni dejan un reloj activo."""
+        from copy import deepcopy
+        from unittest.mock import patch
+        from PySide6.QtCore import QMetaObject
+        self.control.abrirTema('Numéricos')
+        self.control.seleccionar('num_comparar_iterativos')
+        self.control.cargarEjemplo('')
+        self.control.calcular()
+        self.esperar_calculo()
+        original = deepcopy(self.control.sesion.capturar())
+        self.control.verGrafica(False)
+        self.app.processEvents()
+        self.assertFalse(self.control.reloj_grafica.isActive())
+        boton = self.buscar_control('graficaReproducir')
+        self.assertTrue(boton.isVisible())
+        with patch('interfaz.qt.catalogo.ejecutar', side_effect=AssertionError('No recalcular')):
+            self.assertTrue(QMetaObject.invokeMethod(boton, 'clicked'))
+            self.assertTrue(self.control.reloj_grafica.isActive())
+            self.assertEqual(self.control.reloj_grafica.interval(), 2000)
+            self.control._avanzar_grafica()
+            self.assertEqual(self.control.graficaEstado['indice'], 1)
+            self.control.pausarGrafica()
+            self.control.alternarSerieGrafica('jacobi')
+            self.assertFalse(self.control.graficaEstado['series'][0]['activa'])
+        self.assertEqual(self.control.sesion.capturar(), original)
+        self.control.seleccionar('num_biseccion')
+        self.assertFalse(self.control.reloj_grafica.isActive())
+
+    def test_tabla_resultados_larga_permite_scroll_vertical(self):
+        """Una inversa 10×10 conserva sus cien filas sin alargar la tarjeta indefinidamente."""
+        self.control.abrirTema('Numéricos')
+        self.control.seleccionar('num_inversa')
+        self.control.redimensionar('A', 10, 10)
+        for i in range(10):
+            for j in range(10):
+                self.control.editarCelda('A', i, j, '1' if i == j else '0')
+        self.control.calcular()
+        self.esperar_calculo()
+        self.assertEqual(len(self.control.resultado['detalleIterativo']['filas']), 100)
+        tabla = self.buscar_control('tablaResumenIterativo')
+        self.assertGreater(tabla.property('contentHeight'), tabla.height())
+        self.assertLessEqual(tabla.height(), 250)
+        tabla.setProperty('contentY', tabla.property('contentHeight') - tabla.height())
+        self.assertGreater(tabla.property('contentY'), 0)
+
     def test_newton_formulario_vacio_modos_y_residuo(self):
         """Newton usa entradas vacías, campos condicionales y proveedor real de derivada."""
         self.control.abrirTema('Numéricos')

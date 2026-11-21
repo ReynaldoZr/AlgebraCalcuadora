@@ -82,7 +82,7 @@ ColumnLayout {
 
     Rectangle {
         Layout.fillWidth: true
-        implicitHeight: tablaContenedor.implicitHeight + 4
+        implicitHeight: Math.min(250, tablaContenedor.implicitHeight + 4)
         radius: 8
         color: Paleta.entrada
         border.color: Paleta.borde
@@ -96,11 +96,12 @@ ColumnLayout {
             readonly property int numCols: raiz.datos.columnas?.length || 1
             readonly property real colAncho: Math.max(76, (width - 4) / numCols)
             contentWidth: Math.max(width, numCols * colAncho)
-            contentHeight: height
-            flickableDirection: Flickable.HorizontalFlick
+            contentHeight: tablaContenedor.implicitHeight
+            flickableDirection: Flickable.AutoFlickDirection
             boundsBehavior: Flickable.StopAtBounds
             clip: true
             ScrollBar.horizontal: ScrollBar { }
+            ScrollBar.vertical: ScrollBar { }
 
             Column {
                 id: tablaContenedor
@@ -193,12 +194,12 @@ ColumnLayout {
             anchors.fill: parent
             anchors.margins: 8
             spacing: 4
-            Label { visible: (raiz.datos.metodos?.length || 0) > 0; text: "Residuo (ajuste de las ecuaciones)"; color: Paleta.texto; font.bold: true; font.pixelSize: 12; Layout.fillWidth: true; wrapMode: Text.Wrap }
+            Label { visible: (raiz.datos.metodos?.length || 0) > 0; text: raiz.datos.titulo_residuo || "Residuo (ajuste de las ecuaciones)"; color: Paleta.texto; font.bold: true; font.pixelSize: 12; Layout.fillWidth: true; wrapMode: Text.Wrap }
             Repeater {
                 model: raiz.datos.metodos || []
                 Label {
                     required property var modelData
-                    text: modelData.nombre + ": " + modelData.residuo_corto + "  ·  Cambio entre iteraciones: " + modelData.error_corto
+                    text: modelData.nombre + ": " + modelData.residuo_corto + "  ·  " + (modelData.etiqueta_error || "Cambio entre iteraciones") + ": " + modelData.error_corto
                     color: Paleta.texto
                     font.pixelSize: 12
                     wrapMode: Text.Wrap

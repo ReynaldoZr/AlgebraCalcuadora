@@ -5,6 +5,7 @@ Elaboración: equipo del proyecto, con apoyo de IA.
 """
 
 from copy import deepcopy
+from math import isfinite, log10
 from pathlib import Path
 import sys
 
@@ -116,6 +117,7 @@ class Controlador(QObject):
         self._zoom_factor_grafica = 1.0
         self._pan_grafica = (0.0, 0.0)
         self._base_limites_grafica = {}
+        self._escalas_grafica = {}
         self._tema_oscuro_inicial = detectar_tema_oscuro()
         self.reloj = QTimer(self)
         self.reloj.setInterval(INTERVALO_PASOS_MS)
@@ -747,6 +749,9 @@ class Controlador(QObject):
     @Slot(float, float, float)
     def ajustarZoomGrafica(self, factor, dx=0.0, dy=0.0):
         """Aplica zoom o desplazamiento sobre los límites actuales de la figura."""
+        if not all(isfinite(v) for v in (factor, dx, dy)) or factor <= 0:
+            self.avisar('El zoom debe ser positivo y el desplazamiento finito.', True)
+            return
         self._zoom_factor_grafica = max(0.05, min(20.0, self._zoom_factor_grafica * factor))
         px, py = self._pan_grafica
         self._pan_grafica = (px + dx, py + dy)
@@ -775,11 +780,18 @@ class Controlador(QObject):
         resultado = {}
         px, py = self._pan_grafica
         for idx, (xmin, xmax, ymin, ymax) in self._base_limites_grafica.items():
+            logaritmico = self._escalas_grafica.get(idx) == 'log'
+            if logaritmico:
+                ymin, ymax = log10(ymin), log10(ymax)
             cx = 0.5 * (xmin + xmax) + px * (xmax - xmin)
             cy = 0.5 * (ymin + ymax) + py * (ymax - ymin)
             rx = 0.5 * (xmax - xmin) * self._zoom_factor_grafica
             ry = 0.5 * (ymax - ymin) * self._zoom_factor_grafica
-            resultado[idx] = (cx - rx, cx + rx, cy - ry, cy + ry)
+            inferior, superior = cy - ry, cy + ry
+            if logaritmico:
+                inferior = 10.0 ** max(-320, min(308, inferior))
+                superior = 10.0 ** max(-320, min(308, superior))
+            resultado[idx] = (cx - rx, cx + rx, inferior, superior)
         return resultado
 
     def _dibujar_grafica(self):
@@ -803,10 +815,13 @@ class Controlador(QObject):
                         panel_expandido=self._panel_grafica,
                         mostrar_log=self._log_grafica,
                     )
-                    self._base_limites_grafica = {
-                        idx: (*eje.get_xlim(), *eje.get_ylim())
-                        for idx, eje in enumerate(fig_base.axes)
-                    }
+                    paneles = ([self._panel_grafica] if self.clave == 'num_biseccion'
+                               and self._panel_grafica is not None else range(len(fig_base.axes)))
+                    self._base_limites_grafica = {}
+                    self._escalas_grafica = {}
+                    for idx, eje in zip(paneles, fig_base.axes):
+                        self._base_limites_grafica[idx] = (*eje.get_xlim(), *eje.get_ylim())
+                        self._escalas_grafica[idx] = eje.get_yscale()
                 opciones = dict(
                     iteracion_seleccionada=self._iteracion_grafica,
                     visibles=self._visibles_grafica,

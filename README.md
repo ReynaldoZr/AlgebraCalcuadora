@@ -126,3 +126,5 @@ Una nueva función se propone con una issue y se presenta en un PR. Una correcci
 
 
 **Navegación local nueva:** al iniciar aparece el menú por unidades. Elige una tarjeta; «Temas» cambia de tema mediante un menú plegable e «Inicio» vuelve sin borrar la sesión. «Biblioteca» reúne Guardados/Historial. «Cambiar» despliega dimensiones y «⋯» contiene copiar/pegar o reutilizar resultados. [Guía de navegación](docs/INICIO_Y_NAVEGACION.md).
+
+El avance de gráficas, sus controles y los pendientes de #23–#30 están en [Gráficas interactivas](docs/GRAFICAS_INTERACTIVAS.md). El tema oscuro negro/morado del PR #46 fue aprobado por Reynaldo; el claro se conserva.

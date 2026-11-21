@@ -30,9 +30,9 @@ def _aplicar_zoom(eje, zoom, indice_panel=0):
     limites = zoom.get(indice_panel) if isinstance(zoom, dict) else (zoom if indice_panel == 0 else None)
     if limites and len(limites) == 4:
         xmin, xmax, ymin, ymax = limites
-        if xmin < xmax:
+        if all(math.isfinite(v) for v in limites) and xmin != xmax:
             eje.set_xlim(xmin, xmax)
-        if ymin < ymax:
+        if all(math.isfinite(v) for v in limites) and ymin != ymax:
             eje.set_ylim(ymin, ymax)
 
 
@@ -377,7 +377,7 @@ def _figura_sistema(calculo, oscuro, zoom=None):
     eje.set(
         xlabel='Variable del sistema',
         ylabel='Error absoluto frente a Fraction',
-        title=f'Sistema · {etq_max} · cond(A)={formato_visual(d.get("condicion"))} · Residuo={formato_visual(d.get("residuo"))}',
+        title=f'Sistema · {etq_max}\ncond(A)={formato_visual(d.get("condicion"))} · Residuo={formato_visual(d.get("residuo"))}',
     )
     eje.grid(axis='y', alpha=0.3)
     eje.legend(loc='best', fontsize='small')
@@ -385,7 +385,7 @@ def _figura_sistema(calculo, oscuro, zoom=None):
     return figura
 
 
-def _figura_inversa(calculo, oscuro, mostrar_log=False):
+def _figura_inversa(calculo, oscuro, mostrar_log=False, zoom=None):
     """Construye mapa de calor n×n del error por fila y columna con mayor desviación."""
     d = calculo.datos
     c = _colores_tema(oscuro)
@@ -415,8 +415,10 @@ def _figura_inversa(calculo, oscuro, mostrar_log=False):
     if n <= 6:
         for i in range(n):
             for j in range(n):
+                rojo, verde, azul, _ = mapa.cmap(mapa.norm(matriz_err[i][j]))
+                luminosidad = .2126 * rojo + .7152 * verde + .0722 * azul
                 eje.text(j, i, formato_visual(matriz_err[i][j]), ha='center', va='center',
-                         color='white', fontsize=8)
+                         color='#111111' if luminosidad > .55 else 'white', fontsize=8)
 
     eje.set_xticks(range(n))
     eje.set_xticklabels([str(j + 1) for j in range(n)])
@@ -425,8 +427,9 @@ def _figura_inversa(calculo, oscuro, mostrar_log=False):
     eje.set(
         xlabel='Columna',
         ylabel='Fila',
-        title=f'Inversa ({n}×{n}) · Color = |Float propio − Exacto| · cond(A)={formato_visual(d.get("condicion"))} · Residuo={formato_visual(d.get("residuo"))}',
+        title=f'Inversa ({n}×{n}) · Error absoluto por celda\ncond(A)={formato_visual(d.get("condicion"))} · Residuo={formato_visual(d.get("residuo"))}',
     )
+    _aplicar_zoom(eje, zoom, 0)
     return figura
 
 
@@ -466,7 +469,8 @@ def figura_numerica(clave, calculo, oscuro=False, **opciones):
         )
     if clave == 'num_sistema':
         return _figura_sistema(calculo, oscuro, zoom=opciones.get('zoom'))
-    return _figura_inversa(calculo, oscuro, mostrar_log=bool(opciones.get('mostrar_log', False)))
+    return _figura_inversa(calculo, oscuro, mostrar_log=bool(opciones.get('mostrar_log', False)),
+                            zoom=opciones.get('zoom'))
 
 
 def datos_grafica_interactiva(clave, calculo, iteracion_seleccionada=None, visibles=None, panel_expandido=None, mostrar_log=False):

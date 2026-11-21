@@ -31,7 +31,7 @@ def _construir_newton(calculo):
     convergio = bool(d.get('convergio'))
     raiz_txt = formato_visual(calculo.valor) if calculo.valor is not None else 'No disponible'
     filas = [
-        ['Raíz aproximada', raiz_txt],
+        ['Raíz aproximada' if convergio else 'Última aproximación', raiz_txt],
         ['Iteraciones realizadas', str(d.get('iteraciones', len(d.get('filas', ()))))],
         ['Criterio de error', str(d.get('criterio', 'absoluto'))],
         ['Tolerancia del cambio', formato_visual(d.get('tolerancia'))],
@@ -45,7 +45,7 @@ def _construir_newton(calculo):
 
     detalles = [
         dict(titulo='Motivo de parada', valor=str(d.get('motivo', ''))),
-        dict(titulo='Raíz (precisión completa)', valor=formato(calculo.valor) if calculo.valor is not None else 'No disponible'),
+        dict(titulo='Aproximación (precisión completa)', valor=formato(calculo.valor) if calculo.valor is not None else 'No disponible'),
         dict(titulo='Residuo |f(x)| completo', valor=formato(d.get('residuo'))),
         dict(titulo='Tolerancia del cambio completa', valor=formato(d.get('tolerancia'))),
         dict(titulo='Tolerancia del residuo completa', valor=formato(d.get('tolerancia_f'))),
@@ -66,13 +66,17 @@ def _construir_newton(calculo):
                 estado='Convergió' if convergio else 'Sin converger',
                 convergio=convergio,
                 residuo_corto=formato_visual(d.get('residuo')),
-                error_corto=formato_visual(d.get('error')),
+                error_corto=formato_visual(d.get('registros', ())[-1].get(
+                    'error_porcentual' if d.get('criterio') == 'porcentual' else 'error_absoluto'
+                )) if d.get('registros') else 'No definido',
+                etiqueta_error='Cambio (%)' if d.get('criterio') == 'porcentual' else 'Cambio absoluto',
             ),
         ],
         columnas=['Concepto', 'Valor'],
         filas=filas,
         nota_referencia='Referencia SciPy: contraste independiente cuando aplica; no es un valor exacto.',
         nota_precision='Valores redondeados solo para mostrar; tabla, pasos y detalles conservan precisión completa.',
+        titulo_residuo='Residuo en la función',
         explicacion_residuo='El residuo |f(x)| comprueba qué tan cerca de cero queda f(x) en la aproximación final.',
         advertencias=advertencias,
         detalles_tecnicos=detalles,
@@ -87,7 +91,8 @@ def _construir_numerico(clave, calculo, resumen):
     if clave == 'num_biseccion':
         raices = d.get('raices_extremos', ())
         filas = [
-            ['Raíz aproximada', formato_visual(calculo.valor)],
+            ['Valor principal para guardar' if len(raices) > 1 else
+             'Raíz aproximada' if d.get('convergio') else 'Última aproximación', formato_visual(calculo.valor)],
             ['Iteraciones realizadas', str(len(d.get('filas', ())))],
             ['Predicción por ancho', str(d.get('iteraciones_predichas', '—'))],
             ['Residuo |f(xr)|', formato_visual(d.get('residuo'))],
@@ -108,16 +113,18 @@ def _construir_numerico(clave, calculo, resumen):
             estado_general=d.get('motivo', 'Bisección completada.'),
             comparacion_iteraciones='',
             metodos=[
-                dict(nombre='Iteraciones', iteraciones=len(d.get('filas', ())), estado='Realizadas',
-                     convergio=True, residuo_corto=formato_visual(d.get('residuo')),
-                     error_corto=formato_visual(d.get('diferencia_scipy'))),
+                dict(nombre='Iteraciones', iteraciones=len(d.get('filas', ())), estado='Convergió' if d.get('convergio') else 'Sin converger',
+                     convergio=bool(d.get('convergio')), residuo_corto=formato_visual(d.get('residuo')),
+                     error_corto=formato_visual(d.get('diferencia_scipy')),
+                     etiqueta_error='Diferencia con SciPy'),
             ],
             columnas=['Concepto', 'Valor'],
             filas=filas,
             nota_referencia='Referencia SciPy: valor de contraste; no es una solución exacta.',
             nota_precision='Valores redondeados solo para mostrar; detalles y tabla conservan precisión completa.',
             explicacion_residuo='El residuo |f(xr)| mide qué tan cerca de cero queda la función evaluada.',
-            advertencias=[],
+            advertencias=[] if d.get('convergio') else [d.get('motivo', 'No convergió')],
+            titulo_residuo='Residuo en la función',
             detalles_tecnicos=detalles,
         )
 
