@@ -1,6 +1,6 @@
 # Avance de gráficas y revisión del PR 46
 
-El PR de Roberto incorpora una base compartida para las gráficas #23–#30. Reynaldo autorizó su revisión e integración y aprobó el nuevo tema oscuro negro/morado el 21/11/2026. El tema claro y las tres tarjetas se conservan. Este avance no cierra las ocho issues ni modifica los algoritmos matemáticos.
+El PR de Roberto incorpora una base compartida para las gráficas #23–#30. Reynaldo autorizó su revisión e integración y aprobó el nuevo tema oscuro negro/morado el 21/11/2026. El tema claro y las tres tarjetas se conservan. Posteriormente Reynaldo decidió descartar las interacciones restantes: #23–#30 quedan cerradas como no planificadas. La aplicación conserva el avance funcional y se identifica como v0.9.0; no modifica los algoritmos matemáticos.
 
 ## Qué se puede probar
 
@@ -22,14 +22,14 @@ Newton y bisección distinguen una raíz convergente de la última aproximación
 
 Los pasos completos de Newton conservan las fórmulas y cifras que entregó el núcleo. Se añade la resta explícita del cambio y se muestra el estado final del núcleo; no se vuelve a decidir convergencia comparando cantidades redondeadas en la interfaz. La asociación entre pasos y registros usa el orden del contrato, no números extraídos de títulos.
 
-## Pendientes de #23–#30
+## Interacciones descartadas del alcance de v0.9.0
 
 - Consulta de coordenadas/valores al pasar el cursor y arrastre directo del gráfico.
 - Consulta individual de barras y celdas, con sus valores exacto, float propio y NumPy; actualmente inversas muestra la desviación máxima.
 - Selección/reproducción por iteración de la simulación de redondeo/truncamiento.
 - Ampliar aceptación y comprobaciones de cada issue para las interacciones anteriores, dimensiones máximas y casos límite particulares.
 
-No presentar este avance como implementación completa de todos esos requisitos. Las issues conservan sus propios criterios y futuras entregas.
+Estas interacciones no se implementarán en el alcance actual por decisión de Reynaldo del 21/11/2026. No se presentan como funciones existentes ni quedan como tareas abiertas. Una futura ampliación necesitaría una decisión nueva.
 
 ## Comprobación
 

@@ -64,6 +64,8 @@ Calculadora local de Álgebra Lineal para dos estudiantes, con funciones compren
 
 - El 21 de noviembre Reynaldo aprobó expresamente el tema oscuro negro/morado (obsidiana/amatista) del PR #46. Sustituye el azul oscuro de Qt y su gráfica; conserva el claro salvia/crema y la estructura de tarjetas y navegación. La autorización de revisar e integrar este PR es puntual; no elimina las comprobaciones ni autoriza cambios visuales futuros sin revisión.
 
+- Después, el 21 de noviembre, Reynaldo descartó las interacciones restantes de #23–#30 y pidió identificar el avance actual como versión 0.9 (v0.9.0). Las issues se cierran como no planificadas y sus funciones pendientes no forman parte del alcance actual. No volver a abrirlas ni presentarlas como implementadas sin una nueva indicación. La denominación de la aplicación no publica por sí sola una etiqueta o release.
+
 - Última indicación del usuario (4 de noviembre de 2026): no volver a usar Computer Use («ChatGPT is using your computer»), ayuda visual, capturas ni control de pantalla hasta que él indique que es necesario. La autorización anterior para abrir desde IntelliJ ya no habilita nuevas acciones visuales. Continuar con revisión y pruebas del código.
 - Ejecutar `python -m unittest discover -s tests -v` y `python herramientas/comprobar_reglas.py` antes del PR. Comprobar manualmente el recorrido de consola afectado cuando cambie la interacción.
 - Añadir pruebas de resultados conocidos, límites matemáticos y errores relevantes; no pruebas que solo repitan la implementación.

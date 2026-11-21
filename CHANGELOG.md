@@ -2,6 +2,11 @@
 
 ## Sin publicar
 
+### Identificación v0.9.0 · 2026-11-21
+
+- Reynaldo elige versión 0.9 para el avance integrado: `main.VERSION` y título Qt muestran v0.9.0. No se crea una release pública.
+- Se descartan las interacciones restantes de #23–#30 y se cierran como no planificadas. Se conservan las funciones ya implementadas y las reglas de futuras ampliaciones.
+
 - Revisión del PR #46: causas de no convergencia y guardado visibles, pasos completos de Newton sin sustituir cifras ni reinterpretar títulos, zoom en coordenadas logarítmicas y panel ampliado correcto, tablas largas con scroll. Paleta oscura negro/morado aprobada por Reynaldo el 21/11/2026. #23–#30 conservan pendientes de interacción; alcance en `docs/GRAFICAS_INTERACTIVAS.md`.
 
 - Issues #23 a #30 (Gráficas interactivas en Qt y renderizador compartido):

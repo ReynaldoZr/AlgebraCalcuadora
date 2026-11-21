@@ -1,5 +1,14 @@
 # Decisiones y pendientes
 
+## 2026-11-21 · Versión 0.9 y cierre del alcance gráfico
+
+Reynaldo decidió no realizar las interacciones que seguían pendientes de #23–#30.
+Las ocho issues se cierran como no planificadas, no como funciones implementadas.
+El avance ya integrado se identifica como v0.9.0 (versión 0.9) en consola y en
+el título de Qt. Se conservan las funciones existentes, los datos personales y
+la configuración de IntelliJ. La denominación no crea una etiqueta ni una
+release pública adicional; esas publicaciones siguen requiriendo autorización.
+
 ## 2026-11-21 · Revisión del PR 46 y aprobación de tema oscuro
 
 Reynaldo pidió revisar los PR pendientes e integrar lo que funcione y cumpla las

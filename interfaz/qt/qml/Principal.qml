@@ -10,7 +10,7 @@ ApplicationWindow {
     minimumWidth: 1100
     minimumHeight: 760
     visible: true
-    title: "Cuaderno de Álgebra Lineal · Qt Quick · Local"
+    title: "Cuaderno de Álgebra Lineal · v" + Qt.application.version + " · Local"
     color: Paleta.fondo
     font.family: "Segoe UI"
     font.pixelSize: 13

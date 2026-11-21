@@ -6,8 +6,8 @@ Elaboración: equipo del proyecto, con apoyo de IA.
 
 from interfaz.menus import menu_principal
 
-# La versión publicada no cambia por preparar funciones nuevas en una rama local.
-VERSION = "0.1.0"
+# Identificación del avance acordada por Reynaldo; no equivale a una release pública.
+VERSION = "0.9.0"
 
 
 def main():
