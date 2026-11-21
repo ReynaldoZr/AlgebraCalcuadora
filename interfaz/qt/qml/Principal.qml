@@ -452,9 +452,11 @@ ApplicationWindow {
         modal: true
         title: "Gráfica del ejercicio"
         standardButtons: Dialog.Close
+        onClosed: cuaderno.pausarGrafica()
         background: Rectangle { radius: 14; color: Paleta.tarjeta; border.color: Paleta.borde }
         ColumnLayout {
             anchors.fill: parent
+            spacing: 8
             RowLayout {
                 visible: cuaderno.graficaNewton.activo
                 Boton {
@@ -486,7 +488,79 @@ ApplicationWindow {
                     ToolTip.text: "Calcula antes una bisección de la misma función. Newton debe usar cambio absoluto; las curvas tienen criterios distintos."
                 }
             }
-            Image { id: imagenGrafica; objectName: "imagenGrafica"; Layout.fillWidth: true; Layout.fillHeight: true; fillMode: Image.PreserveAspectFit; cache: false }
+            RowLayout {
+                visible: cuaderno.graficaEstado.activo
+                Layout.fillWidth: true
+                spacing: 6
+                Boton {
+                    objectName: "graficaAnterior"
+                    visible: cuaderno.graficaEstado.reproducible
+                    text: "‹"
+                    enabled: cuaderno.graficaEstado.indice > 0
+                    onClicked: cuaderno.seleccionarIteracionGrafica(cuaderno.graficaEstado.indice - 1)
+                }
+                Boton {
+                    objectName: "graficaReproducir"
+                    visible: cuaderno.graficaEstado.reproducible
+                    text: cuaderno.graficaEstado.reproduciendo ? "Ⅱ Pausar" : "▶ Reproducir"
+                    principal: true
+                    onClicked: cuaderno.reproducirGrafica()
+                }
+                Boton {
+                    objectName: "graficaSiguiente"
+                    visible: cuaderno.graficaEstado.reproducible
+                    text: "›"
+                    enabled: cuaderno.graficaEstado.indice + 1 < cuaderno.graficaEstado.total
+                    onClicked: cuaderno.seleccionarIteracionGrafica(cuaderno.graficaEstado.indice + 1)
+                }
+                Label {
+                    visible: cuaderno.graficaEstado.reproducible
+                    text: (cuaderno.graficaEstado.indice + 1) + " / " + cuaderno.graficaEstado.total
+                    color: Paleta.texto
+                }
+                Repeater {
+                    model: cuaderno.graficaEstado.series || []
+                    CheckBox {
+                        required property var modelData
+                        text: modelData.etiqueta
+                        checked: modelData.activa
+                        onClicked: cuaderno.alternarSerieGrafica(modelData.clave)
+                    }
+                }
+                Item { Layout.fillWidth: true }
+                Boton { visible: cuaderno.graficaEstado.conPaneles; discreto: cuaderno.graficaEstado.panelExpandido !== 0; text: cuaderno.graficaEstado.panelExpandido === 0 ? "Ver ambos" : "Ampliar función"; onClicked: cuaderno.expandirPanelGrafica(0) }
+                Boton { visible: cuaderno.graficaEstado.conPaneles; discreto: cuaderno.graficaEstado.panelExpandido !== 1; text: cuaderno.graficaEstado.panelExpandido === 1 ? "Ver ambos" : "Ampliar error"; onClicked: cuaderno.expandirPanelGrafica(1) }
+                Boton { visible: cuaderno.graficaEstado.conLog; discreto: !cuaderno.graficaEstado.mostrarLog; text: "Escala log"; onClicked: cuaderno.alternarEscalaLogGrafica() }
+                Boton { discreto: true; text: "+"; ToolTip.visible: hovered; ToolTip.text: "Acercar"; onClicked: cuaderno.ajustarZoomGrafica(0.7, 0, 0) }
+                Boton { discreto: true; text: "−"; ToolTip.visible: hovered; ToolTip.text: "Alejar"; onClicked: cuaderno.ajustarZoomGrafica(1.4, 0, 0) }
+                Boton { discreto: true; text: "Restablecer"; enabled: cuaderno.graficaEstado.zoomActivo || cuaderno.graficaEstado.panelExpandido !== -1; onClicked: cuaderno.reiniciarVistaGrafica() }
+            }
+            Label {
+                visible: (cuaderno.graficaEstado.detalle || "").length > 0
+                text: cuaderno.graficaEstado.detalle || ""
+                color: Paleta.secundario
+                font.pixelSize: 12
+                wrapMode: Text.Wrap
+                Layout.fillWidth: true
+            }
+            Item {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Image {
+                    id: imagenGrafica
+                    objectName: "imagenGrafica"
+                    anchors.fill: parent
+                    fillMode: Image.PreserveAspectFit
+                    cache: false
+                }
+                WheelHandler {
+                    enabled: cuaderno.graficaEstado.activo
+                    onWheel: event => {
+                        if (event.angleDelta.y > 0) cuaderno.ajustarZoomGrafica(0.8, 0, 0)
+                        else if (event.angleDelta.y < 0) cuaderno.ajustarZoomGrafica(1.25, 0, 0)
+                    }
+                }
+            }
             Boton { text: "Guardar imagen…"; onClicked: cuaderno.guardarGrafica() }
         }
     }

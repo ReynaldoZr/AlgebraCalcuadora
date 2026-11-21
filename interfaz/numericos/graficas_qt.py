@@ -15,7 +15,7 @@ from interfaz.numericos.figuras import figura_numerica
 def imagen_grafica(clave, calculo, oscuro=True, **opciones):
     """Dibuja las mismas curvas y datos en memoria, sin archivos temporales ni Tk."""
     figura = figura_numerica(clave, calculo, oscuro=oscuro, **opciones)
-    fondo, texto = ('#001233', '#e8ecf4') if oscuro else ('#dad7cd', '#344e41')
+    fondo, texto = ('#15131b', '#f3effa') if oscuro else ('#dad7cd', '#344e41')
     figura.set_facecolor(fondo)
     for eje in figura.axes:
         eje.set_facecolor(fondo)

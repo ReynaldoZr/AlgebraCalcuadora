@@ -121,8 +121,8 @@ class PruebasQtQuick(unittest.TestCase):
         self.control.cargarEjemplo('')
         self.control.calcular()
         self.esperar_calculo()
-        self.assertFalse(tarjeta.isVisible())
-        self.assertTrue(self.buscar_control('resumenResultado').isVisible())
+        self.assertTrue(tarjeta.isVisible())
+        self.assertGreater(tabla.height(), 0)
 
     def test_newton_formulario_vacio_modos_y_residuo(self):
         """Newton usa entradas vacías, campos condicionales y proveedor real de derivada."""
