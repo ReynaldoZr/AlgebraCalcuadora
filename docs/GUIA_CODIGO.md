@@ -63,7 +63,7 @@ Los módulos calculan y devuelven datos; no piden información ni dibujan botone
 4. Añade un comentario corto cuando expliques por qué se intercambian filas, se limita un pivote, se protege un archivo o se separa precisión exacta/aproximada. No escribas un comentario que solo repita la línea siguiente.
 5. Prueba un ejemplo conocido y un error relevante. Ejecuta las comprobaciones de README antes del PR.
 
-El flujo sigue siendo issue → rama → implementación → comprobaciones → PR → revisión humana cuando se autorice publicar. La IA no integra ni publica automáticamente. El 6 de noviembre el usuario autorizó PySide6 + QML para el próximo avance. La interfaz Tkinter se conserva como respaldo; véase MIGRACION_QT.md.
+El flujo sigue siendo issue → rama → implementación → comprobaciones → PR → revisión humana cuando se autorice publicar. Quien prepara el cambio no integra ni publica automáticamente. El 6 de noviembre el usuario autorizó PySide6 + QML para el próximo avance. La interfaz Tkinter se conserva como respaldo; véase MIGRACION_QT.md.
 
 
 ## Inicio y navegación compacta

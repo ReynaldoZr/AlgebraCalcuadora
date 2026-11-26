@@ -12,7 +12,7 @@ Calculadora educativa local para un equipo de dos estudiantes. **Versión de la 
 
 **IntelliJ IDEA:** usar la configuración **Calculadora escritorio**, que ejecuta `gui.py` con `.venv/Scripts/python.exe`. También se puede ejecutar directamente `.venv\Scripts\python.exe gui.py`. El [mapa del código](docs/GUIA_CODIGO.md) explica qué hace cada archivo; se añadieron comentarios breves en decisiones y puntos de conexión.
 
-## Antes de trabajar con una IA
+## Antes de trabajar con un colaborador
 
 **Programa 9 provisional · Newton:** la propuesta de #36 conecta el núcleo a **Numéricos → Newton-Raphson**, con derivada analítica/numérica, estado, residuo y resultado reutilizable. Conserva el diseño y las entradas vacías. [Guía del formulario](docs/NEWTON_FORMULARIO.md). Las mejoras de pasos/tabla (#37) y gráfica (#38) conectan vista previa, tabla completa, tangentes seleccionables y comparación opcional con bisección. [Guía del recorrido](docs/NEWTON_PASOS_Y_GRAFICAS.md). El enunciado académico definitivo todavía debe confirmarse.
 
@@ -20,7 +20,7 @@ Para preparar la exposición de este avance, empezar por [Dónde estudiar Newton
 
 **Guardados y estudio (local):** abre **Guardar / Estudio** para guardar una matriz, un ejercicio completo, cargar casos o consultar ayudas. La pestaña **Guardados** conserva elementos con símbolos como **Aᵀ** y nombres automáticos (**Transpuesta 1**, **Transpuesta 2**), nombres/símbolos propios y notas. Incluye búsqueda, historial de cien ejercicios, recuperación y PDF con todos los pasos. Cada editor permite copiar/pegar matrices. Los datos permanecen en tu equipo al cerrar. [Guía y ubicación de los datos](docs/GUARDADOS_Y_ESTUDIO.md).
 
-La IA sigue **issue → rama → implementación → comprobaciones → PR → CI** y deja el pull request abierto para revisión humana. Reynaldo u otro humano autorizado decide si se corrige, se descarta o se integra. Las pruebas aprobadas no autorizan a la IA a hacer merge ni a publicar versiones. Leer [AGENTS.md](AGENTS.md) y el [flujo completo para la IA](docs/FLUJO_IA.md) antes de empezar.
+Quien prepara el cambio sigue **issue → rama → implementación → comprobaciones → PR → CI** y deja el pull request abierto para revisión humana. Reynaldo u otro humano autorizado decide si se corrige, se descarta o se integra. Las pruebas aprobadas no autorizan a quien prepara el cambio a hacer merge ni a publicar versiones. Leer [AGENTS.md](AGENTS.md) y el [flujo completo para quien prepara el cambio](docs/FLUJO_DE_REVISION.md) antes de empezar.
 
 ## Ejecutar
 
@@ -114,7 +114,7 @@ El verificador analiza imports con AST, rechaza bibliotecas externas fuera del �
 - [Issues iniciales](docs/ISSUES.md) y [plan de versiones](docs/VERSIONES.md): tareas reales y orden de las etapas.
 - [Guía para añadir operaciones](docs/COMO_AGREGAR.md): pasos y ejemplo concreto.
 - [Trabajo entre dos](docs/TRABAJO_EN_EQUIPO.md): issues, ramas, revisión y PR.
-- [AGENTS.md](AGENTS.md) y [guion de IA](docs/GUION_IA.md): reglas para mantener la estructura.
+- [AGENTS.md](AGENTS.md) y [guion de colaboración](docs/GUIA_DE_COLABORACION.md): reglas para mantener la estructura.
 - [Requisitos de UAM](docs/REVISION_UAM.md) e [inventario de fuentes](docs/INVENTARIO_MATERIALES.md): indicaciones revisadas al 3 de noviembre de 2026.
 - [Decisiones](docs/DECISIONES.md) e [historial](CHANGELOG.md): razones y cambios.
 

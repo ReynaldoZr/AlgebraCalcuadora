@@ -1,6 +1,6 @@
-# Cómo debe trabajar la IA hasta la revisión humana
+# Cómo debe trabajar quien prepara el cambio hasta la revisión humana
 
-La IA desarrolla y deja una propuesta comprobable. Reynaldo u otro humano autorizado revisa el pull request y decide si se integra, se corrige o se descarta. Una comprobación automática aprobada es evidencia técnica, no autorización humana.
+Quien prepara el cambio desarrolla y deja una propuesta comprobable. Reynaldo u otro humano autorizado revisa el pull request y decide si se integra, se corrige o se descarta. Una comprobación automática aprobada es evidencia técnica, no autorización humana.
 
 ## 1. Leer y definir la issue
 
@@ -10,9 +10,9 @@ La issue debe indicar objetivo, fuente de clase, módulos afectados, entradas, r
 
 ## 2. Preparar una rama
 
-Partir de main actualizado sin sobrescribir cambios locales. Crear una rama descriptiva vinculada al número de issue, por ejemplo `feat/2-producto-matrices`, `fix/8-validar-fracciones` o `docs/6-flujo-ia-revision-humana`. Si se continúa un PR existente, trabajar en su rama en vez de duplicarlo.
+Partir de main actualizado sin sobrescribir cambios locales. Crear una rama descriptiva vinculada al número de issue, por ejemplo `feat/2-producto-matrices`, `fix/8-validar-fracciones` o `docs/6-flujo-de-revision`. Si se continúa un PR existente, trabajar en su rama en vez de duplicarlo.
 
-main representa lo integrado. La IA no hace commits directos allí, no fuerza su historial y no modifica las protecciones para eludir el PR.
+main representa lo integrado. Quien prepara el cambio no hace commits directos allí, no fuerza su historial y no modifica las protecciones para eludir el PR.
 
 ## 3. Implementar y documentar
 
@@ -36,7 +36,7 @@ Corregir los fallos relacionados con el cambio. Un problema que no pueda resolve
 
 ## 5. Abrir el pull request
 
-Hacer commits comprensibles y publicar únicamente la rama de trabajo. Abrir el PR hacia main con la plantilla. Incluir `Closes #N`: es un vínculo que cerrará la issue al integrar, no una orden para que la IA la cierre ahora.
+Hacer commits comprensibles y publicar únicamente la rama de trabajo. Abrir el PR hacia main con la plantilla. Incluir `Closes #N`: es un vínculo que cerrará la issue al integrar, no una orden para que quien prepara el cambio la cierre ahora.
 
 El PR debe explicar problema, comportamiento resultante, alcance, fuente de clase, comprobaciones ejecutadas, instrucciones para probar y limitaciones. Si la implementación está incompleta o bloqueada, mantenerlo como borrador. Si está lista y comprobada, puede quedar abierto para revisión.
 
@@ -44,7 +44,7 @@ El PR debe explicar problema, comportamiento resultante, alcance, fuente de clas
 
 Consultar las dos comprobaciones de CI de Windows con Python 3.11 y 3.13. Deben corresponder al último commit del PR. Si se añaden commits, las comprobaciones anteriores no prueban por sí solas el estado nuevo. El equipo decidió validar únicamente Windows; no añadir plataformas sin una nueva indicación.
 
-La IA puede reparar su rama, subir la corrección y comprobar de nuevo. No puede integrar, activar auto-merge, autoaprobarse, simular otra persona ni rebajar las reglas de protección. Si la CI no está disponible o falla por una causa externa, reportarlo y dejar el PR como borrador.
+Quien prepara el cambio puede reparar su rama, subir la corrección y comprobar de nuevo. No puede integrar, activar auto-merge, autoaprobarse, simular otra persona ni rebajar las reglas de protección. Si la CI no está disponible o falla por una causa externa, reportarlo y dejar el PR como borrador.
 
 ## 7. Entregar el PR y detenerse
 
@@ -57,11 +57,11 @@ La respuesta final debe incluir:
 - Cualquier limitación o fallo pendiente.
 - La indicación de que está pendiente de revisión humana.
 
-El trabajo de desarrollo de la IA termina aquí. No hacer merge, cerrar la issue como completada, crear etiquetas ni publicar releases. El permiso de desarrollar o subir una rama no autoriza esos pasos.
+El trabajo de desarrollo de quien prepara el cambio termina aquí. No hacer merge, cerrar la issue como completada, crear etiquetas ni publicar releases. El permiso de desarrollar o subir una rama no autoriza esos pasos.
 
 ## 8. Decisión humana
 
-Reynaldo u otro humano autorizado abre el PR, revisa el diff y las comprobaciones y prueba el comportamiento relevante. Puede pedir cambios, rechazar la propuesta o decidir integrarla. Si pide cambios, la IA los prepara en la misma rama y devuelve el PR actualizado para otra revisión.
+Reynaldo u otro humano autorizado abre el PR, revisa el diff y las comprobaciones y prueba el comportamiento relevante. Puede pedir cambios, rechazar la propuesta o decidir integrarla. Si pide cambios, quien prepara el cambio los prepara en la misma rama y devuelve el PR actualizado para otra revisión.
 
 Integrar y publicar son decisiones distintas. Después de revisar, el humano puede integrar desde GitHub o dar una instrucción explícita de integración para ese PR. Las etiquetas y releases requieren también autorización expresa para la publicación correspondiente. Ante dudas sobre el alcance de esa autorización, mantener el PR abierto y pedir la aclaración concreta.
 
@@ -69,4 +69,4 @@ Integrar y publicar son decisiones distintas. Después de revisar, el humano pue
 
 main tiene PR, rama actualizada, CI y conversaciones resueltas como requisitos; también bloquea force-push y borrado. Actualmente no exige una aprobación formal de otra cuenta, porque falta incorporar al segundo integrante. Eso no elimina la revisión humana de este flujo.
 
-GitHub no distingue si una operación con la misma cuenta y credenciales la ejecutó una persona o una IA. Estas instrucciones fijan el límite de la IA; no se presenta la CI como una barrera de aprobación humana. Cuando haya dos cuentas colaboradoras, se podrá configurar una aprobación obligatoria de una cuenta distinta del autor. GitHub no permite que el autor apruebe su propio PR; véase la [documentación oficial sobre revisiones](https://docs.github.com/en/pull-requests/how-tos/review-pull-requests/approving-a-pull-request-with-required-reviews).
+Cuando haya dos cuentas colaboradoras, se podrá configurar una aprobación obligatoria de una cuenta distinta del autor. GitHub no permite que el autor apruebe su propio PR; véase la [documentación oficial sobre revisiones](https://docs.github.com/en/pull-requests/how-tos/review-pull-requests/approving-a-pull-request-with-required-reviews).

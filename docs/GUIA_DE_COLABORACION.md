@@ -1,4 +1,4 @@
-# Guion para trabajar con una IA
+# Guion para trabajar con un colaborador
 
 Este texto se puede copiar al iniciar una tarea. Se reemplaza la línea del objetivo por una operación concreta. AGENTS.md debe ubicarse en la raíz del repositorio definitivo; en otras herramientas se adjunta o se pide expresamente su lectura. El README orienta a las personas; AGENTS.md resume reglas para el agente.
 
@@ -7,7 +7,7 @@ Estamos desarrollando entre dos estudiantes una calculadora local de Álgebra Li
 
 Objetivo de esta tarea: [operación concreta y ejemplo esperado].
 
-Tu flujo es issue → rama → implementación → comprobaciones → pull request → CI → revisión humana. Lee docs/FLUJO_IA.md. Usa la issue indicada o crea una pequeña con criterios de aceptación y trabaja en una rama propia desde main actualizado.
+Tu flujo es issue → rama → implementación → comprobaciones → pull request → CI → revisión humana. Lee docs/FLUJO_DE_REVISION.md. Usa la issue indicada o crea una pequeña con criterios de aceptación y trabaja en una rama propia desde main actualizado.
 
 Antes de modificar archivos, lee AGENTS.md, README.md y las secciones relevantes de docs/REVISION_UAM.md, docs/ESTRUCTURA.md y docs/COMO_AGREGAR.md. Comprueba el estado real del código y de Git; no supongas que las funciones del plan ya existen.
 
@@ -30,6 +30,6 @@ No inventes autores, calificaciones, evidencias, resultados de pruebas, enlaces 
 
 ## Cómo evitar instrucciones demasiado largas
 
-Mantener las reglas esenciales en AGENTS.md y los detalles en las guías enlazadas. Cuando una regla cambie, actualizar su fuente y los documentos que la referencian. Pedir a la IA que resuma qué reglas aplican al módulo antes de una tarea importante permite detectar malentendidos.
+Mantener las reglas esenciales en AGENTS.md y los detalles en las guías enlazadas. Cuando una regla cambie, actualizar su fuente y los documentos que la referencian. Pedir a quien prepara el cambio que resuma qué reglas aplican al módulo antes de una tarea importante permite detectar malentendidos.
 
-AGENTS.md es una guía reconocida por Codex, no una garantía de que cualquier IA cumpla todo. La revisión del compañero y las comprobaciones automáticas siguen siendo necesarias. Referencia: [documentación oficial de instrucciones de proyecto](https://learn.chatgpt.com/docs/agent-configuration/agents-md).
+AGENTS.md reúne las reglas del proyecto. La revisión del compañero y las comprobaciones automáticas siguen siendo necesarias.
