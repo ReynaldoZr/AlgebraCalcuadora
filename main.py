@@ -1,13 +1,13 @@
 """Inicia la calculadora local de Álgebra Lineal.
 
 Tema: operaciones matriciales y organización modular.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from interfaz.menus import menu_principal
 
-# La versión publicada no cambia por preparar funciones nuevas en una rama local.
-VERSION = "0.1.0"
+# Identificación del avance acordada por Reynaldo; no equivale a una release pública.
+VERSION = "1.0.0"
 
 
 def main():

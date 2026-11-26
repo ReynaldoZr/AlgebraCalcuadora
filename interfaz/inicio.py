@@ -1,7 +1,7 @@
 """Presenta el inicio por unidades y el menú de temas plegable.
 
 Tema: navegación de escritorio; no calcula ni modifica ejercicios.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 import tkinter as tk

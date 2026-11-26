@@ -1,7 +1,7 @@
 """Comprueba el catálogo y persistencia real de Newton desde el formulario.
 
 Tema: issue 36, parámetros, resultados y lectura segura de expresiones.
-Elaboración: equipo 9, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from pathlib import Path

@@ -1,7 +1,7 @@
 """Facilita escribir expresiones con los signos admitidos por la calculadora.
 
 Tema: entrada de funciones, sin modificar los algoritmos numéricos.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from tkinter import ttk

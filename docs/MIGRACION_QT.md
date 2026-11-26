@@ -62,7 +62,7 @@ Para probar manualmente: abre Numéricos, escribe una función con el teclado o 
 
 ## Alcance de esta entrega local
 
-Se conectan todos los temas existentes, no se añaden métodos matemáticos. Se conserva Tkinter para comparar mientras se revisa Qt; retirarlo sería otra tarea. No se incluye instalador ni distribución como ejecutable. La publicación y revisión humana siguen el flujo de FLUJO_IA.md.
+Se conectan todos los temas existentes, no se añaden métodos matemáticos. Se conserva Tkinter para comparar mientras se revisa Qt; retirarlo sería otra tarea. No se incluye instalador ni distribución como ejecutable. La publicación y revisión humana siguen el flujo de FLUJO_DE_REVISION.md.
 
 ## Comprobación local del 6 de noviembre
 

@@ -6,9 +6,9 @@ Actualización del 15 de noviembre de 2026. El PR #12 integró el avance de álg
 
 El PR #17 integró Jacobi y sus validaciones compartidas (#14), por autorización de Reynaldo tras verificar las pruebas. La #15, asignada a Roberto, añade Gauss-Seidel y reordenamiento. La #16 conecta los métodos a la interfaz. Reynaldo asume la corrección de extremos de bisección en #13 por indicación del 15 de noviembre. Consultar el estado real de GitHub antes de comenzar y conservar cambios locales ajenos. Leer docs/JACOBI.md, docs/SEMANA_12.md y docs/GUIA_CODIGO.md.
 
-## Introducción y límite de la IA
+## Introducción y límite de quien prepara el cambio
 
-La IA prepara cambios para que una persona pueda revisarlos. Su recorrido es **issue → rama → implementación → comprobaciones → pull request → CI → revisión humana**. Leer [docs/FLUJO_IA.md](docs/FLUJO_IA.md) antes de empezar. La entrega de la IA es un PR abierto y comprobado; la decisión de integrarlo corresponde a Reynaldo u otro humano autorizado.
+Quien prepara el cambio prepara cambios para que una persona pueda revisarlos. Su recorrido es **issue → rama → implementación → comprobaciones → pull request → CI → revisión humana**. Leer [docs/FLUJO_DE_REVISION.md](docs/FLUJO_DE_REVISION.md) antes de empezar. La entrega de quien prepara el cambio es un PR abierto y comprobado; la decisión de integrarlo corresponde a Reynaldo u otro humano autorizado.
 
 - Vincular el cambio a una issue y trabajar en una rama propia desde main actualizado. No escribir directamente en main.
 - Ejecutar las comprobaciones, abrir el PR y revisar la CI del último commit. Si algo falla, corregir en esa misma rama y volver a comprobar. Si queda un bloqueo, informarlo y mantener el PR como borrador.
@@ -16,7 +16,7 @@ La IA prepara cambios para que una persona pueda revisarlos. Su recorrido es **i
 - **Detenerse antes de integrar:** no hacer merge, squash o rebase hacia main, no activar auto-merge ni entrar en una cola de integración, no autoaprobar el PR y no usar otra cuenta para aparentar una revisión humana.
 - No cerrar la issue como completada, crear etiquetas, publicar releases, adelantar la versión publicada ni desactivar protecciones para terminar la tarea. Registrar la propuesta en «Sin publicar».
 - Que las pruebas estén verdes o que se haya pedido «hacer la tarea», «subir los cambios» o «abrir el PR» no autoriza integrarlo. Para una actuación posterior de integración o publicación hace falta una instrucción humana explícita para ese PR, después de su revisión; no inferirla del permiso de desarrollar.
-- No sustituir la revisión por una aprobación de la propia IA. Atender correcciones posteriores en la misma rama y dejar que el humano vuelva a decidir sobre el estado actualizado.
+- No sustituir la revisión por una aprobación de quien presenta el cambio. Atender correcciones posteriores en la misma rama y dejar que el humano vuelva a decidir sobre el estado actualizado.
 
 ## Contexto y lectura inicial
 
@@ -64,7 +64,9 @@ Calculadora local de Álgebra Lineal para dos estudiantes, con funciones compren
 
 - El 21 de noviembre Reynaldo aprobó expresamente el tema oscuro negro/morado (obsidiana/amatista) del PR #46. Sustituye el azul oscuro de Qt y su gráfica; conserva el claro salvia/crema y la estructura de tarjetas y navegación. La autorización de revisar e integrar este PR es puntual; no elimina las comprobaciones ni autoriza cambios visuales futuros sin revisión.
 
-- Última indicación del usuario (4 de noviembre de 2026): no volver a usar Computer Use («ChatGPT is using your computer»), ayuda visual, capturas ni control de pantalla hasta que él indique que es necesario. La autorización anterior para abrir desde IntelliJ ya no habilita nuevas acciones visuales. Continuar con revisión y pruebas del código.
+- Después, el 21 de noviembre, Reynaldo descartó las interacciones restantes de #23–#30 y pidió identificar el avance actual como versión 0.9 (v0.9.0). Las issues se cierran como no planificadas y sus funciones pendientes no forman parte del alcance actual. No volver a abrirlas ni presentarlas como implementadas sin una nueva indicación. La denominación de la aplicación no publica por sí sola una etiqueta o release.
+
+- Última indicación del usuario (4 de noviembre de 2026): no volver a usar Computer Use, ayuda visual, capturas ni control de pantalla hasta que él indique que es necesario. La autorización anterior para abrir desde IntelliJ ya no habilita nuevas acciones visuales. Continuar con revisión y pruebas del código.
 - Ejecutar `python -m unittest discover -s tests -v` y `python herramientas/comprobar_reglas.py` antes del PR. Comprobar manualmente el recorrido de consola afectado cuando cambie la interacción.
 - Añadir pruebas de resultados conocidos, límites matemáticos y errores relevantes; no pruebas que solo repitan la implementación.
 - Cada mejora usa issue, rama y PR según docs/TRABAJO_EN_EQUIPO.md. El PR debe indicar alcance, fuente, validación y limitaciones. No inventar enlaces ni pruebas ejecutadas.

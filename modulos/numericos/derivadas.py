@@ -1,7 +1,7 @@
 """Aproxima derivadas por diferencias hacia adelante y centrales.
 
 Tema: Sesión 22 y preparación provisional del Programa 9, issue 34.
-Elaboración: equipo 9, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from modulos.numericos.funciones import formato, numero_finito

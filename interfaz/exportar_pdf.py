@@ -1,7 +1,7 @@
 """Exporta ejercicios completos a PDF de texto sin dependencias externas.
 
 Tema: evidencias de estudio con datos exactos y todos los pasos conservados.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 import os

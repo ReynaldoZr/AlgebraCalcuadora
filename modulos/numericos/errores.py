@@ -1,7 +1,7 @@
 """Calcula errores y experimentos de precisión de la semana 12.
 
 Tema: propagación, redondeo, truncamiento, representación e inestabilidad.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from decimal import Decimal, InvalidOperation, ROUND_DOWN, ROUND_HALF_EVEN, localcontext
@@ -147,3 +147,55 @@ def descomponer(texto='0.1', base=2, cifras=16):
     error = resto / base ** len(fraccionarios)
     pasos.append(Paso('Reconstrucción y resto', 'El resto no nulo indica que la expansión mostrada se truncó.', formulas=((f'Base {base}: {representacion}', f'Error absoluto exacto={error}'),)))
     return Calculo(representacion, tuple(pasos), dict(base=base, resto=str(error), original=str(valor)))
+
+
+def descomponer_entero(texto, base):
+    """Interpreta cifras en su base de origen y muestra el valor de cada posición."""
+    cifras = ''.join(str(texto).split())
+    if base not in (2, 10) or not cifras or any(c not in '0123456789'[:base] for c in cifras):
+        raise ValueError('Escribe un entero no negativo con cifras válidas para la base.')
+    if len(cifras) > 100:
+        raise ValueError('Se admiten como máximo 100 cifras.')
+    pasos = []
+    aportes = []
+    for posicion, cifra in enumerate(cifras):
+        exponente = len(cifras) - posicion - 1
+        aporte = int(cifra) * base ** exponente
+        aportes.append(aporte)
+        pasos.append(Paso(f'Cifra {cifra} · posición {exponente}',
+                          formulas=((f'{cifra} × {base}^{exponente} = {aporte}',),)))
+    total = sum(aportes)
+    pasos.append(Paso('Sumamos los aportes', ' + '.join(map(str, aportes)) + f' = {total}'))
+    return Calculo(total, tuple(pasos), dict(base=base, resto=0, desglose=True))
+
+
+def maclaurin_exp(x, verdadero, tolerancia, maximo):
+    """Aproxima exp(x) con términos sucesivos y compara los dos errores porcentuales."""
+    x = numero_finito(x, 'x')
+    verdadero = numero_finito(verdadero, 'Valor verdadero')
+    tolerancia = numero_finito(tolerancia, 'Tolerancia porcentual')
+    if verdadero <= 0 or tolerancia <= 0 or not 1 <= maximo <= 1000:
+        raise ValueError('Usa una referencia y tolerancia positivas y entre 1 y 1000 términos.')
+    termino, suma = 1.0, 0.0
+    filas, pasos = [], []
+    convergio = False
+    for n in range(maximo):
+        anterior = suma
+        if n:
+            termino *= x / n
+        suma += termino
+        if not math.isfinite(suma):
+            raise ValueError('La serie produjo un valor no finito.')
+        real = abs((verdadero - suma) / verdadero) * 100
+        aproximado = abs((suma - anterior) / suma) * 100 if n and suma else None
+        filas.append((n, termino, suma, real, aproximado))
+        pasos.append(Paso(f'Término {n}', formulas=(
+            (f'x^{n}/{n}! = {formato(termino)}', f'Suma = {formato(suma)}'),
+            (f'Error verdadero (%) = {formato(real)}', f'Error aproximado (%) = {formato(aproximado)}'),
+        )))
+        if aproximado is not None and aproximado < tolerancia:
+            convergio = True
+            break
+    motivo = 'Se cumple la tolerancia.' if convergio else 'Se alcanzó el máximo de términos.'
+    return Calculo(suma, tuple(pasos), dict(convergio=convergio, motivo=motivo, filas=filas,
+                   columnas=('n', 'Término', 'Suma', 'Error verdadero (%)', 'Error aproximado (%)')))

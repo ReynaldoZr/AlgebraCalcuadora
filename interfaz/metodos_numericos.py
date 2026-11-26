@@ -1,7 +1,7 @@
 """Describe formularios y adapta la unidad numérica a consola y escritorio.
 
 Tema: semana 12, con imports de algoritmos bajo demanda y ejemplos conocidos.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from dataclasses import dataclass
@@ -18,6 +18,9 @@ class MetodoNumerico:
 
 
 CAMPOS = {
+    'modo_base': ('Operación', 'Convertir desde decimal'),
+    'error_iterativo': ('Medida del error', 'Absoluto'),
+    'parada': ('Modo de parada', 'Por tolerancia'),
     'x0': ('Valor inicial x₀', ''), 'derivada': ("Derivada f'(x)", ''),
     'modo_derivada': ('Tipo de derivada', 'analitica'),
     'funcion': ('f(x)', 'x^4-5*x^3+0.5*x^2-11*x+10'), 'a': ('Extremo a', '0.55'), 'b': ('Extremo b', '1.1'),
@@ -30,28 +33,29 @@ CAMPOS = {
     'numero': ('Número decimal', '0.1'), 'base': ('Base (2 o 10)', '2'), 'cifras': ('Cifras fraccionarias', '16'),
     'vector_b': ('Vector b · valores separados por comas', '7, -21, 15'),
     'inicial': ('Vector inicial X₀ · separado por comas', '0, 0, 0'),
-    'epsilon': ('Tolerancia ε · decimal', '0.0001'),
+    'epsilon': ('Tolerancia ε · cambio absoluto o %', '0.0001'),
     'relajacion': ('Relajación λ (0 < λ < 2)', '1'),
     'reordenar': ('Reordenar ecuaciones', 'si'),
 }
 METODOS_NUMERICOS = {
-    'num_biseccion': MetodoNumerico('Bisección y contraste con SciPy', ('funcion', 'a', 'b'), ('criterio', 'tolerancia', 'tolerancia_f', 'maximo')),
+    'num_biseccion': MetodoNumerico('Bisección y contraste con SciPy', ('funcion', 'a', 'b'), ('criterio', 'tolerancia', 'tolerancia_f', 'parada', 'maximo')),
     'num_errores': MetodoNumerico('Error absoluto, relativo y porcentual', ('verdadero', 'aproximado'), ()),
     'num_propagacion': MetodoNumerico('Propagación del error', ('funcion', 'x', 'delta'), ('h',)),
     'num_simulacion': MetodoNumerico('Truncamiento frente a redondeo', ('capital', 'tasa'), ('iteraciones', 'decimales')),
     'num_flotante': MetodoNumerico('Punto flotante: épsilon, overflow y underflow', (), ()),
     'num_inestabilidad': MetodoNumerico('Estabilidad: expresión directa y reformulada', ('x',), ()),
-    'num_bases': MetodoNumerico('Representación en base 2 y base 10', ('numero',), ('base', 'cifras')),
+    'num_bases': MetodoNumerico('Representación en base 2 y base 10', ('numero',), ('modo_base', 'base', 'cifras')),
     'num_inversa': MetodoNumerico('Inversa: Fraction, float propio y NumPy', (), (), ('A',)),
     'num_sistema': MetodoNumerico('Sistema: Fraction, float propio y NumPy', (), (), ('A', 'b')),
-    'num_jacobi': MetodoNumerico('Jacobi · sistemas iterativos', (), ('vector_b', 'inicial', 'epsilon', 'maximo', 'reordenar'), ('A',)),
-    'num_gauss_seidel': MetodoNumerico('Gauss-Seidel · sistemas iterativos', (), ('vector_b', 'inicial', 'epsilon', 'maximo', 'relajacion', 'reordenar'), ('A',)),
-    'num_comparar_iterativos': MetodoNumerico('Comparar Jacobi y Gauss-Seidel', (), ('vector_b', 'inicial', 'epsilon', 'maximo', 'reordenar'), ('A',)),
+    'num_jacobi': MetodoNumerico('Jacobi · sistemas iterativos', (), ('vector_b', 'inicial', 'error_iterativo', 'epsilon', 'maximo', 'reordenar'), ('A',)),
+    'num_gauss_seidel': MetodoNumerico('Gauss-Seidel · sistemas iterativos', (), ('vector_b', 'inicial', 'error_iterativo', 'epsilon', 'maximo', 'relajacion', 'reordenar'), ('A',)),
+    'num_comparar_iterativos': MetodoNumerico('Comparar Jacobi y Gauss-Seidel', (), ('vector_b', 'inicial', 'error_iterativo', 'epsilon', 'maximo', 'reordenar'), ('A',)),
     'num_newton': MetodoNumerico(
         'Newton-Raphson · raíces de funciones',
         ('funcion', 'x0', 'modo_derivada', 'derivada'),
-        ('h', 'criterio', 'tolerancia', 'tolerancia_f', 'maximo'),
+        ('h', 'criterio', 'tolerancia', 'tolerancia_f', 'parada', 'maximo'),
     ),
+    'num_maclaurin': MetodoNumerico('Serie de Maclaurin para exp(x)', ('x', 'verdadero'), ('epsilon', 'maximo')),
 }
 
 
@@ -63,6 +67,8 @@ def parametros_defecto(clave):
         datos.update(ejemplo_newton())
     if clave == 'num_jacobi':
         datos['reordenar'] = 'no'
+    if clave == 'num_maclaurin':
+        datos.update(x='0.5', verdadero='1.648721', epsilon='0.05', maximo='100')
     if clave == 'num_propagacion':
         datos['funcion'] = 'x^3'
     if clave == 'num_inestabilidad':
@@ -84,6 +90,8 @@ def parametros_vacios(clave):
 
 def etiqueta_campo(clave, nombre):
     """Resuelve etiquetas del método sin cambiar las del resto de la calculadora."""
+    if nombre == 'parada':
+        return 'Modo de parada'
     if clave == 'num_newton':
         from interfaz.numericos.newton_adaptador import CAMPOS_NEWTON
         return CAMPOS_NEWTON[nombre].etiqueta
@@ -92,6 +100,12 @@ def etiqueta_campo(clave, nombre):
 
 def opciones_campo(clave, nombre):
     """Comparte opciones válidas entre Qt, Tk y consola."""
+    if nombre == 'modo_base':
+        return ('Convertir desde decimal', 'Descomponer en la base indicada')
+    if nombre == 'error_iterativo':
+        return ('Absoluto', 'Porcentual por variable')
+    if nombre == 'parada':
+        return ('Por tolerancia', 'Iteraciones fijas', 'Solo tolerancia del error')
     if nombre == 'criterio':
         return ('absoluto', 'porcentual') if clave == 'num_newton' else ('intervalo', 'porcentual')
     return {'base': ('2', '10'), 'reordenar': ('si', 'no'),
@@ -100,6 +114,8 @@ def opciones_campo(clave, nombre):
 
 def campo_visible(clave, nombre, parametros):
     """Muestra solo la entrada de derivada que corresponde al modo elegido."""
+    if clave == 'num_bases' and nombre == 'cifras':
+        return parametros.get('modo_base') != 'Descomponer en la base indicada'
     if clave != 'num_newton':
         return True
     numerica = str(parametros.get('modo_derivada', 'analitica')).strip().lower() == 'numerica'
@@ -146,7 +162,7 @@ def _opcion_reordenar(valor):
 
 def ejecutar_numerico(clave, parametros, matrices=None):
     """Llama al núcleo de la semana 12; no requiere dependencias al iniciar otros temas."""
-    from modulos.numericos.errores import calcular_errores, descomponer, inestabilidad, propagacion, punto_flotante, simulacion
+    from modulos.numericos.errores import calcular_errores, descomponer, descomponer_entero, maclaurin_exp, inestabilidad, propagacion, punto_flotante, simulacion
     matrices = matrices or {}
     p = parametros
     if clave == 'num_newton':
@@ -160,23 +176,25 @@ def ejecutar_numerico(clave, parametros, matrices=None):
         b_vec = leer_vector_numerico(p['vector_b'], 'b')
         x0_vec = leer_vector_numerico(p['inicial'], 'X₀')
         maximo = entero(p['maximo'], 'Máximo')
+        porcentual = p.get('error_iterativo') == 'Porcentual por variable'
         reordenar = _opcion_reordenar(p.get('reordenar', 'si'))
         if clave == 'num_jacobi':
             calculo = jacobi(matrices['A'], b_vec, x0_vec, p['epsilon'], maximo,
-                             reordenar=reordenar)
+                             reordenar=reordenar, porcentual=porcentual)
         elif clave == 'num_gauss_seidel':
             calculo = gauss_seidel(
                 matrices['A'], b_vec, x0_vec, p['epsilon'], maximo,
-                reordenar=reordenar, relajacion=p.get('relajacion', '1') or '1',
+                reordenar=reordenar, porcentual=porcentual, relajacion=p.get('relajacion', '1') or '1',
             )
         else:
             calculo = comparar_iterativos(
-                matrices['A'], b_vec, x0_vec, p['epsilon'], maximo, reordenar=reordenar,
+                matrices['A'], b_vec, x0_vec, p['epsilon'], maximo, reordenar=reordenar, porcentual=porcentual,
             )
         return verificar_iterativo(calculo)
     if clave == 'num_biseccion':
         from modulos.numericos.biseccion import biseccion
-        return biseccion(p['funcion'], p['a'], p['b'], p['tolerancia'], entero(p['maximo'], 'Máximo'), p['criterio'], p['tolerancia_f'])
+        return biseccion(p['funcion'], p['a'], p['b'], p['tolerancia'], entero(p['maximo'], 'Máximo'), p['criterio'], p['tolerancia_f'], iteraciones_fijas=p.get('parada') == 'Iteraciones fijas',
+                         solo_error=p.get('parada') == 'Solo tolerancia del error')
     if clave == 'num_errores':
         return calcular_errores(p['verdadero'], p['aproximado'])
     if clave == 'num_propagacion':
@@ -187,7 +205,11 @@ def ejecutar_numerico(clave, parametros, matrices=None):
         return punto_flotante()
     if clave == 'num_inestabilidad':
         return inestabilidad(p['x'])
+    if clave == 'num_maclaurin':
+        return maclaurin_exp(p['x'], p['verdadero'], p['epsilon'], entero(p['maximo'], 'Máximo'))
     if clave == 'num_bases':
+        if p.get('modo_base') == 'Descomponer en la base indicada':
+            return descomponer_entero(p['numero'], entero(p['base'], 'Base'))
         return descomponer(p['numero'], entero(p['base'], 'Base'), entero(p['cifras'], 'Cifras'))
     if clave in ('num_inversa', 'num_sistema'):
         from modulos.numericos.comparadores import comparar
@@ -429,6 +451,10 @@ def resumen_numerico(clave, calculo):
         return '\n'.join(f'{fila[0]}: {fila[1]}' for fila in d['filas'])
     if clave == 'num_inestabilidad':
         return f'Forma directa: {formato(d["directo"])}\nReformulada: {formato(d["estable"])}\nError directo: {formato(d["error_directo"])}\nError reformulado: {formato(d["error_estable"])}'
+    if clave == 'num_maclaurin':
+        return f'Aproximación: {calculo.valor:.6f}\n{d["motivo"]}'
+    if clave == 'num_bases' and d.get('desglose'):
+        return f'Suma de los valores posicionales: {calculo.valor}'
     if clave == 'num_bases':
         return f'Representación en base {d["base"]}:\n{calculo.valor}\nResto exacto no mostrado: {d["resto"]}'
     return f'Comparación con Fraction, float propio y NumPy\ncond(A): {formato(d["condicion"])}\nResiduo propio: {formato(d["residuo"])}\nResiduo NumPy: {formato(d["residuo_numpy"])}\nLa tabla conserva cada error absoluto y relativo.'

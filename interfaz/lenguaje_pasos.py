@@ -1,7 +1,7 @@
 """Explica acciones matemáticas en lenguaje cotidiano sin modificar sus datos.
 
 Tema: texto breve para el recorrido y aclaraciones para el desarrollo completo.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 

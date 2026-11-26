@@ -1,7 +1,7 @@
 """Opera vectores y reutiliza sistemas para combinación e independencia.
 
 Tema: operaciones en Rⁿ y tareas 3 y 4.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from modulos.modulo_matrices import multiplicar_por_escalar, restar_matrices, sumar_matrices, transponer_matriz

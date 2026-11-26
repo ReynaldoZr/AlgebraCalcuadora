@@ -1,7 +1,7 @@
 """Resuelve Ax=b con Gauss o Gauss-Jordan y comprueba su solución general.
 
 Tema: tareas 1 y 2; soluciones única, infinita e inconsistente.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from fractions import Fraction
@@ -69,3 +69,63 @@ def resolver_sistema(matriz_a, vector_b, metodo="gauss"):
     datos["clasificacion"] = "infinitas" if libres else "unica"
     pasos.append(Paso("Comprobación en el sistema original", "A·particular=b y cada dirección satisface A·v=0." if libres else "A·x=b, comprobado con las entradas originales.", comprobacion))
     return Calculo(particular, tuple(pasos), datos)
+
+
+def resolver_cramer(matriz, vector_b):
+    """Resuelve un sistema cuadrado con determinantes y verifica Ax=b."""
+    from fractions import Fraction
+    from modulos.modulo_determinantes import calcular_determinante
+
+    n, m = validar_matriz(matriz)
+    validar_vector(vector_b, n)
+    if n != m:
+        raise ValueError("Cramer requiere una matriz cuadrada.")
+    principal = calcular_determinante(matriz).valor
+    pasos = [Paso("Determinante de A", f"det(A) = {principal}", matriz=matriz)]
+    if principal == 0:
+        raise ValueError("Cramer no aplica: det(A) = 0. Usa Gauss-Jordan para clasificar el sistema.")
+    solucion, determinantes = [], []
+    for j in range(n):
+        reemplazo = [fila[:j] + [b] + fila[j + 1:] for fila, b in zip(matriz, vector_b)]
+        det = calcular_determinante(reemplazo).valor
+        valor = Fraction(det) / Fraction(principal)
+        solucion.append(valor)
+        determinantes.append(det)
+        pasos.append(Paso(f"Sustituimos la columna {j + 1} por b", matriz=reemplazo))
+        pasos.append(Paso(f"Calculamos x{j + 1}", formulas=((det, "÷", principal, "=", valor),)))
+    producto = producto_matricial(matriz, [[v] for v in solucion])
+    verificado = producto == [[v] for v in vector_b]
+    pasos.append(Paso("Comprobación Ax = b", "Se cumple" if verificado else "No se cumple", producto))
+    return Calculo(solucion, tuple(pasos), dict(verificado=verificado, det=principal, determinantes=determinantes))
+
+
+def analizar_forma(matriz):
+    '''Clasifica la entrada y calcula su forma reducida con aritmética exacta.'''
+    validar_matriz(matriz)
+    lideres = [next((j for j, v in enumerate(fila) if v != 0), None) for fila in matriz]
+    posiciones = [(i, j) for i, j in enumerate(lideres) if j is not None]
+    filas_nulas_abajo = all(i == k for k, (i, _) in enumerate(posiciones))
+    orden = all(a[1] < b[1] for a, b in zip(posiciones, posiciones[1:]))
+    escalonada = filas_nulas_abajo and orden
+    unitaria = all(matriz[i][j] == 1 for i, j in posiciones)
+    columnas_limpias = all(all(k == i or fila[j] == 0 for k, fila in enumerate(matriz))
+                           for i, j in posiciones)
+    reducida = escalonada and unitaria and columnas_limpias
+    razones = []
+    if not filas_nulas_abajo:
+        razones.append('Hay una fila no nula después de una fila nula.')
+    if not orden:
+        razones.append('Los pivotes no avanzan hacia la derecha.')
+    if escalonada and not unitaria:
+        razones.append('Algún pivote no es 1.')
+    if escalonada and not columnas_limpias:
+        razones.append('Alguna columna pivote tiene otras entradas no nulas.')
+    nombre = 'Escalonada reducida' if reducida else 'Solo escalonada' if escalonada else 'No escalonada'
+    final = reducir(matriz, reducida=True)
+    # Las columnas pivote se indican también sobre las posiciones correspondientes en A.
+    pivotes = ', '.join(f'({i + 1}, {j + 1})' for i, j in enumerate(final.pivotes)) or 'ninguno'
+    razones = ' '.join(razones) or 'La entrada cumple las condiciones de forma escalonada reducida.'
+    pasos = (Paso(nombre, razones, matriz=matriz), *final.pasos,
+             Paso('Forma escalonada reducida', f'Posiciones pivote: {pivotes}', matriz=final.matriz))
+    return Calculo(final.matriz, pasos, dict(forma=nombre, razones=razones,
+                   pivotes=final.pivotes, posiciones=pivotes))

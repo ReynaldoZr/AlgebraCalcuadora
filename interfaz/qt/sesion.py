@@ -1,7 +1,7 @@
 """Conserva entradas, cálculos y Deshacer separados de los controles gráficos.
 
 Tema: sesiones por método y ejemplos explícitos, sin dependencia de Qt o Tk.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from copy import deepcopy

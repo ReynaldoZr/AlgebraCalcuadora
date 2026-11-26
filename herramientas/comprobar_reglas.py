@@ -1,7 +1,7 @@
 """Detecta incumplimientos básicos de estructura y documentación.
 
 Tema: separación de cálculo, interfaz y bibliotecas por unidad.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 import ast

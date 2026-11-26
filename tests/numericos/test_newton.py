@@ -1,7 +1,7 @@
 """Comprueba Newton propio, fallos numéricos e integración con adaptadores reales.
 
 Tema: issue 33, casos de la Sesión 22 y límites de punto flotante.
-Elaboración: equipo 9, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 import math

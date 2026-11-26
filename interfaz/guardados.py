@@ -1,7 +1,7 @@
 """Muestra la biblioteca personal y el historial en una única pestaña.
 
 Tema: búsqueda, nombres, notas, recuperación y exportación de ejercicios locales.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from datetime import datetime, timedelta, timezone

@@ -18,11 +18,11 @@ Las tareas fáciles tienen valor: preparar ejemplos y respuestas verificadas, re
 4. Ejecutar pruebas, comprobador de reglas y revisión del diff; probar la consola si cambia la interacción.
 5. Publicar la rama y abrir un pull request a main, vinculado a la issue y con instrucciones de prueba.
 6. Comprobar la CI del último commit y corregir fallos en esa misma rama. Si hay un bloqueo, dejar el PR como borrador y explicarlo.
-7. **La IA entrega el PR abierto y se detiene.** No integra, autoaprueba, activa auto-merge, cierra la issue como completada ni publica versiones.
+7. **Quien prepara el cambio entrega el PR abierto y se detiene.** No integra, autoaprueba, activa auto-merge, cierra la issue como completada ni publica versiones.
 8. Reynaldo u otro humano autorizado revisa, prueba y decide si pide cambios, descarta o integra. Las pruebas aprobadas no sustituyen su decisión.
 9. Solo tras la decisión humana se integra. El cierre de la issue y la publicación de etiqueta/release corresponden al resultado autorizado; publicar necesita autorización expresa.
 
-El procedimiento completo, incluidos los límites de la IA, está en [FLUJO_IA.md](FLUJO_IA.md). Una petición general de desarrollar, subir cambios o abrir un PR no autoriza a la IA a integrarlo.
+El procedimiento completo, incluidos los límites de quien prepara el cambio, está en [FLUJO_DE_REVISION.md](FLUJO_DE_REVISION.md). Una petición general de desarrollar, subir cambios o abrir un PR no autoriza a quien prepara el cambio a integrarlo.
 
 Para dos personas no hace falta añadir una rama develop permanente. main representa el estado integrado; las ramas de trabajo duran lo necesario para su PR.
 

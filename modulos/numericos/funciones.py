@@ -1,7 +1,7 @@
 """Interpreta funciones matemáticas mediante una lista explícita de operaciones.
 
 Tema: entrada segura de f(x), sin eval, atributos, imports o instrucciones Python.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 import ast

@@ -1,7 +1,7 @@
 """Comprueba adaptador, presentación, tabla y gráficas de Newton con fixtures (#36, #37, #38).
 
 Tema: desarrollo paralelo contra el contrato #33 sin importar módulos inexistentes.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 import math

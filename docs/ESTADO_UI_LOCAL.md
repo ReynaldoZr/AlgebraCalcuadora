@@ -18,7 +18,7 @@ La ampliación de biblioteca/estudio aprobó una suite general de 131 pruebas en
 
 Último ajuste solicitado: guardar una respuesta directamente desde su tarjeta sin cambiar de pestaña, conservando los atajos Usar como A/B; símbolos junto a los temas y cuadrícula 3×3 para Matrices. Aprobaron trece comprobaciones afectadas de biblioteca, guardado directo, reutilización, iconos, temas y tamaño mínimo. Reglas aprobadas en 52 archivos Python y diff sin errores de espacios. No se usó Computer Use ni se publicó el cambio.
 
-El usuario confirmó que funciona y pidió no volver a usar Computer Use («ChatGPT is using your computer») para verificar hasta nuevo aviso. No reactivar control de pantalla ni capturas por iniciativa propia. Continuar con pruebas del código cuando corresponda.
+El usuario confirmó que funciona y pidió no volver a usar Computer Use para verificar hasta nuevo aviso. No reactivar control de pantalla ni capturas por iniciativa propia. Continuar con pruebas del código cuando corresponda.
 
 ## Registro histórico de las etapas anteriores
 

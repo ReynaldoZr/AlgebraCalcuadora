@@ -59,7 +59,7 @@ Calculadora_Algebra_Lineal/
 ├── entregas/                     Informes y capturas organizados por entrega
 ├── .github/                      Plantillas de PR/tareas y comprobaciones
 ├── README.md                     Entrada para las personas
-├── AGENTS.md                     Reglas de trabajo para IA
+├── AGENTS.md                     Reglas de trabajo del proyecto
 ├── CHANGELOG.md                  Cambios publicados por versión
 └── .gitignore                    Archivos locales excluidos del repositorio
 ```
@@ -86,7 +86,7 @@ Calculadora_Algebra_Lineal/
 | Comprobar una propiedad | teoremas/verificadores.py |
 | Añadir un caso de práctica | ejemplos/ y su respuesta revisada |
 | Añadir bisección o comparar con SciPy | modulos/numericos/ |
-| Cambiar una regla común | docs/DECISIONES.md y AGENTS.md si afecta a la IA |
+| Cambiar una regla común | docs/DECISIONES.md y AGENTS.md si afecta a quien prepara el cambio |
 
 ## Cómo se relacionan las partes
 

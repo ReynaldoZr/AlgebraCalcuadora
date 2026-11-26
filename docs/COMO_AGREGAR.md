@@ -10,7 +10,7 @@
 6. Conectar la operación al menú del tema y mostrar errores recuperables sin cerrar la aplicación.
 7. Añadir teorema o comprobación si lo exige el enunciado.
 8. Actualizar documentación afectada y abrir un PR vinculado a la issue con el resultado verificable; comprobar la CI del último commit.
-9. Si trabaja una IA, entregar el PR abierto y detenerse antes de integrar o publicar. Reynaldo u otro humano autorizado decide después de revisar; seguir [FLUJO_IA.md](FLUJO_IA.md).
+9. Si trabaja un colaborador, entregar el PR abierto y detenerse antes de integrar o publicar. Reynaldo u otro humano autorizado decide después de revisar; seguir [FLUJO_DE_REVISION.md](FLUJO_DE_REVISION.md).
 
 ## Ejemplo de cambio pequeño
 
@@ -34,7 +34,7 @@ También se revisarán las entradas vacías, texto en campos numéricos, dimensi
 
 ## Condición para dar una operación por terminada
 
-Para la IA, estar lista para revisión significa entregar el cambio y sus comprobaciones en un PR abierto. No significa que esté integrado o publicado. El cierre definitivo depende de la revisión y decisión humana.
+Para quien prepara el cambio, estar lista para revisión significa entregar el cambio y sus comprobaciones en un PR abierto. No significa que esté integrado o publicado. El cierre definitivo depende de la revisión y decisión humana.
 
 El cálculo funciona, su entrada y salida están documentadas, aparece donde corresponde, maneja datos incorrectos, tiene comprobación apropiada y ambos integrantes pueden explicarla con un ejemplo. En Métodos Numéricos debe indicarse si hubo convergencia o por qué se detuvo.
 

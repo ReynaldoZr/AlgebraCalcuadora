@@ -1,7 +1,7 @@
 """Construye un editor desplazable para una matriz de hasta 10x10.
 
 Tema: entrada gráfica de matrices con conversión exacta.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 import tkinter as tk

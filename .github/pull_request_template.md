@@ -1,6 +1,6 @@
 ## Pendiente de revisión humana
 
-Este PR es una propuesta para que Reynaldo u otro humano autorizado la revise. La IA no lo integra, no activa auto-merge ni publica versiones. Las comprobaciones aprobadas no equivalen a autorización humana.
+Este PR es una propuesta para que Reynaldo u otro humano autorizado la revise. Quien prepara el cambio no lo integra, no activa auto-merge ni publica versiones. Las comprobaciones aprobadas no equivalen a autorización humana.
 
 ## Problema y comportamiento nuevo
 
@@ -29,4 +29,4 @@ Pasos concretos, datos de ejemplo y resultado esperado. Si solo cambia documenta
 
 ## Decisión humana
 
-Reservada a Reynaldo u otro humano autorizado: pedir cambios, descartar o integrar. La IA debe dejar esta decisión pendiente y entregar los enlaces de issue y PR.
+Reservada a Reynaldo u otro humano autorizado: pedir cambios, descartar o integrar. Quien prepara el cambio debe dejar esta decisión pendiente y entregar los enlaces de issue y PR.

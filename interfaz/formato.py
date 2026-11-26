@@ -1,7 +1,7 @@
 """Presenta matrices alineadas y procedimientos de operaciones implementadas.
 
 Tema: notación matricial y operaciones elemento a elemento.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 

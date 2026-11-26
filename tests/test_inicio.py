@@ -1,7 +1,7 @@
 """Comprueba navegación, conservación de sesiones y herramientas compactas.
 
 Tema: inicio por unidades y menú plegable sin cálculos involuntarios.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 import tkinter as tk

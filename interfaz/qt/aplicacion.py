@@ -1,7 +1,7 @@
 """Arranca Qt Quick y mantiene la consola libre de dependencias gráficas.
 
 Tema: aplicación de escritorio local y proveedor de imágenes numéricas.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from pathlib import Path
@@ -16,6 +16,7 @@ from PySide6.QtQuickControls2 import QQuickStyle
 from PySide6.QtWidgets import QApplication
 
 from interfaz.qt.controlador import Controlador
+from main import VERSION
 
 
 class ImagenesGraficas(QQuickImageProvider):
@@ -36,6 +37,7 @@ class ImagenesGraficas(QQuickImageProvider):
 
 def crear_motor(app, biblioteca=None):
     """Carga los componentes locales; inyecta una biblioteca en memoria en pruebas."""
+    app.setApplicationVersion(VERSION)
     # El modo de pruebas sin pantalla de Windows necesita registrar fuentes locales.
     if sys.platform == 'win32':
         fuentes = Path(os.environ.get('WINDIR', 'C:/Windows')) / 'Fonts'

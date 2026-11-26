@@ -1,7 +1,7 @@
 """Comprueba pegado, casos de práctica y exportación PDF sin controlar la pantalla.
 
 Tema: ayudas de estudio y evidencias completas de los cálculos exactos.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from fractions import Fraction as F

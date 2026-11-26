@@ -1,7 +1,7 @@
 """Ofrece casos de práctica y ayudas breves sin cambiar los métodos del núcleo.
 
 Tema: ejemplos de solución, singularidad, pertenencia y pivoteo.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from copy import deepcopy
@@ -36,6 +36,8 @@ def casos_disponibles(clave):
         return ('Invertible', 'Singular', 'Requiere intercambio')
     if clave.startswith('det_'):
         return ('Determinante no nulo', 'Determinante cero', 'Triangular')
+    if clave == 'lu_factores':
+        return ('Ejemplo habitual',)
     if clave.startswith('lu_'):
         return ('Sin permutación', 'Requiere PA=LU', 'Singular')
     if clave == 'transponer':
@@ -74,7 +76,7 @@ def ejemplo_por_caso(clave, caso):
         datos['A'] = {'Determinante no nulo': [[1, 2, 3], [0, 1, 4], [5, 6, 0]],
                       'Determinante cero': [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
                       'Triangular': [[2, 1, 0], [0, 3, 1], [0, 0, 4]]}[caso]
-    elif clave.startswith('lu_'):
+    elif clave in ('lu_factorizar', 'lu_resolver'):
         if caso == 'Requiere PA=LU':
             datos.update(A=[[0, 1], [1, 0]], b=[[1], [2]])
         elif caso == 'Singular':

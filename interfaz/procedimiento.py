@@ -1,7 +1,7 @@
 """Presenta procedimientos generales completos con desplazamiento vertical.
 
 Tema: matrices aumentadas y desarrollo de sistemas, determinantes e inversas.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from tkinter import ttk

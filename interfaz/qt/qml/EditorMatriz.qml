@@ -12,6 +12,7 @@ ColumnLayout {
         Layout.fillWidth: true
         Label { text: "Matriz " + editor.datos.nombre; color: Paleta.texto; font.pixelSize: 17; font.bold: true }
         Item { Layout.fillWidth: true }
+        Boton { text: "Pegar matriz"; onClicked: cuaderno.pegarMatriz(editor.datos.nombre) }
         Boton { text: "···"; discreto: true; onClicked: herramientas.open() }
         Menu {
             id: herramientas

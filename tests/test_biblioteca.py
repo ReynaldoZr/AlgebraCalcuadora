@@ -1,7 +1,7 @@
 """Comprueba guardado persistente, nombres, historial y recuperación exacta.
 
 Tema: archivos de la persona, conservación ante errores y JSON sin código ejecutable.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from copy import deepcopy

@@ -1,7 +1,7 @@
 """Comprueba resultados y precondiciones de las operaciones matriciales.
 
 Tema: suma, resta y conservación de entradas.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 import unittest

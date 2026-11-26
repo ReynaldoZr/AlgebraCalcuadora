@@ -1,7 +1,7 @@
 """Verifica el acceso a Jacobi y sus resultados en la presentación local.
 
 Tema: issue #16, entradas, sesiones, tabla, gráfica y biblioteca.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 import unittest

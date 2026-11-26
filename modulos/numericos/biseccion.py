@@ -14,7 +14,7 @@ from modulos.procedimientos import Calculo, Paso
 
 def biseccion(
     expresion, a, b, tolerancia=0.0001, max_iteraciones=200,
-    criterio='intervalo', tolerancia_f=0.0001,
+    criterio='intervalo', tolerancia_f=0.0001, *, iteraciones_fijas=False, solo_error=False,
 ):
     """Devuelve raíz aproximada, todas las iteraciones y contraste SciPy.
 
@@ -155,13 +155,18 @@ def biseccion(
         cumple_x = (
             cota <= tolerancia
             if criterio == 'intervalo'
-            else error is not None and error <= tolerancia
+            else error is not None and error < tolerancia
         )
-        if fm == 0 or (cumple_x and abs(fm) <= tolerancia_f):
+        if cumple_x:
+            datos.setdefault('primera_tolerancia', i)
+        if fm == 0 or (cumple_x and (iteraciones_fijas or solo_error or abs(fm) <= tolerancia_f)
+                       and (not iteraciones_fijas or i == max_iteraciones)):
             datos['convergio'] = True
             motivo = (
                 'Raíz exacta en punto medio.'
                 if fm == 0
+                else 'Se completaron las iteraciones y se cumple la tolerancia.' if iteraciones_fijas
+                else 'Se cumple la tolerancia del error; el residuo se informa por separado.' if solo_error
                 else 'Se cumplen la tolerancia elegida y el residuo.'
             )
             break
@@ -182,6 +187,8 @@ def biseccion(
 
         anterior = medio
 
+    if iteraciones_fijas and not datos['convergio'] and i == max_iteraciones:
+        motivo = 'Iteraciones solicitadas completadas sin cumplir la tolerancia final.'
     datos.update(motivo=motivo, residuo=abs(fm), cota=cota)
 
     # SciPy sirve de contraste; usa una tolerancia absoluta en x.

@@ -1,7 +1,7 @@
 """Contiene el resumen teórico de las operaciones implementadas.
 
 Tema: suma/resta de igual dimensión, escalar y transpuesta.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 

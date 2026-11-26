@@ -1,7 +1,7 @@
 """Revela una vista ya preparada con un desvanecimiento breve.
 
 Tema: transición de pestañas sin mostrar su construcción ni bloquear Tk.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 import tkinter as tk

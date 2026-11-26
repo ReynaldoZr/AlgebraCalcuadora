@@ -1,7 +1,7 @@
 """Comprueba diferencias finitas, representabilidad y proveedor para Newton.
 
 Tema: issue 34, ejemplos y precisión de la Sesión 22.
-Elaboración: equipo 9, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 import math

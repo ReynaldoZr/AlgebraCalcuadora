@@ -1,7 +1,7 @@
 """Dibuja gráficas numéricas en un diálogo Tk con la paleta del proyecto.
 
 Tema: función e incertidumbre en bisección, propagación y errores de iteración.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 import tkinter as tk

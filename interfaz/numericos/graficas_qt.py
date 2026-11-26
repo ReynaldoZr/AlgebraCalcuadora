@@ -1,7 +1,7 @@
 """Convierte la figura numérica existente a una imagen para Qt Quick.
 
 Tema: adaptador gráfico opcional, independiente del algoritmo de bisección.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from io import BytesIO

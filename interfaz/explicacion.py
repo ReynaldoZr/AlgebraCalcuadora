@@ -1,7 +1,7 @@
 """Describe etapas didácticas de operaciones ya calculadas, sin widgets.
 
 Tema: origen, operación, simplificación y destino de cada elemento.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from dataclasses import dataclass

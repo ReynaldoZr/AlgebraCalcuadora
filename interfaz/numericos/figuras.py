@@ -1,7 +1,7 @@
 """Construye figuras interactivas de la semana 12 sin depender de Tk ni Qt.
 
 Tema: reutilizar las mismas curvas en ambas interfaces con inspección y zoom.
-Elaboracion: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from fractions import Fraction

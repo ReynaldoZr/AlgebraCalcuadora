@@ -1,7 +1,7 @@
 """Expone los cálculos de semana 12 en consola conservando los menús anteriores.
 
 Tema: funciones, tablas completas, contraste de bibliotecas y errores recuperables.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from interfaz.entradas import elegir_matriz, leer_opcion

@@ -2,6 +2,15 @@
 
 ## Sin publicar
 
+## v1.0.0 · 25 de noviembre de 2026
+
+Lanzamiento del Cuaderno de Álgebra con selector de propiedades, entrada de sistemas por pegado, regla de Cramer, verificación LU y criterios de parada para los ejercicios de la guía.
+
+### Identificación v0.9.0 · 2026-11-21
+
+- Reynaldo elige versión 0.9 para el avance integrado: `main.VERSION` y título Qt muestran v0.9.0. No se crea una release pública.
+- Se descartan las interacciones restantes de #23–#30 y se cierran como no planificadas. Se conservan las funciones ya implementadas y las reglas de futuras ampliaciones.
+
 - Revisión del PR #46: causas de no convergencia y guardado visibles, pasos completos de Newton sin sustituir cifras ni reinterpretar títulos, zoom en coordenadas logarítmicas y panel ampliado correcto, tablas largas con scroll. Paleta oscura negro/morado aprobada por Reynaldo el 21/11/2026. #23–#30 conservan pendientes de interacción; alcance en `docs/GRAFICAS_INTERACTIVAS.md`.
 
 - Issues #23 a #30 (Gráficas interactivas en Qt y renderizador compartido):
@@ -99,7 +108,7 @@
 - Interfaz gráfica opcional con Tkinter/ttk: matrices editables de hasta 10x10, suma/resta, procedimiento y teoremas, ejemplo y reutilización de resultados.
 - Lectura numérica y presentación compartidas entre consola y ventana; se conservan los algoritmos y la versión publicados.
 - Pruebas con widgets reales y pantalla virtual para la CI de Linux; la falta de pantalla/Tk no puede omitir silenciosamente las pruebas gráficas en CI.
-- Instrucciones de IA y colaboración: issue, rama, comprobaciones y PR abierto; integración y publicación reservadas a decisión humana. Guía paso a paso y plantilla de PR actualizadas.
+- Instrucciones de colaboración y colaboración: issue, rama, comprobaciones y PR abierto; integración y publicación reservadas a decisión humana. Guía paso a paso y plantilla de PR actualizadas.
 
 ## v0.1.0 — 2026-11-03
 

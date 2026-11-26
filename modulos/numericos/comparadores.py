@@ -1,7 +1,7 @@
 """Compara Gauss-Jordan exacto, su recorrido flotante y NumPy.
 
 Tema: semana 12; error, residuo y condicionamiento de matrices casi singulares.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from fractions import Fraction

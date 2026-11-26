@@ -1,7 +1,7 @@
 """Verifica claridad y conservación de la información del procedimiento.
 
 Tema: vista esencial frente al desarrollo completo, sin cálculos nuevos.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 import unittest

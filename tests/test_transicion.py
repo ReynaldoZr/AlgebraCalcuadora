@@ -1,7 +1,7 @@
 """Verifica limpieza y finalización del desvanecimiento con un reloj controlado.
 
 Tema: cancelación de capas y temporizadores al navegar y cerrar.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 import unittest

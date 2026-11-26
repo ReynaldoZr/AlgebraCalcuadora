@@ -1,7 +1,7 @@
 """Comprueba la estructura y las dimensiones de las matrices.
 
 Tema: condiciones para operar con matrices rectangulares.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from fractions import Fraction

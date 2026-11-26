@@ -1,7 +1,7 @@
 """Comprueba la sesión nueva sin depender de una pantalla ni de widgets.
 
 Tema: exactitud, todos los métodos y compatibilidad de guardados existentes.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from fractions import Fraction

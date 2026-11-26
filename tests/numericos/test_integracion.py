@@ -1,7 +1,7 @@
 """Comprueba la integración de semana 12 con GUI, biblioteca y consola.
 
 Tema: aproximaciones guardadas separadas del álgebra exacta y sus dependencias.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from copy import deepcopy
@@ -136,7 +136,7 @@ class PruebasIntegracionNumerica(unittest.TestCase):
     def test_consola_biseccion_y_menu_errores(self):
         """La consola solicita parámetros y muestra contraste, tabla y salida normal."""
         from main import main
-        entradas = ['8', '1', 'cos(x)-x', '0', '1', '', '', '', '', '2', '99', '9']
+        entradas = ['8', '1', 'cos(x)-x', '0', '1', '', '', '', '', '', '2', '99', '9']
         salida = io.StringIO()
         with patch('builtins.input', side_effect=entradas), redirect_stdout(salida):
             main()

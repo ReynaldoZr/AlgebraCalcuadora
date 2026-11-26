@@ -17,7 +17,7 @@ Orden recomendado: #23 para la base compartida, #24 y #25 para las vistas indivi
 
 Propuestas solicitadas por Reynaldo el 17 de noviembre de 2026 para planificar mejoras por gráfica. No representan funcionalidades implementadas ni autorizan cambiar los algoritmos.
 
-La maqueta interactiva se generó con IA y orienta la composición. Sus curvas, escalas o etiquetas pueden ser ilustrativas: la implementación debe usar los cálculos reales. Las otras imágenes se renderizaron por separado con datos de ejemplos del proyecto; tampoco son capturas de una interfaz ya integrada.
+La maqueta interactiva se preparó como referencia y orienta la composición. Sus curvas, escalas o etiquetas pueden ser ilustrativas: la implementación debe usar los cálculos reales. Las otras imágenes se renderizaron por separado con datos de ejemplos del proyecto; tampoco son capturas de una interfaz ya integrada.
 
 Conservar la paleta vigente, la separación cálculo/interfaz, los pasos completos y el ritmo manual de 2 segundos. Alcance de comprobaciones: Windows con Python 3.11 y 3.13. Cada implementación sigue issue → rama → pruebas → PR → revisión humana.
 

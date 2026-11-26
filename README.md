@@ -2,17 +2,17 @@
 
 ## Nueva interfaz local: PySide6 + QML
 
-El avance autorizado del 6 de noviembre incorpora una nueva interfaz de escritorio. Instala `python -m pip install -r requirements-interfaz.txt` y ejecuta `python gui.py` (o **Calculadora escritorio** en IntelliJ). Para los métodos de semana 12 instala también `requirements-numericos.txt`. `python main.py` conserva la consola y `python gui_tk.py` permite usar la interfaz anterior durante la transición. Esta propuesta sigue local, sin PR ni versión publicada.
+El avance autorizado del 6 de noviembre incorpora una nueva interfaz de escritorio. Instala `python -m pip install -r requirements-interfaz.txt` y ejecuta `python gui.py` (o **Calculadora escritorio** en IntelliJ). Para los métodos de semana 12 instala también `requirements-numericos.txt`. `python main.py` conserva la consola y `python gui_tk.py` permite usar la interfaz anterior durante la transición. La interfaz y el avance actual están integrados; la aplicación se identifica como v1.0.0.
 
 Se mantienen los temas, entradas vacías, ejemplos explícitos, tres tarjetas, pasos completos, recorrido fijo de dos segundos, historial, guardados y PDF. Los datos de la Biblioteca son compatibles con la interfaz anterior. La guía de arquitectura y de prueba está en [docs/MIGRACION_QT.md](docs/MIGRACION_QT.md).
 
-Calculadora educativa local para un equipo de dos estudiantes. **Versión v0.1.0:** suma y resta de matrices, con resultados exactos y procedimiento. Proyecto en desarrollo mediante issues y pull requests.
+Calculadora educativa local para un equipo de dos estudiantes. **Versión de la aplicación v1.0.0:** álgebra exacta, métodos numéricos, interfaz Qt y avance de Newton con pasos, tablas y gráficas. Proyecto en desarrollo mediante issues y pull requests.
 
-**Ampliación local sin publicar:** además de matrices, sistemas, vectores, determinantes, inversas, LU y verificadores, se incorpora **Numéricos · Semana 12**: bisección, errores, propagación, truncamiento/redondeo, bases, estabilidad, comparación Fraction/float/NumPy y gráficas. Se conserva el diseño de tres tarjetas y las vistas existentes. La nueva unidad necesita `requirements-numericos.txt`; el álgebra exacta sigue independiente. [Preparación y ejemplos de semana 12](docs/SEMANA_12.md).
+**Contenido integrado del avance:** además de matrices, sistemas, vectores, determinantes, inversas, LU y verificadores, se incorpora **Numéricos · Semana 12**: bisección, errores, propagación, truncamiento/redondeo, bases, estabilidad, comparación Fraction/float/NumPy y gráficas. Se conserva el diseño de tres tarjetas y las vistas existentes. La nueva unidad necesita `requirements-numericos.txt`; el álgebra exacta sigue independiente. [Preparación y ejemplos de semana 12](docs/SEMANA_12.md).
 
 **IntelliJ IDEA:** usar la configuración **Calculadora escritorio**, que ejecuta `gui.py` con `.venv/Scripts/python.exe`. También se puede ejecutar directamente `.venv\Scripts\python.exe gui.py`. El [mapa del código](docs/GUIA_CODIGO.md) explica qué hace cada archivo; se añadieron comentarios breves en decisiones y puntos de conexión.
 
-## Antes de trabajar con una IA
+## Antes de trabajar con un colaborador
 
 **Programa 9 provisional · Newton:** la propuesta de #36 conecta el núcleo a **Numéricos → Newton-Raphson**, con derivada analítica/numérica, estado, residuo y resultado reutilizable. Conserva el diseño y las entradas vacías. [Guía del formulario](docs/NEWTON_FORMULARIO.md). Las mejoras de pasos/tabla (#37) y gráfica (#38) conectan vista previa, tabla completa, tangentes seleccionables y comparación opcional con bisección. [Guía del recorrido](docs/NEWTON_PASOS_Y_GRAFICAS.md). El enunciado académico definitivo todavía debe confirmarse.
 
@@ -20,7 +20,7 @@ Para preparar la exposición de este avance, empezar por [Dónde estudiar Newton
 
 **Guardados y estudio (local):** abre **Guardar / Estudio** para guardar una matriz, un ejercicio completo, cargar casos o consultar ayudas. La pestaña **Guardados** conserva elementos con símbolos como **Aᵀ** y nombres automáticos (**Transpuesta 1**, **Transpuesta 2**), nombres/símbolos propios y notas. Incluye búsqueda, historial de cien ejercicios, recuperación y PDF con todos los pasos. Cada editor permite copiar/pegar matrices. Los datos permanecen en tu equipo al cerrar. [Guía y ubicación de los datos](docs/GUARDADOS_Y_ESTUDIO.md).
 
-La IA sigue **issue → rama → implementación → comprobaciones → PR → CI** y deja el pull request abierto para revisión humana. Reynaldo u otro humano autorizado decide si se corrige, se descarta o se integra. Las pruebas aprobadas no autorizan a la IA a hacer merge ni a publicar versiones. Leer [AGENTS.md](AGENTS.md) y el [flujo completo para la IA](docs/FLUJO_IA.md) antes de empezar.
+Quien prepara el cambio sigue **issue → rama → implementación → comprobaciones → PR → CI** y deja el pull request abierto para revisión humana. Reynaldo u otro humano autorizado decide si se corrige, se descarta o se integra. Las pruebas aprobadas no autorizan a quien prepara el cambio a hacer merge ni a publicar versiones. Leer [AGENTS.md](AGENTS.md) y el [flujo completo para quien prepara el cambio](docs/FLUJO_DE_REVISION.md) antes de empezar.
 
 ## Ejecutar
 
@@ -114,17 +114,17 @@ El verificador analiza imports con AST, rechaza bibliotecas externas fuera del �
 - [Issues iniciales](docs/ISSUES.md) y [plan de versiones](docs/VERSIONES.md): tareas reales y orden de las etapas.
 - [Guía para añadir operaciones](docs/COMO_AGREGAR.md): pasos y ejemplo concreto.
 - [Trabajo entre dos](docs/TRABAJO_EN_EQUIPO.md): issues, ramas, revisión y PR.
-- [AGENTS.md](AGENTS.md) y [guion de IA](docs/GUION_IA.md): reglas para mantener la estructura.
+- [AGENTS.md](AGENTS.md) y [guion de colaboración](docs/GUIA_DE_COLABORACION.md): reglas para mantener la estructura.
 - [Requisitos de UAM](docs/REVISION_UAM.md) e [inventario de fuentes](docs/INVENTARIO_MATERIALES.md): indicaciones revisadas al 3 de noviembre de 2026.
 - [Decisiones](docs/DECISIONES.md) e [historial](CHANGELOG.md): razones y cambios.
 
 El permiso de NumPy/SciPy del plan semanal 12 se limita a Métodos Numéricos. Las tareas 1–6 conservarán sus algoritmos propios. Se mantiene la consola pedida desde la tarea 4.
 
-Producto, transpuesta, sistemas, vectores, determinantes, inversas, verificadores y LU se añadirán por etapas; no están implementados en v0.1.0. La identidad de pantalla «Cuaderno de Álgebra Lineal» es provisional.
+Producto, transpuesta, sistemas, vectores, determinantes, inversas, verificadores y LU están implementados. v0.1.0 identifica únicamente la primera entrega histórica; v1.0.0 identifica el lanzamiento actual. El enunciado definitivo del Programa 9 sigue por confirmar.
 
-Una nueva función se propone con una issue y se presenta en un PR. Una corrección compatible puede corresponder a una mini versión, por ejemplo v0.1.1. Integrar requiere decisión humana; publicar una etiqueta o release requiere también autorización expresa. Los datos del segundo integrante y del nuevo grupo se registrarán cuando estén confirmados; las cabeceras actuales identifican el trabajo del equipo con apoyo de IA.
+Una nueva función se propone con una issue y se presenta en un PR. Una corrección compatible puede corresponder a una mini versión, por ejemplo v0.1.1. Integrar requiere decisión humana; publicar una etiqueta o release requiere también autorización expresa. El equipo actual está formado por Reynaldo y Roberto (Grupo 9).
 
 
 **Navegación local nueva:** al iniciar aparece el menú por unidades. Elige una tarjeta; «Temas» cambia de tema mediante un menú plegable e «Inicio» vuelve sin borrar la sesión. «Biblioteca» reúne Guardados/Historial. «Cambiar» despliega dimensiones y «⋯» contiene copiar/pegar o reutilizar resultados. [Guía de navegación](docs/INICIO_Y_NAVEGACION.md).
 
-El avance de gráficas, sus controles y los pendientes de #23–#30 están en [Gráficas interactivas](docs/GRAFICAS_INTERACTIVAS.md). El tema oscuro negro/morado del PR #46 fue aprobado por Reynaldo; el claro se conserva.
+El avance de gráficas, sus controles y el cierre de alcance de #23–#30 están en [Gráficas interactivas](docs/GRAFICAS_INTERACTIVAS.md). El tema oscuro negro/morado del PR #46 fue aprobado por Reynaldo; el claro se conserva.

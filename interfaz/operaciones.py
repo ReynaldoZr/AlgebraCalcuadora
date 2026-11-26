@@ -1,16 +1,17 @@
 """Conecta los temas nuevos al mismo catálogo de consola y escritorio.
 
 Tema: presentación de cálculos exactos; no contiene algoritmos de resolución.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from dataclasses import dataclass
 
 from interfaz.explicacion import etapas_completas
 from modulos.modulo_determinantes import calcular_determinante
-from modulos.modulo_lu import factorizar_lu, resolver_lu
-from modulos.modulo_matrices import calcular_inversa, transponer_matriz
-from modulos.modulo_sistemas import resolver_sistema
+from modulos.modulo_lu import factorizar_lu, resolver_factores_lu, resolver_lu
+from modulos.modulo_matrices import (calcular_inversa, producto_matricial,
+                                     sumar_matrices, transponer_matriz)
+from modulos.modulo_sistemas import analizar_forma, resolver_cramer, resolver_sistema
 from modulos.modulo_vectores import combinacion_lineal, escalar_vector, independencia_lineal, restar_vectores, sumar_vectores
 from modulos.procedimientos import Calculo, Paso
 from teoremas.verificadores import PROPIEDADES, verificar_propiedad, verificar_todas
@@ -32,6 +33,8 @@ class Operacion:
 OPERACIONES = {
     'gauss': Operacion('Sistemas', 'Eliminación de Gauss', ('A', 'b'), 'A: coeficientes m×n. b: columna m×1.'),
     'jordan': Operacion('Sistemas', 'Gauss-Jordan', ('A', 'b'), 'A: coeficientes m×n. b: columna m×1.'),
+    'cramer': Operacion('Sistemas', 'Regla de Cramer', ('A', 'b'), 'A cuadrada y det(A) distinto de cero.'),
+    'forma_escalonada': Operacion('Sistemas', 'Clasificar y reducir una matriz', ('A',), 'Usa la matriz tal como aparece en el enunciado.'),
     'v_suma': Operacion('Vectores', 'Suma de vectores', ('A', 'B'), 'Cada vector se escribe como una fila 1×n.'),
     'v_resta': Operacion('Vectores', 'Resta de vectores', ('A', 'B'), 'Cada vector se escribe como una fila 1×n.'),
     'v_escalar': Operacion('Vectores', 'Escalar por vector', ('A',), 'A: vector fila 1×n. k: escalar exacto.', True),
@@ -44,6 +47,7 @@ OPERACIONES = {
     'inv_adjunta': Operacion('Inversas', 'Inversa por adjunta', ('A',), 'A cuadrada y det(A)≠0. Se muestran menores, cofactores y adjunta.'),
     'lu_factorizar': Operacion('LU', 'Factorización A=LU', ('A',), 'Admite A rectangular: L m×m y U m×n. Sin permutación.'),
     'lu_resolver': Operacion('LU', 'Resolver Ax=b por LU', ('A', 'b'), 'A cuadrada, b columna m×1. Encadena Ly=b y Ux=y.'),
+    'lu_factores': Operacion('LU', 'Usar L y U dadas', ('L', 'U', 'A', 'b'), 'Introduce A, los factores dados y b para verificar L·U = A.'),
     'prop_todas': Operacion('Propiedades', 'Comprobar todas las propiedades', ('A', 'B', 'C'), 'Se calculan ambos miembros; las condiciones fallidas se indican como «No aplicable».', True),
 }
 for _clave, _nombre in PROPIEDADES.items():
@@ -109,10 +113,28 @@ def presentar_verificaciones(verificaciones):
 def calcular_operacion(clave, entradas, escalar=2):
     """Despacha un método del catálogo y adapta su salida a las dos interfaces."""
     operacion = OPERACIONES[clave]
-    a = entradas['A']
+    a = entradas.get('A')
+    if clave == 'forma_escalonada':
+        calculo = analizar_forma(a)
+        datos = calculo.datos
+        columnas = ', '.join(str(j + 1) for j in datos['pivotes']) or 'ninguna'
+        resumen = (f'Forma de entrada: {datos["forma"]}\nMotivo: {datos["razones"]}\n'
+                   f'Columnas pivote: {columnas}\nPosiciones pivote: {datos["posiciones"]}')
+        return Presentacion(calculo, resumen, calculo.valor)
+    if clave == 'cramer':
+        calculo = resolver_cramer(a, extraer_columna(entradas['b']))
+        filas = [f"det(A) = {calculo.datos['det']}"]
+        for j, det in enumerate(calculo.datos['determinantes'], 1):
+            filas.append(f'det(A{j}) = {det} · x{j} = {calculo.valor[j - 1]}')
+        filas.append('Comprobación Ax = b: ' + ('se cumple' if calculo.datos['verificado'] else 'no se cumple'))
+        return Presentacion(calculo, '\n'.join(filas), [[v] for v in calculo.valor])
     if clave in ('gauss', 'jordan'):
         calculo = resolver_sistema(a, extraer_columna(entradas['b']), clave)
         resumen = describir_sistema(calculo)
+        if clave == 'jordan':
+            reducida = [' '.join(map(str, fila[:-1])) + ' | ' + str(fila[-1])
+                        for fila in calculo.datos['matriz']]
+            resumen += '\nForma reducida [A | b]:\n' + '\n'.join(reducida)
         pasos = calculo.pasos + (Paso('Solución y clasificación', resumen),)
         return Presentacion(Calculo(calculo.valor, pasos, calculo.datos), resumen,
                             [[v] for v in calculo.valor] if calculo.valor is not None else None)
@@ -123,11 +145,21 @@ def calcular_operacion(clave, entradas, escalar=2):
         calculo = calcular_inversa(a, clave[4:])
         return Presentacion(calculo, 'Inversa calculada.\nComprobación exacta A·A⁻¹ = I: se cumple.', calculo.valor)
     if clave.startswith('lu_'):
-        calculo = factorizar_lu(a) if clave == 'lu_factorizar' else resolver_lu(a, extraer_columna(entradas['b']))
+        if clave == 'lu_factores':
+            calculo = resolver_factores_lu(entradas['L'], entradas['U'], extraer_columna(entradas['b']), original=a)
+        elif clave == 'lu_factorizar':
+            calculo = factorizar_lu(a)
+        else:
+            calculo = resolver_lu(a, extraer_columna(entradas['b']))
         if clave == 'lu_factorizar':
             return Presentacion(calculo, 'Factorización sin permutación.\nComprobación exacta L·U = A: se cumple.\nLas matrices L y U aparecen en Todos los pasos.', calculo.valor[1])
         resumen = 'Solución: ' + ', '.join(f'x{i + 1}={v}' for i, v in enumerate(calculo.valor))
         resumen += '\ny = (' + ', '.join(str(v) for v in calculo.datos['y']) + ')\nComprobación A·x=b: se cumple.'
+        if clave == 'lu_factores':
+            y = ', '.join(map(str, calculo.datos['y']))
+            x = ', '.join(map(str, calculo.valor))
+            estado = 'se cumple' if calculo.datos['verificado'] else 'no se cumple'
+            resumen = f'L·U = A: se cumple.\nLy = b → y = ({y})\nUx = y → x = ({x})\nComprobación LUx = b: {estado}.'
         return Presentacion(calculo, resumen, [[v] for v in calculo.valor])
     if clave in ('combinacion', 'independencia'):
         vectores = transponer_matriz(a)
@@ -145,7 +177,16 @@ def calcular_operacion(clave, entradas, escalar=2):
     if clave.startswith('prop_'):
         b, c = entradas.get('B'), entradas.get('C')
         verificaciones = verificar_todas(a, b, c, escalar) if clave == 'prop_todas' else [verificar_propiedad(clave[5:], a, b, c, escalar)]
-        return presentar_verificaciones(verificaciones)
+        presentacion = presentar_verificaciones(verificaciones)
+        if clave == 'prop_distributividad' and verificaciones[0].cumple is not None:
+            suma = sumar_matrices(b, c)
+            pasos = (Paso('Sumamos B + C', matriz=suma),
+                     Paso('Multiplicamos A por B + C', matriz=producto_matricial(a, suma)),
+                     Paso('Calculamos AB', matriz=producto_matricial(a, b)),
+                     Paso('Calculamos AC', matriz=producto_matricial(a, c)))
+            calculo = presentacion.calculo
+            return Presentacion(Calculo(calculo.valor, pasos + calculo.pasos), presentacion.resumen, None)
+        return presentacion
     if clave.startswith('v_'):
         if len(a) != 1 or ('B' in operacion.entradas and len(entradas['B']) != 1):
             raise ValueError('Cada vector debe tener una sola fila (1×n).')
@@ -178,6 +219,8 @@ def ejemplo_operacion(clave):
         datos['A'] = [[1, 2, 3], [0, 1, 4], [5, 6, 0]]
     elif tema == 'LU':
         datos.update(A=[[2, 1, 1], [4, -6, 0], [-2, 7, 2]], b=[[5], [-2], [9]])
+        if clave == 'lu_factores':
+            datos['L'], datos['U'] = factorizar_lu(datos['A']).valor
     elif clave == 'prop_det_triangular':
         datos['A'] = [[2, 1], [0, 3]]
     return datos, '3'

@@ -1,7 +1,7 @@
 """Comprueba resultados conocidos, límites y conservación del álgebra exacta.
 
 Tema: tareas 1 a 6; sistemas, vectores, determinantes, inversas, LU y propiedades.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from copy import deepcopy

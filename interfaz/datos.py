@@ -1,7 +1,7 @@
 """Convierte las entradas numéricas de consola y ventana.
 
 Tema: lectura exacta de enteros, decimales y fracciones.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from fractions import Fraction

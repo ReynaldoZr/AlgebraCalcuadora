@@ -1,7 +1,7 @@
 """Ejercita Qt Quick sin capturas ni control de la pantalla de la persona.
 
 Tema: carga QML, teclado, sesiones, tablas, guardados y temporizador.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 import importlib.util

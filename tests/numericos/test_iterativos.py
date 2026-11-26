@@ -1,7 +1,7 @@
 """Comprueba Jacobi mediante soluciones conocidas y límites de sus datos.
 
 Tema: Programa 8, actualización simultánea, parada y conservación de entradas.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from copy import deepcopy
