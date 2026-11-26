@@ -1,7 +1,7 @@
 """Prueba los nuevos temas con widgets reales de escritorio.
 
 Tema: sesiones independientes, procedimiento completo e invalidación de pasos.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 import unittest

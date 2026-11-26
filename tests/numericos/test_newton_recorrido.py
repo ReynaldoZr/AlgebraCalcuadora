@@ -1,7 +1,7 @@
 """Verifica pasos y figuras conectados al núcleo real de Newton (#37 y #38).
 
 Tema: coherencia de datos, casos de clase, discontinuidades y exportación.
-Elaboración: equipo 9, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from copy import deepcopy

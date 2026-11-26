@@ -1,7 +1,7 @@
 """Abre la interfaz gráfica opcional de la calculadora.
 
 Tema: edición de matrices en una ventana de escritorio.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 

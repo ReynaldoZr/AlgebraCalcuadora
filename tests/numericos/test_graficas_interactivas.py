@@ -1,7 +1,7 @@
 """Comprueba las mejoras de gráficas interactivas para las issues #23 a #30.
 
 Tema: renderizado headless, escalas seguras, selección de filas, toggles y temas.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 import unittest

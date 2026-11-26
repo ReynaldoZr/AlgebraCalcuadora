@@ -136,6 +136,8 @@ ColumnLayout {
                                 height: 38
                                 implicitHeight: 38
                                 color: filaHover.hovered ? Paleta.borde : (index % 2 === 0 ? Paleta.entrada : Paleta.tarjeta)
+                                border.width: index + 1 === cuaderno.resultado.tabla.primeraTolerancia ? 2 : 0
+                                border.color: Paleta.acento
                                 HoverHandler { id: filaHover }
                                 Row {
                                     anchors.fill: parent

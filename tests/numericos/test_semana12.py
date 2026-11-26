@@ -1,7 +1,7 @@
 """Verifica métodos numéricos, errores, límites y contraste con bibliotecas.
 
 Tema: casos conocidos de semana 12, sin interacción con el escritorio del usuario.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from copy import deepcopy

@@ -1,7 +1,7 @@
 """Comprueba el catálogo y el uso de consola de los nuevos temas.
 
 Tema: adaptación de resultados y recorrido desde entrada hasta procedimiento.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 import io

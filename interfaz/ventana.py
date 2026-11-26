@@ -1,7 +1,7 @@
 """Compone la calculadora y su desarrollo completo en pestañas internas.
 
 Tema: sesión gráfica de suma, resta y escalar, sin duplicar el núcleo.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from contextlib import contextmanager

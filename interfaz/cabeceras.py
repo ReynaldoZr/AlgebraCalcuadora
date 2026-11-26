@@ -1,7 +1,7 @@
 """Muestra las cabeceras ASCII de la calculadora.
 
 Tema: identidad de los módulos requerida desde el Programa 4.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 

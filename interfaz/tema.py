@@ -1,7 +1,7 @@
 """Centraliza colores y estilos de la ventana de escritorio.
 
 Tema: presentación azul oscuro y lavanda, con alternativa clara.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from tkinter import ttk

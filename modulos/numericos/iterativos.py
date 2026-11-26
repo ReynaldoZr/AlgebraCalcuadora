@@ -1,7 +1,7 @@
 """Resuelve sistemas por Jacobi y Gauss-Seidel con reordenamiento y comparación.
 
 Tema: Programa 8, aproximaciones sucesivas, dominancia diagonal y relajación.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 import math
@@ -142,7 +142,7 @@ def _preparar_sistema(matriz, vector_b, inicial, tolerancia, max_iteraciones, re
 
 
 def _ejecutar_iterativo(metodo, a_orig, b_orig, a_trab, b_trab, x_ini, tolerancia,
-                        max_iteraciones, perm, reordenado, relajacion=1.0):
+                        max_iteraciones, perm, reordenado, relajacion=1.0, porcentual=False):
     """Ejecuta el ciclo común de Jacobi o Gauss-Seidel sobre el sistema preparado."""
     x = x_ini[:]
     dominantes = dominancia_diagonal(a_trab)
@@ -164,6 +164,11 @@ def _ejecutar_iterativo(metodo, a_orig, b_orig, a_trab, b_trab, x_ini, toleranci
         columnas=('k',) + tuple(f'x{i + 1}' for i in range(len(x))) + ('Error máximo',),
         motivo='Se alcanzó el máximo de iteraciones sin cumplir la tolerancia.',
     )
+    if porcentual:
+        datos['columnas'] = (datos['columnas'][:-1]
+                             + tuple(f'Ea x{i + 1} (%)' for i in range(len(x))
+                                     ) + ('Error máximo (%)',))
+    datos['porcentual'] = porcentual
     filas_datos = tuple(
         (f'Fila {i + 1}: [{", ".join(formato(v) for v in fila)}] | b={formato(b_trab[i])}',)
         for i, fila in enumerate(a_trab)
@@ -186,7 +191,10 @@ def _ejecutar_iterativo(metodo, a_orig, b_orig, a_trab, b_trab, x_ini, toleranci
             else:
                 nuevo = [(b_trab[i] - math.fsum(v * x[j] for j, v in enumerate(fila) if j != i)) / fila[i]
                          for i, fila in enumerate(a_trab)]
-            error = max(abs(v - anterior) for v, anterior in zip(nuevo, x))
+            cambios = [abs(v - anterior) for v, anterior in zip(nuevo, x)]
+            errores = tuple((cambio / abs(v) * 100 if v else 0.0 if cambio == 0 else None)
+                            for v, cambio in zip(nuevo, cambios)) if porcentual else ()
+            error = max((v for v in errores if v is not None), default=0.0) if porcentual else max(cambios)
             if not all(math.isfinite(v) for v in nuevo) or not math.isfinite(error):
                 raise OverflowError
         except (OverflowError, ValueError):
@@ -197,17 +205,22 @@ def _ejecutar_iterativo(metodo, a_orig, b_orig, a_trab, b_trab, x_ini, toleranci
             datos['advertencias'].append(
                 f'El error creció en la iteración {k}. Hay posible falta de convergencia.'
             )
-        datos['filas'].append((k, *nuevo, error))
+        datos['filas'].append((k, *nuevo, *errores, error))
         datos['error'] = error
         pasos.append(Paso(
             f'Iteración {k} de {metodo}',
             'El error creció respecto a la iteración anterior.' if crece else detalle_iter,
             formulas=tuple((f'x{i + 1}={formato(v)}',) for i, v in enumerate(nuevo))
+            + tuple((f'Ea x{i + 1}={formato(v)} %',) for i, v in enumerate(errores))
             + ((f'Error máximo={formato(error)}',),),
         ))
         x = nuevo
-        if error <= tolerancia:
-            datos.update(convergio=True, motivo='La diferencia máxima es menor o igual que la tolerancia.')
+        cumple = (all(v is not None and v < tolerancia for v in errores)
+                  if porcentual else error <= tolerancia)
+        if cumple:
+            motivo = ('Cada error porcentual es menor que la tolerancia.' if porcentual
+                      else 'La diferencia máxima es menor o igual que la tolerancia.')
+            datos.update(convergio=True, motivo=motivo)
             break
 
     datos['residuo'] = residuo_sistema(a_orig, b_orig, x)
@@ -220,18 +233,19 @@ def _ejecutar_iterativo(metodo, a_orig, b_orig, a_trab, b_trab, x_ini, toleranci
     return Calculo(x[:], tuple(pasos), datos)
 
 
-def jacobi(matriz, vector_b, inicial, tolerancia=0.0001, max_iteraciones=200, reordenar=False):
+def jacobi(matriz, vector_b, inicial, tolerancia=0.0001, max_iteraciones=200, reordenar=False, *, porcentual=False):
     """Devuelve Calculo con el último vector, pasos y tabla usando actualización simultánea."""
     a_orig, b_orig, a_trab, b_trab, x_ini, tol, perm, reordenado = _preparar_sistema(
         matriz, vector_b, inicial, tolerancia, max_iteraciones, reordenar,
     )
     return _ejecutar_iterativo(
         'Jacobi', a_orig, b_orig, a_trab, b_trab, x_ini, tol, max_iteraciones, perm, reordenado,
+        porcentual=porcentual,
     )
 
 
 def gauss_seidel(matriz, vector_b, inicial, tolerancia=0.0001, max_iteraciones=200,
-                 reordenar=False, relajacion=1.0):
+                 reordenar=False, relajacion=1.0, *, porcentual=False):
     """Devuelve Calculo con el último vector, pasos y tabla usando actualización inmediata."""
     lam = validar_relajacion(relajacion)
     a_orig, b_orig, a_trab, b_trab, x_ini, tol, perm, reordenado = _preparar_sistema(
@@ -239,17 +253,17 @@ def gauss_seidel(matriz, vector_b, inicial, tolerancia=0.0001, max_iteraciones=2
     )
     return _ejecutar_iterativo(
         'Gauss-Seidel', a_orig, b_orig, a_trab, b_trab, x_ini, tol, max_iteraciones,
-        perm, reordenado, relajacion=lam,
+        perm, reordenado, relajacion=lam, porcentual=porcentual,
     )
 
 
 def comparar_iterativos(matriz, vector_b, inicial, tolerancia=0.0001, max_iteraciones=200,
-                        reordenar=True, relajacion=1.0):
+                        reordenar=True, relajacion=1.0, *, porcentual=False):
     """Ejecuta Jacobi y Gauss-Seidel con los mismos datos y conserva ambas tablas completas."""
-    res_j = jacobi(matriz, vector_b, inicial, tolerancia, max_iteraciones, reordenar=reordenar)
+    res_j = jacobi(matriz, vector_b, inicial, tolerancia, max_iteraciones, reordenar=reordenar, porcentual=porcentual)
     res_gs = gauss_seidel(
         matriz, vector_b, inicial, tolerancia, max_iteraciones,
-        reordenar=reordenar, relajacion=relajacion,
+        reordenar=reordenar, relajacion=relajacion, porcentual=porcentual,
     )
     dj, dgs = res_j.datos, res_gs.datos
     diferencia_metodos = max(abs(vj - vg) for vj, vg in zip(res_j.valor, res_gs.valor))

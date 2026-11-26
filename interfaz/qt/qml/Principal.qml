@@ -28,11 +28,12 @@ ApplicationWindow {
     property bool registroHistorial: false
     property bool bibliotecaDesdeCalculadora: false
     property string copiaParaCargar: ""
+    readonly property bool selectorAmplio: ["Propiedades", "Numéricos"].includes(cuaderno.formulario.tema)
 
     function cambiarPagina(nombre) {
         cuaderno.pausar()
         if (nombre === "biblioteca" && pagina !== nombre)
-            bibliotecaDesdeCalculadora = pagina === "calculadora"
+            bibliotecaDesdeCalculadora = pagina === "calculadora" || pagina === "propiedades"
         pagina = nombre
         transicion.restart()
     }
@@ -90,7 +91,7 @@ ApplicationWindow {
             id: paginas
             Layout.fillWidth: true
             Layout.fillHeight: true
-            currentIndex: ventana.pagina === "inicio" ? 0 : ventana.pagina === "biblioteca" ? 2 : 1
+            currentIndex: ventana.pagina === "inicio" ? 0 : ventana.pagina === "biblioteca" ? 2 : ventana.pagina === "propiedades" ? 3 : 1
 
             ScrollView {
                 contentWidth: availableWidth
@@ -146,6 +147,7 @@ ApplicationWindow {
                     enabled: !cuaderno.estado.ocupado
                     Selector {
                         id: metodo
+                        visible: !ventana.selectorAmplio
                         objectName: "selectorMetodo"
                         Layout.preferredWidth: 370
                         model: cuaderno.formulario.metodos || []
@@ -153,7 +155,27 @@ ApplicationWindow {
                         currentIndex: model.findIndex(m => m.clave === cuaderno.formulario.clave)
                         onActivated: cuaderno.seleccionar(model[currentIndex].clave)
                     }
+                    Boton {
+                        visible: ventana.selectorAmplio
+                        readonly property string nombreActual: propiedades.numericos
+                            ? metodo.currentText : propiedades.nombre(cuaderno.formulario.clave)
+                        text: nombreActual + "  ⌄"
+                        Accessible.name: (propiedades.numericos ? "Seleccionar método: " : "Seleccionar propiedad: ") + nombreActual
+                        onClicked: {
+                            ventana.cambiarPagina("propiedades")
+                            propiedades.reiniciar()
+                        }
+                    }
                     Boton { text: "Cargar ejemplo"; enabled: cuaderno.formulario.ejemplo; onClicked: cuaderno.cargarEjemplo("") }
+                    Boton {
+                        text: "Pegar sistema [A | b]"
+                        visible: ["gauss", "jordan", "cramer", "num_jacobi", "num_gauss_seidel",
+                                  "num_comparar_iterativos"].includes(cuaderno.formulario.clave)
+                        onClicked: {
+                            textoSistema.text = cuaderno.textoPortapapeles()
+                            pegarSistema.open()
+                        }
+                    }
                     Boton { text: "Otros casos…"; enabled: cuaderno.formulario.ejemplo; onClicked: casos.open() }
                     Item { Layout.fillWidth: true }
                     Boton { text: "Teoremas"; discreto: true; onClicked: cuaderno.consultar("Teoremas") }
@@ -348,6 +370,21 @@ ApplicationWindow {
                     eliminar.open()
                 }
             }
+            SelectorPropiedades {
+                id: propiedades
+                numericos: cuaderno.formulario.tema === "Numéricos"
+                metodos: ventana.selectorAmplio ? cuaderno.formulario.metodos : []
+                actual: cuaderno.formulario.clave
+                onVolver: ventana.cambiarPagina("calculadora")
+                onElegir: clave => {
+                    if (!cuaderno.estado.ocupado) {
+                        cuaderno.seleccionar(clave)
+                        ventana.vista = "calculadora"
+                        ventana.cambiarPagina("calculadora")
+                    }
+                }
+            }
+
         }
         Label { objectName: "estado"; text: cuaderno.estado.mensaje; color: cuaderno.estado.error ? Paleta.error : Paleta.secundario; wrapMode: Text.Wrap; Layout.fillWidth: true; font.pixelSize: 12 }
     }
@@ -378,6 +415,50 @@ ApplicationWindow {
             Item { Layout.fillHeight: true }
         }
     }
+    Dialog {
+        id: pegarSistema
+        title: "Pegar sistema [A | b]"
+        anchors.centerIn: parent
+        width: Math.min(620, ventana.width - 48)
+        modal: true
+        standardButtons: Dialog.Cancel
+        ColumnLayout {
+            width: parent.width
+            Label {
+                text: "Una ecuación por fila. El último valor se carga en b."
+                color: Paleta.texto
+            }
+            ScrollView {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 150
+                TextArea {
+                    id: textoSistema
+                    placeholderText: "1 2 | 5\n0 1 | 2"
+                    Accessible.name: "Filas del sistema"
+                }
+            }
+            Label {
+                id: previaSistema
+                Layout.fillWidth: true
+                wrapMode: Text.Wrap
+                color: Paleta.texto
+                text: textoSistema.text.trim() ? cuaderno.cargarSistemaPegado(textoSistema.text, false) : ""
+            }
+            Boton {
+                text: "Aplicar"
+                principal: true
+                enabled: textoSistema.text.trim().length > 0
+                onClicked: {
+                    const error = cuaderno.cargarSistemaPegado(textoSistema.text, true)
+                    if (!error)
+                        pegarSistema.close()
+                    else
+                        previaSistema.text = Qt.binding(() => cuaderno.cargarSistemaPegado(textoSistema.text, false))
+                }
+            }
+        }
+    }
+
     Dialog {
         id: guardarDialogo
         objectName: "guardarDialogo"

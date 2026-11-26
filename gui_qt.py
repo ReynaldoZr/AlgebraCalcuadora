@@ -1,7 +1,7 @@
 """Abre la nueva interfaz Qt Quick sin sustituir la consola ni la interfaz Tk.
 
 Tema: lanzador de la migración visual de escritorio.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 

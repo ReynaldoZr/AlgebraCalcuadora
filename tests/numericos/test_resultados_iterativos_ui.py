@@ -1,7 +1,7 @@
 """Comprueba la presentación estructurada de resultados iterativos (Issue #32).
 
 Tema: tabla por variable, referencia para comparar, redondeo visual y detalles técnicos.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 import unittest

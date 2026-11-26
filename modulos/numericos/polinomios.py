@@ -1,7 +1,7 @@
 """Evalúa polinomios y su derivada con Horner y comprueba deflación lineal.
 
 Tema: Sesión 22, raíces de polinomios y preparación del Programa 9, issue 35.
-Elaboración: equipo 9, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from modulos.numericos.funciones import formato, numero_finito

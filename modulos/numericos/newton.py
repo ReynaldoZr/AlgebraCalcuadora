@@ -1,7 +1,7 @@
 """Calcula Newton-Raphson propio y conserva su historial y causa de parada.
 
 Tema: preparación provisional del Programa 9, Sesión 22, issue 33.
-Elaboración: equipo 9, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 import math
@@ -79,7 +79,7 @@ def _terminar(x, datos, pasos, motivo, convergio=False):
 
 
 def resolver_newton(funcion, derivada, x0, tolerancia=0.0001, max_iteraciones=200,
-                    criterio='absoluto', *, tolerancia_f=1e-8):
+                    criterio='absoluto', *, tolerancia_f=1e-8, iteraciones_fijas=False, solo_error=False):
     """Devuelve Calculo con Newton propio, tabla y registros compatibles con #36–#38.
 
     El cambio elegido y el residuo deben ser menores que sus tolerancias; f(x)=0
@@ -134,7 +134,12 @@ def resolver_newton(funcion, derivada, x0, tolerancia=0.0001, max_iteraciones=20
                 nuevo, datos, pasos,
                 'Estancamiento en punto flotante con función no nula; revisar escala y residuo.',
             )
-        if error_elegido is not None and error_elegido < tol and residuo < tol_f:
+        cumple_error = error_elegido is not None and error_elegido < tol
+        if cumple_error:
+            datos.setdefault('primera_tolerancia', k)
+        if cumple_error and iteraciones_fijas and k == max_iteraciones:
+            return _terminar(nuevo, datos, pasos, 'Iteraciones completadas y tolerancia alcanzada.', True)
+        if not iteraciones_fijas and cumple_error and (solo_error or residuo < tol_f):
             return _terminar(
                 nuevo, datos, pasos, 'Se cumplen la tolerancia del cambio y la del residuo.', True,
             )
@@ -143,6 +148,8 @@ def resolver_newton(funcion, derivada, x0, tolerancia=0.0001, max_iteraciones=20
                 nuevo, datos, pasos, 'Se repite un ciclo de dos puntos sin alcanzar una raíz.',
             )
         penultimo, x, fx = x, nuevo, fnuevo
+    if iteraciones_fijas:
+        return _terminar(x, datos, pasos, 'Iteraciones solicitadas completadas sin cumplir la tolerancia final.')
     return _terminar(
         x, datos, pasos, 'Máximo de iteraciones alcanzado sin cumplir ambas tolerancias.',
     )

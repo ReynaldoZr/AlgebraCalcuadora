@@ -1,7 +1,7 @@
 """Presenta el desarrollo completo en tarjetas desplazables.
 
 Tema: explicación de resultados exactos ya obtenidos por el núcleo.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 import tkinter as tk

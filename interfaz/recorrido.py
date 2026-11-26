@@ -1,7 +1,7 @@
 """Coordina pasos visuales con un temporizador proporcionado por la ventana.
 
 Tema: explicación de operaciones ya calculadas, sin repetir algoritmos.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 

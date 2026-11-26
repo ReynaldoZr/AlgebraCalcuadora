@@ -1,7 +1,7 @@
 """Conecta eventos QML con sesiones y servicios existentes del proyecto.
 
 Tema: señales, tareas de cálculo, biblioteca y temporizador de dos segundos.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from copy import deepcopy
@@ -419,6 +419,23 @@ class Controlador(QObject):
                     from interfaz.numericos.newton_presentacion import pasos_completos_newton, tabla_newton
                     self._salida.update(pasos=pasos_completos_newton(p.calculo),
                                         tabla=tabla_newton(p.calculo))
+                if self.clave == 'num_biseccion':
+                    tabla = self._salida['tabla']
+                    tabla['columnas'].append('Signo f(xl)·f(xr)')
+                    for visual, fila in zip(tabla['filas'], p.calculo.datos['filas']):
+                        fa, fm = fila[4], fila[6]
+                        signo = '0' if not fa or not fm else '−' if (fa < 0) != (fm < 0) else '+'
+                        visual.append(signo)
+                mostrar_seis = (self.clave == 'num_maclaurin' or p.calculo.datos.get('porcentual')
+                                or s.parametros.get('parada') in ('Iteraciones fijas', 'Solo tolerancia del error')
+                                or any(p.calculo.datos.get(k, {}).get('porcentual')
+                                       for k in ('jacobi', 'gauss_seidel')))
+                if mostrar_seis:
+                    for visual, fila in zip(self._salida['tabla']['filas'], p.calculo.datos.get('filas', ())):
+                        for indice, valor in enumerate(fila):
+                            if isinstance(valor, float):
+                                visual[indice] = f'{valor:.6f}'
+                self._salida['tabla']['primeraTolerancia'] = p.calculo.datos.get('primera_tolerancia', 0)
             self._presentacion_publicada = s.presentacion
             self.resultadoCambiado.emit()
         self._actualizar_previa()
@@ -495,6 +512,40 @@ class Controlador(QObject):
             self._terminar_edicion(True)
         except (ValueError, ZeroDivisionError) as error:
             self.avisar(str(error), True)
+
+    @Slot(result=str)
+    def textoPortapapeles(self):
+        """Devuelve el texto para el diálogo de carga rápida."""
+        return QGuiApplication.clipboard().text()
+
+    @Slot(str, bool, result=str)
+    def cargarSistemaPegado(self, texto, aplicar):
+        """Valida [A | b] y cambia ambas entradas en una sola edición."""
+        if self._ocupado or self.clave not in ('gauss', 'jordan', 'cramer', 'num_jacobi',
+                                                'num_gauss_seidel', 'num_comparar_iterativos'):
+            return 'No se puede cargar un sistema en este momento.'
+        try:
+            for numero, fila in enumerate(texto.splitlines(), 1):
+                if '|' in fila:
+                    partes = fila.split('|')
+                    if len(partes) != 2 or len(interpretar_matriz(partes[1].strip())[0]) != 1:
+                        raise ValueError(f'Fila {numero}: escribe un solo valor de b después de |.')
+            matriz = interpretar_matriz(texto.replace('|', ' '), limite=11)
+            if not 2 <= len(matriz[0]) <= 11 or len(matriz) > 10:
+                raise ValueError('Indica hasta 10 ecuaciones, 1 a 10 coeficientes y la columna b.')
+        except (ValueError, ZeroDivisionError) as error:
+            return str(error)
+        if aplicar:
+            self._editar()
+            self.sesion.entradas['A'] = [[str(v) for v in fila[:-1]] for fila in matriz]
+            if 'b' in self.sesion.entradas:
+                self.sesion.entradas['b'] = [[str(fila[-1])] for fila in matriz]
+            else:
+                self.sesion.parametros['vector_b'] = ', '.join(str(fila[-1]) for fila in matriz)
+            self._terminar_edicion(True)
+            return ''
+        filas = [' '.join(map(str, fila[:-1])) + ' | ' + str(fila[-1]) for fila in matriz]
+        return f'{len(matriz)} filas, {len(matriz[0]) - 1} coeficientes por fila y b\n' + '\n'.join(filas)
 
     @Slot(str)
     def usarResultado(self, destino):

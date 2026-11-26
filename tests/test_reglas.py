@@ -1,7 +1,7 @@
 """Comprueba los límites por ámbito del verificador de reglas.
 
 Tema: imports con alias, cálculo puro y excepción numérica.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 import ast

@@ -1,7 +1,7 @@
 """Lee datos y repite preguntas cuando la entrada es incorrecta.
 
 Tema: dimensiones y componentes de matrices.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from interfaz.datos import convertir_numero

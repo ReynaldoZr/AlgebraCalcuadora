@@ -1,7 +1,7 @@
 """Dibuja fracciones, fórmulas y matrices sin convertirlas a imágenes.
 
 Tema: notación exacta legible en los lienzos de Tkinter.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 import tkinter as tk

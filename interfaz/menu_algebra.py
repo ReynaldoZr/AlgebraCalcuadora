@@ -1,7 +1,7 @@
 """Ofrece en consola los temas de álgebra del catálogo compartido.
 
 Tema: navegación, entradas y procedimientos, sin duplicar algoritmos.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from interfaz.entradas import elegir_matriz, leer_numero, leer_opcion

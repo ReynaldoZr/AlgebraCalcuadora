@@ -1,7 +1,7 @@
 """Integra la semana 12 conservando tres tarjetas y las vistas generales.
 
 Tema: formularios aproximados, tabla completa, pasos, historial y gráficas.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from contextlib import contextmanager
@@ -82,14 +82,20 @@ class PanelNumerico(ttk.Frame):
             columna = 0 if nombre in ('funcion', 'a', 'b', 'verdadero', 'aproximado', 'x', 'delta', 'capital', 'tasa', 'numero', 'x0', 'modo_derivada', 'derivada') else 1
             marco = ttk.Frame(self.grupos[columna], style='Interior.TFrame')
             self.etiquetas[nombre] = ttk.Label(marco, text=etiqueta, style='Tarjeta.TLabel')
-            self.etiquetas[nombre].pack(anchor='w')
-            if nombre in ('criterio', 'base', 'reordenar', 'modo_derivada'):
+            compacto = nombre in ('vector_b', 'inicial', 'error_iterativo', 'epsilon',
+                                   'maximo', 'relajacion', 'reordenar')
+            if compacto:
+                self.etiquetas[nombre].pack(side='left', padx=(0, 6))
+            else:
+                self.etiquetas[nombre].pack(anchor='w')
+            opciones_pack = dict(side='right', fill='x', expand=True) if compacto else dict(fill='x', pady=(2, 0))
+            if nombre in ('criterio', 'base', 'reordenar', 'modo_derivada', 'parada', 'error_iterativo', 'modo_base'):
                 selector = ttk.Combobox(marco, textvariable=self.parametros[nombre], values=opciones_campo(self.clave, nombre), state='readonly', width=16)
-                selector.pack(fill='x', pady=(2, 0))
+                selector.pack(**opciones_pack)
                 self.selectores[nombre] = selector
             else:
                 entrada = ttk.Entry(marco, textvariable=self.parametros[nombre], width=18)
-                entrada.pack(fill='x', pady=(2, 0))
+                entrada.pack(**opciones_pack)
                 self.entradas[nombre] = entrada
             self.campos[nombre] = marco
         self.teclado = TecladoFuncion(self.grupos[0], self.entradas['funcion'], self._edicion)

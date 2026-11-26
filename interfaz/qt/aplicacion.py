@@ -1,7 +1,7 @@
 """Arranca Qt Quick y mantiene la consola libre de dependencias gráficas.
 
 Tema: aplicación de escritorio local y proveedor de imágenes numéricas.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from pathlib import Path

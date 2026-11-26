@@ -2,11 +2,11 @@
 
 ## Nueva interfaz local: PySide6 + QML
 
-El avance autorizado del 6 de noviembre incorpora una nueva interfaz de escritorio. Instala `python -m pip install -r requirements-interfaz.txt` y ejecuta `python gui.py` (o **Calculadora escritorio** en IntelliJ). Para los métodos de semana 12 instala también `requirements-numericos.txt`. `python main.py` conserva la consola y `python gui_tk.py` permite usar la interfaz anterior durante la transición. La interfaz y el avance actual están integrados; la aplicación se identifica como v0.9.0 (versión 0.9).
+El avance autorizado del 6 de noviembre incorpora una nueva interfaz de escritorio. Instala `python -m pip install -r requirements-interfaz.txt` y ejecuta `python gui.py` (o **Calculadora escritorio** en IntelliJ). Para los métodos de semana 12 instala también `requirements-numericos.txt`. `python main.py` conserva la consola y `python gui_tk.py` permite usar la interfaz anterior durante la transición. La interfaz y el avance actual están integrados; la aplicación se identifica como v1.0.0.
 
 Se mantienen los temas, entradas vacías, ejemplos explícitos, tres tarjetas, pasos completos, recorrido fijo de dos segundos, historial, guardados y PDF. Los datos de la Biblioteca son compatibles con la interfaz anterior. La guía de arquitectura y de prueba está en [docs/MIGRACION_QT.md](docs/MIGRACION_QT.md).
 
-Calculadora educativa local para un equipo de dos estudiantes. **Versión de la aplicación v0.9.0:** álgebra exacta, métodos numéricos, interfaz Qt y avance de Newton con pasos, tablas y gráficas. Proyecto en desarrollo mediante issues y pull requests.
+Calculadora educativa local para un equipo de dos estudiantes. **Versión de la aplicación v1.0.0:** álgebra exacta, métodos numéricos, interfaz Qt y avance de Newton con pasos, tablas y gráficas. Proyecto en desarrollo mediante issues y pull requests.
 
 **Contenido integrado del avance:** además de matrices, sistemas, vectores, determinantes, inversas, LU y verificadores, se incorpora **Numéricos · Semana 12**: bisección, errores, propagación, truncamiento/redondeo, bases, estabilidad, comparación Fraction/float/NumPy y gráficas. Se conserva el diseño de tres tarjetas y las vistas existentes. La nueva unidad necesita `requirements-numericos.txt`; el álgebra exacta sigue independiente. [Preparación y ejemplos de semana 12](docs/SEMANA_12.md).
 
@@ -120,9 +120,9 @@ El verificador analiza imports con AST, rechaza bibliotecas externas fuera del �
 
 El permiso de NumPy/SciPy del plan semanal 12 se limita a Métodos Numéricos. Las tareas 1–6 conservarán sus algoritmos propios. Se mantiene la consola pedida desde la tarea 4.
 
-Producto, transpuesta, sistemas, vectores, determinantes, inversas, verificadores y LU están implementados. v0.1.0 identifica únicamente la primera entrega histórica; v0.9.0 identifica el avance actual. El enunciado definitivo del Programa 9 sigue por confirmar.
+Producto, transpuesta, sistemas, vectores, determinantes, inversas, verificadores y LU están implementados. v0.1.0 identifica únicamente la primera entrega histórica; v1.0.0 identifica el lanzamiento actual. El enunciado definitivo del Programa 9 sigue por confirmar.
 
-Una nueva función se propone con una issue y se presenta en un PR. Una corrección compatible puede corresponder a una mini versión, por ejemplo v0.1.1. Integrar requiere decisión humana; publicar una etiqueta o release requiere también autorización expresa. El equipo actual está formado por Reynaldo y Roberto (Grupo 9); las cabeceras actuales identifican el trabajo del equipo con apoyo de IA.
+Una nueva función se propone con una issue y se presenta en un PR. Una corrección compatible puede corresponder a una mini versión, por ejemplo v0.1.1. Integrar requiere decisión humana; publicar una etiqueta o release requiere también autorización expresa. El equipo actual está formado por Reynaldo y Roberto (Grupo 9).
 
 
 **Navegación local nueva:** al iniciar aparece el menú por unidades. Elige una tarjeta; «Temas» cambia de tema mediante un menú plegable e «Inicio» vuelve sin borrar la sesión. «Biblioteca» reúne Guardados/Historial. «Cambiar» despliega dimensiones y «⋯» contiene copiar/pegar o reutilizar resultados. [Guía de navegación](docs/INICIO_Y_NAVEGACION.md).

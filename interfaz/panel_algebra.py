@@ -1,7 +1,7 @@
 """Compone entradas y procedimientos de los temas de álgebra pendientes.
 
 Tema: escritorio local con navegación y pasos, sin bibliotecas numéricas.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from contextlib import contextmanager
@@ -99,9 +99,6 @@ class PanelAlgebra(ttk.Frame):
         self.boton_deshacer = ttk.Button(acciones, text='Deshacer', command=self.deshacer)
         self.boton_deshacer.pack(side='left')
         self.alternar_secundaria = ttk.Frame(acciones)
-        for nombre in ('B', 'C'):
-            ttk.Radiobutton(self.alternar_secundaria, text='Editar ' + nombre, variable=self.secundaria,
-                            value=nombre, command=self._mostrar_secundaria).pack(side='left')
         ttk.Label(self, textvariable=self.estado, style='Estado.TLabel', wraplength=880).grid(row=4, column=0, sticky='ew', pady=(6, 0))
 
     def _crear_resultados(self):
@@ -166,14 +163,20 @@ class PanelAlgebra(ttk.Frame):
                 self.editores[nombre] = editor
                 if nombre == 'b':
                     editor.cargar([[''], ['']])
-        self.editores['A'].grid(row=0, column=0, sticky='nsew', padx=(0, 6))
+        self.editores[operacion.entradas[0]].grid(row=0, column=0, sticky='nsew', padx=(0, 6))
         self.regla.grid(row=0, column=1, sticky='nsew', padx=6)
         self.texto_regla.configure(text=operacion.ayuda)
         self.escalar_central.pack_forget()
         if operacion.escalar and len(operacion.entradas) == 1:
             self.escalar_central.pack(pady=12)
         self.alternar_secundaria.pack_forget()
-        if 'C' in operacion.entradas:
+        for boton in self.alternar_secundaria.winfo_children():
+            boton.destroy()
+        if len(operacion.entradas) > 2:
+            for nombre in operacion.entradas[1:]:
+                ttk.Radiobutton(self.alternar_secundaria, text='Editar ' + nombre,
+                                variable=self.secundaria, value=nombre,
+                                command=self._mostrar_secundaria).pack(side='left')
             self.alternar_secundaria.pack(side='left', padx=10)
         self._mostrar_secundaria()
         self.marco_escalar.pack_forget()
@@ -183,9 +186,9 @@ class PanelAlgebra(ttk.Frame):
 
     def _mostrar_secundaria(self):
         """Muestra b o B en la tarjeta central; C comparte ese lugar solo cuando hace falta."""
-        nombres = OPERACIONES[self.clave].entradas[1:]
+        principal, *nombres = OPERACIONES[self.clave].entradas
         for nombre, editor in self.editores.items():
-            if nombre != 'A':
+            if nombre != principal:
                 editor.grid_remove()
         if nombres:
             nombre = self.secundaria.get() if self.secundaria.get() in nombres else nombres[0]

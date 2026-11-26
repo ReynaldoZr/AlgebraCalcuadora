@@ -1,7 +1,7 @@
 """Calcula determinantes por cofactores, Sarrus y reducción exacta.
 
 Tema: tarea 5; menores, signos de cofactores y operaciones de fila.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from modulos.eliminacion import reducir

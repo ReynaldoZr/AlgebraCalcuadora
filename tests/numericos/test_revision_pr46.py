@@ -1,7 +1,7 @@
 """Regresiones matemáticas de la revisión del PR 46.
 
 Tema: presentación fiel de no convergencia, precisión y datos originales.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from copy import deepcopy

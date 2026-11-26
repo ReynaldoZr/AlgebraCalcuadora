@@ -1,7 +1,7 @@
 """Adapta el formulario y el resumen de Newton-Raphson al contrato de #33 (Issue #36).
 
 Tema: entradas vacías, validación de derivada analítica/numérica y resumen sin datos falsos.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Elaboración: equipo del proyecto
 """
 
 from dataclasses import dataclass
@@ -187,4 +187,6 @@ def ejecutar_newton_adaptador(parametros, solver=None, proveedor_derivada=None):
         args['max_iteraciones'],
         criterio=args['criterio'],
         tolerancia_f=args['tolerancia_f'],
+        **({'solo_error': True} if parametros.get('parada') == 'Solo tolerancia del error' else {}),
+        **({'iteraciones_fijas': True} if parametros.get('parada') == 'Iteraciones fijas' else {}),
     )

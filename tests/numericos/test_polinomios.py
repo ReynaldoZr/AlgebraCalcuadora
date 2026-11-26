@@ -1,7 +1,7 @@
 """Comprueba Horner, términos ausentes, deflación y referencias de polinomios.
 
 Tema: issue 35 y ejemplos de la Sesión 22, sin depender de Newton pendiente.
-Elaboración: equipo 9, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 import math

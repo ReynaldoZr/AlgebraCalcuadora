@@ -1,6 +1,10 @@
 # Plan de versiones
 
-## Estado actual · 21 de noviembre de 2026
+## v1.0.0 · 25 de noviembre de 2026
+
+Lanzamiento del Cuaderno de Álgebra con selector de propiedades, entrada de sistemas por pegado, regla de Cramer, verificación LU y criterios de parada para los ejercicios de la guía.
+
+## Antecedente · 21 de noviembre de 2026
 
 Reynaldo eligió **versión 0.9**, registrada como **v0.9.0**, para el avance integrado de la aplicación. La consola y el título de Qt leen la misma constante `main.VERSION`.
 

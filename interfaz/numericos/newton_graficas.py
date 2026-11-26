@@ -1,7 +1,7 @@
 """Construye gráficas de Newton-Raphson y comparación con bisección (Issue #38).
 
 Tema: panel de función con tangente de iteración y panel de evolución con escala segura.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from math import isfinite

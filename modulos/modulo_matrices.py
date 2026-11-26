@@ -1,7 +1,7 @@
 """Calcula las operaciones básicas de matrices conservando las entradas.
 
 Tema: operaciones de matrices de los Programas 3 y 5.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from fractions import Fraction

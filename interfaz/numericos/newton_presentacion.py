@@ -1,7 +1,7 @@
 """Presenta vista previa, todos los pasos y tabla completa de Newton (Issue #37).
 
 Tema: consumo exclusivo del contrato Calculo/Paso de #33, sin cálculos ni parseo en QML.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from interfaz.qt.presentacion import paso_visual

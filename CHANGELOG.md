@@ -2,6 +2,10 @@
 
 ## Sin publicar
 
+## v1.0.0 · 25 de noviembre de 2026
+
+Lanzamiento del Cuaderno de Álgebra con selector de propiedades, entrada de sistemas por pegado, regla de Cramer, verificación LU y criterios de parada para los ejercicios de la guía.
+
 ### Identificación v0.9.0 · 2026-11-21
 
 - Reynaldo elige versión 0.9 para el avance integrado: `main.VERSION` y título Qt muestran v0.9.0. No se crea una release pública.

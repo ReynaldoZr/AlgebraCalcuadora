@@ -1,7 +1,7 @@
 """Conecta la biblioteca y las herramientas de estudio con las sesiones existentes.
 
 Tema: guardado y recuperación de ejercicios, sin cambiar algoritmos o distribución.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 import tkinter as tk

@@ -1,7 +1,7 @@
 """Traduce resultados exactos a datos de lectura para QML sin usar float.
 
 Tema: fracciones apiladas, fórmulas completas y recorrido esencial.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from interfaz.lenguaje_pasos import explicar_paso

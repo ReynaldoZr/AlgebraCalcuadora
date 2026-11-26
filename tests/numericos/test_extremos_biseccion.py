@@ -1,7 +1,7 @@
 """Comprueba raíces en ambos extremos y su presentación reutilizable.
 
 Tema: regresión de la issue #13, resumen, pasos y gráfica de bisección.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from copy import deepcopy

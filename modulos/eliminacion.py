@@ -1,7 +1,7 @@
 """Comparte la reducción exacta y las operaciones elementales por filas.
 
 Tema: formas escalonada y reducida, pivotes y multiplicadores.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from dataclasses import dataclass

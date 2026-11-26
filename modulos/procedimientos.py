@@ -1,7 +1,7 @@
 """Define resultados y pasos reutilizables sin depender de la interfaz.
 
 Tema: procedimientos exactos de las tareas 1 a 6.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from dataclasses import dataclass, field

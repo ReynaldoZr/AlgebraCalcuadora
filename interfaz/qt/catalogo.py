@@ -1,7 +1,7 @@
 """Adapta los catálogos existentes a formularios de Qt Quick.
 
 Tema: metadatos de pantallas y reutilización de cálculos, sin widgets Tk.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from interfaz.datos import convertir_numero
@@ -36,6 +36,7 @@ TEMAS = (
     ('Numéricos', '≈ƒ', 'Bisección, errores y estabilidad'),
 )
 AYUDA_NUMERICA = {
+    'num_maclaurin': 'Ingresa x, la referencia positiva y la tolerancia porcentual. La tabla compara ambos errores por término.',
     'num_newton': 'Newton necesita x₀ y una derivada. Absoluto: cambio en x; porcentual: cambio en %. El residuo tiene tolerancia independiente. No garantiza convergencia ni todas las raíces.',
     'num_jacobi': 'Cada componente usa el vector anterior. Escribe b y X₀ separados por comas y decimales con punto. El residuo comprueba el sistema original.',
     'num_gauss_seidel': 'Usa de inmediato los valores recién calculados. Admite reordenar ecuaciones y factor de relajación 0 < λ < 2. El residuo comprueba el sistema original.',

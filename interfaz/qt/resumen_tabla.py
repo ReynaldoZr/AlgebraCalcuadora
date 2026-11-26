@@ -1,7 +1,7 @@
 """Adapta la vista de resultados en tabla a todos los métodos de la calculadora.
 
 Tema: presentación uniforme con tabla, métricas y detalles técnicos sin cálculos en QML.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from interfaz.metodos_numericos import (
@@ -210,6 +210,11 @@ def _construir_numerico(clave, calculo, resumen):
             explicacion_residuo='', advertencias=[], detalles_tecnicos=detalles,
         )
 
+    if clave == 'num_maclaurin' or (clave == 'num_bases' and d.get('desglose')):
+        return dict(activo=True, estado_general=resumen, comparacion_iteraciones='', metodos=[],
+                    columnas=['Concepto', 'Valor'], filas=_tabla_desde_resumen(resumen),
+                    nota_referencia='', nota_precision='', explicacion_residuo='', advertencias=[],
+                    detalles_tecnicos=[])
     if clave == 'num_bases':
         filas = [
             [f'Base {d.get("base", "")}', str(calculo.valor)],
@@ -252,7 +257,11 @@ def resumen_estructurado(clave, presentacion):
     if clave in ('num_comparar_iterativos', 'num_jacobi', 'num_gauss_seidel'):
         return resumen_iterativo_estructurado(clave, presentacion.calculo)
     if clave in METODOS_NUMERICOS:
-        return _construir_numerico(clave, presentacion.calculo, presentacion.resumen)
+        resumen = _construir_numerico(clave, presentacion.calculo, presentacion.resumen)
+        primera = presentacion.calculo.datos.get('primera_tolerancia')
+        if primera is not None:
+            resumen['filas'].append(['Primera iteración que cumple la tolerancia del error', str(primera)])
+        return resumen
 
     filas = []
     if presentacion.matriz is not None and len(presentacion.matriz) > 0:

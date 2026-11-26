@@ -1,7 +1,7 @@
 """Comprueba biblioteca, recuperación, pegado e historial con widgets de prueba.
 
 Tema: integración de herramientas de estudio sin automatizar la pantalla de la persona.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from copy import deepcopy

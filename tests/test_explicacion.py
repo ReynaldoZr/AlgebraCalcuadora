@@ -1,7 +1,7 @@
 """Comprueba el significado de las etapas sin necesitar widgets ni pantalla.
 
 Tema: equivalencias exactas, signos y destino de resultados.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from fractions import Fraction

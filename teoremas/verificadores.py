@@ -1,7 +1,7 @@
 """Comprueba ambos miembros de las propiedades exigidas en las tareas 5 y 6.
 
 Tema: operaciones, transpuesta, inversa, determinantes y equivalencia de métodos.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from dataclasses import dataclass

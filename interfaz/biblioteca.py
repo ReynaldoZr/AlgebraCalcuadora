@@ -1,7 +1,7 @@
 """Conserva matrices, ejercicios e historial en un archivo local de la persona.
 
 Tema: persistencia JSON exacta, independiente de los algoritmos matemáticos.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from copy import deepcopy
@@ -137,10 +137,10 @@ def validar_registro(registro):
                 k not in CAMPOS or not isinstance(v, str) or len(v) > 300 for k, v in parametros.items()):
             raise ValueError('Los parámetros numéricos guardados no son válidos.')
         metodo = METODOS_NUMERICOS[registro['operacion']]
-        if any(k not in parametros for k in metodo.campos_a + metodo.campos_b) or any(k not in registro['entradas'] for k in metodo.matrices):
+        if any(k not in parametros for k in metodo.campos_a + metodo.campos_b if k not in ('parada', 'error_iterativo', 'modo_base')) or any(k not in registro['entradas'] for k in metodo.matrices):
             raise ValueError('El ejercicio numérico está incompleto.')
     for nombre, matriz in registro['entradas'].items():
-        if nombre not in ('A', 'B', 'C', 'b'):
+        if nombre not in ('A', 'B', 'C', 'b', 'L', 'U'):
             raise ValueError('Nombre de matriz guardada desconocido.')
         leer_matriz_guardada(matriz)
     convertir_numero(registro['escalar'])

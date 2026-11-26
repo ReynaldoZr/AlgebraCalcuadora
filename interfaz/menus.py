@@ -1,7 +1,7 @@
 """Coordina los menús y conecta datos, cálculos y resultados.
 
 Tema: módulo de matrices y consulta de teoremas.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from interfaz.cabeceras import mostrar_inicio, mostrar_matrices

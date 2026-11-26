@@ -1,7 +1,7 @@
 """Agrupa acciones secundarias sin duplicar su validación o comportamiento.
 
 Tema: menús compactos de la interfaz de escritorio.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 import tkinter as tk

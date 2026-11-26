@@ -1,7 +1,7 @@
 """Comprueba temporizadores y navegación sin depender de una pantalla.
 
 Tema: reproducción cancelable del procedimiento visual.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 import unittest

@@ -1,7 +1,7 @@
 """Factoriza A=LU sin permutación y resuelve Ly=b, Ux=y.
 
 Tema: tarea 6; multiplicadores, matrices rectangulares y comprobaciones.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 from modulos.eliminacion import reducir
@@ -37,9 +37,29 @@ def resolver_lu(matriz, vector_b):
         raise ValueError("Resolver por LU requiere A cuadrada; la factorización sí admite matrices rectangulares.")
     factorizacion = factorizar_lu(matriz)
     inferior, superior = factorizacion.valor
+    return resolver_factores_lu(inferior, superior, vector_b, factorizacion.pasos)
+
+
+def resolver_factores_lu(inferior, superior, vector_b, pasos_previos=(), *, original=None):
+    """Resuelve con factores dados y comprueba el sistema reconstruido."""
+    n, m = validar_matriz(inferior)
+    if n != m or validar_matriz(superior) != (n, n):
+        raise ValueError("L y U deben ser cuadradas y del mismo tamaño.")
+    validar_vector(vector_b, n)
+    for i in range(n):
+        if inferior[i][i] == 0 or superior[i][i] == 0:
+            raise ValueError("Factor singular: las diagonales de L y U deben ser distintas de cero.")
+        if any(inferior[i][j] or superior[j][i] for j in range(i + 1, n)):
+            raise ValueError("L debe ser triangular inferior y U triangular superior.")
+    matriz = producto_matricial(inferior, superior)
+    if original is not None and not son_iguales(matriz, original):
+        raise ErrorCalculo("Los factores dados no reproducen A: L·U ≠ A.",
+                           (Paso("Producto L·U", matriz=matriz), Paso("Matriz A original", matriz=original)))
+    if original is not None:
+        pasos_previos = (*pasos_previos, Paso("Comprobación L·U = A", "Se cumple", matriz))
     intermedio = resolver_sistema(inferior, vector_b)
     solucion = resolver_sistema(superior, intermedio.valor)
-    pasos = list(factorizacion.pasos) + [Paso("Resolvemos Ly=b")] + list(intermedio.pasos)
+    pasos = list(pasos_previos) + [Paso("Resolvemos Ly=b")] + list(intermedio.pasos)
     pasos += [Paso("Resolvemos Ux=y")] + list(solucion.pasos)
     if solucion.datos["clasificacion"] != "unica":
         raise ErrorCalculo("La matriz es singular: LU existe, pero este sistema no tiene solución única por sustitución LU. Consulta Gauss-Jordan para su clasificación general.", pasos)

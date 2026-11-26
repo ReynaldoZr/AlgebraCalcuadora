@@ -4,7 +4,7 @@ Propuesta del 17 de noviembre de 2026, planificada en [#32](https://github.com/R
 
 La mejora afecta a la tarjeta de resultados: comparar aproximaciones en una tabla, separar referencia y residuo, acortar los números solo al mostrar y mantener los detalles técnicos disponibles. Las advertencias críticas deben permanecer visibles. Conservar las tres tarjetas y la navegación actual.
 
-Las imágenes son maquetas generadas por IA, no capturas de la calculadora ni pruebas numéricas. Los valores y recuentos definitivos salen de los cálculos reales; la imagen no determina la cantidad de pasos. NumPy proporciona una referencia aproximada, no un valor real exacto por definición.
+Las imágenes son maquetas de diseño, no capturas de la calculadora ni pruebas numéricas. Los valores y recuentos definitivos salen de los cálculos reales; la imagen no determina la cantidad de pasos. NumPy proporciona una referencia aproximada, no un valor real exacto por definición.
 
 ## Referencia principal · mismo diseño, solo resultados
 

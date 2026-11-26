@@ -1,7 +1,7 @@
 """Abre la interfaz Qt Quick conservando main.py para la consola.
 
 Tema: punto de entrada de escritorio configurado en IntelliJ.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 

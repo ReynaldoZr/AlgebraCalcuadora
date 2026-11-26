@@ -1,7 +1,7 @@
 """Convierte bloques pegados en matrices exactas antes de tocar las casillas.
 
 Tema: entrada de filas desde texto, hojas de cálculo y listas entre corchetes.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 import re

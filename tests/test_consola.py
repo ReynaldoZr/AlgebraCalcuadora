@@ -1,7 +1,7 @@
 """Prueba el uso de consola con entradas controladas.
 
 Tema: recuperación de errores y reutilización de resultados.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 import io

@@ -1,7 +1,7 @@
 """Comprueba recorridos reales de la ventana con los cálculos existentes.
 
 Tema: resultados exactos, errores de entrada y conservación de datos.
-Elaboración: equipo del proyecto, con apoyo de IA.
+Equipo responsable: Grupo 9.
 """
 
 import os
